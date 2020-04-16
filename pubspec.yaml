@@ -6,6 +6,9 @@ description: Visualize imports as a dot graph.
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
+executables:
+  lakos:
+
 dependencies:
   path: ^1.6.0
   gviz: ^0.3.0

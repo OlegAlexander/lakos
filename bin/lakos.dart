@@ -6,6 +6,14 @@ import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
 import 'package:gviz/gviz.dart' as gviz;
 
+const usage = '''
+Usage: lakos <mode> <rootDir>
+Available modes:
+  - dot: Print dependency graph in Graphviz dot format
+  - metrics: Print dependency graph metrics in json format''';
+
+const modes = ['dot', 'metrics'];
+
 String parseImportLine(String line) {
   var openQuote = false;
   var importPath = '';
@@ -44,7 +52,23 @@ String getPrettyJSONString(jsonObject) {
 }
 
 void main(List<String> args) {
-  var rootDir = io.Directory(args[0]);
+  if (args.length != 2) {
+    print('Wrong number of arguments.');
+    print(usage);
+    io.exit(1);
+  }
+  var mode = args[0];
+  if (!modes.contains(mode)) {
+    print('Invalid mode: $mode');
+    print(usage);
+    io.exit(1);
+  }
+  var rootDir = io.Directory(args[1]);
+  if (!rootDir.existsSync()) {
+    print('rootDir does not exist: ${rootDir.path}');
+    io.exit(1);
+  }
+
   var dartFiles = <String, List<String>>{};
   var entities = rootDir.listSync(recursive: true, followLinks: false);
   for (var entity in entities) {
@@ -69,7 +93,7 @@ void main(List<String> args) {
           var uri = Uri.file(dartFile);
           var resolvedUri = uri.resolve(parsedImportLine).toString();
           // Only add files that exist--account for imports inside strings, etc.
-          if (io.File(rootDir.path + "/" + resolvedUri).existsSync()) {
+          if (io.File(rootDir.path + '/' + resolvedUri).existsSync()) {
             dartFiles[path.withoutExtension(dartFile)]
                 .add(path.withoutExtension(resolvedUri));
           }
@@ -81,6 +105,17 @@ void main(List<String> args) {
   var jsonText = getPrettyJSONString(dartFiles);
   // print(jsonText);
 
-  var dotString = generateDotGraph(dartFiles);
-  print(dotString);
+  switch (mode) {
+    case 'dot':
+      {
+        var dotString = generateDotGraph(dartFiles);
+        print(dotString);
+        break;
+      }
+    case 'metrics':
+      {
+        print('Metrics not implemented yet.');
+        break;
+      }
+  }
 }
