@@ -43,23 +43,93 @@ void main() {
   });
 
   test('json_serializable', () {
-    var jsonSerializableLocation =
-        getPackageLocation('json_serializable', '3.3.0');
-    expect(jsonSerializableLocation, isNotNull);
+    var packageLocation = getPackageLocation('json_serializable', '3.3.0');
+    expect(packageLocation, isNotNull);
     var result = io.Process.runSync(
+        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '/lib']);
+    print(result.stdout);
+    io.Process.runSync(
         'dart',
         [
           'bin/lakos.dart',
           'dot',
-          jsonSerializableLocation.path + '/lib',
+          packageLocation.path + '/lib',
           '|',
           'dot',
           '-Tpng',
-          '-Gdpi=200',
+          '-Gdpi=300',
           '-o',
           'dot_images/json_serializable.png'
         ],
         runInShell: true);
-    print([result.stdout, result.stderr, result.exitCode]);
+  });
+
+  test('pub_cache', () {
+    var packageLocation = getPackageLocation('pub_cache', '0.2.3');
+    expect(packageLocation, isNotNull);
+    var result = io.Process.runSync(
+        'dart', ['bin/lakos.dart', 'dot', packageLocation.path]);
+    print(result.stdout);
+    io.Process.runSync(
+        'dart',
+        [
+          'bin/lakos.dart',
+          'dot',
+          packageLocation.path,
+          '|',
+          'dot',
+          '-Tpng',
+          '-Gdpi=300',
+          '-o',
+          'dot_images/pub_cache.png'
+        ],
+        runInShell: true);
+
+/* TODO: Here's what needs to happen:
+digraph the_graph {
+    subgraph cluster_0 {
+        label=example;
+        "example/list.dart" [label=list, style=filled];
+    }
+    subgraph cluster_1 {
+        label=lib;
+        "lib/pub_cache.dart" [label=pub_cache, style=filled];
+        subgraph cluster_3 {
+            label=src;
+            "lib/src/impl.dart" [label=impl, style=filled];
+        }
+    }
+    subgraph cluster_4 {
+        label=test;
+        "test/all.dart" [label=all, style=filled];
+        "test/pub_cache_test.dart" [label=pub_cache_test, style=filled];
+    }
+  "lib/pub_cache.dart" -> "lib/src/impl.dart";
+  "lib/src/impl.dart" -> "lib/pub_cache.dart";
+  "test/all.dart" -> "test/pub_cache_test.dart";
+}
+*/
+  });
+
+  test('test', () {
+    var packageLocation = getPackageLocation('test', '1.14.2');
+    expect(packageLocation, isNotNull);
+    var result = io.Process.runSync(
+        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '/lib']);
+    print(result.stdout);
+    io.Process.runSync(
+        'dart',
+        [
+          'bin/lakos.dart',
+          'dot',
+          packageLocation.path + '/lib',
+          '|',
+          'dot',
+          '-Tpng',
+          '-Gdpi=300',
+          '-o',
+          'dot_images/test.png'
+        ],
+        runInShell: true);
   });
 }

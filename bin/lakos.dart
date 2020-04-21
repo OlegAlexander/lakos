@@ -36,7 +36,11 @@ String generateDotGraph(Map<String, List<String>> dartFiles) {
   var graph = gviz.Gviz();
   // Add nodes
   for (var file in dartFiles.keys) {
-    graph.addNode(file);
+    var properties = {
+      'label': path.basenameWithoutExtension(file),
+      'style': 'filled'
+    };
+    graph.addNode(file, properties: properties);
   }
   // Add edges
   for (var source in dartFiles.keys) {
@@ -77,7 +81,7 @@ void main(List<String> args) {
       var rootDirForwardSlashes = rootDir.path.replaceAll('\\', '/');
       var dartFile =
           dartFileForwardSlashes.replaceFirst(rootDirForwardSlashes + '/', '');
-      dartFiles[path.withoutExtension(dartFile)] = [];
+      dartFiles[dartFile] = [];
 
       // Grab the imports from the dart file
       var lines = io.File(entity.path).readAsLinesSync();
@@ -94,8 +98,7 @@ void main(List<String> args) {
           var resolvedUri = uri.resolve(parsedImportLine).toString();
           // Only add files that exist--account for imports inside strings, etc.
           if (io.File(rootDir.path + '/' + resolvedUri).existsSync()) {
-            dartFiles[path.withoutExtension(dartFile)]
-                .add(path.withoutExtension(resolvedUri));
+            dartFiles[dartFile].add(resolvedUri);
           }
         }
       }
