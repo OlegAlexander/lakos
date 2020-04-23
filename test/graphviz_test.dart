@@ -12,13 +12,15 @@ void main() {
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Digraph simple"; labelloc=top;
-"a" [label="a"];
-"b" [label="b"];
-"c" [label="c"];
-"a" -> "b";
-"a" -> "c";
-}''');
+  label="Digraph simple";
+  labelloc=top;
+  "a" [label="a"];
+  "b" [label="b"];
+  "c" [label="c"];
+  "a" -> "b";
+  "a" -> "c";
+}
+''');
   });
 
   test('Subgraph simple', () {
@@ -33,16 +35,18 @@ label="Digraph simple"; labelloc=top;
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Subgraph simple"; labelloc=top;
-subgraph "cluster~zero" {
-label="zero"; labelloc=top;
-"a" [label="a"];
-"b" [label="b"];
-"c" [label="c"];
+  label="Subgraph simple";
+  labelloc=top;
+  subgraph "cluster~zero" {
+    label="zero";
+    "a" [label="a"];
+    "b" [label="b"];
+    "c" [label="c"];
+  }
+  "a" -> "b";
+  "a" -> "c";
 }
-"a" -> "b";
-"a" -> "c";
-}''');
+''');
   });
 
   test('Subgraph nested', () {
@@ -59,17 +63,20 @@ label="zero"; labelloc=top;
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Subgraph nested"; labelloc=top;
-subgraph "cluster~zero" {
-label="zero"; labelloc=top;
-"a" [label="a"];
-"b" [label="b"];
-subgraph "cluster~one" {
-label="one"; labelloc=top;
-"c" [label="c"];
-}}
-"a" -> "b";
-"a" -> "c";
-}''');
+  label="Subgraph nested";
+  labelloc=top;
+  subgraph "cluster~zero" {
+    label="zero";
+    "a" [label="a"];
+    "b" [label="b"];
+    subgraph "cluster~one" {
+      label="one";
+      "c" [label="c"];
+    }
+  }
+  "a" -> "b";
+  "a" -> "c";
+}
+''');
   });
 }

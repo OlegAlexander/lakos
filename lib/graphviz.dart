@@ -8,12 +8,13 @@ class DigraphSimple {
 
   @override
   String toString() {
-    return '''
+    return _dotFormat('''
 digraph "$id" {
-label="$label"; labelloc=top;
+label="$label";
+labelloc=top;
 ${nodes.join('\n')}
 ${edges.join('\n')}
-}''';
+}''');
   }
 }
 
@@ -51,12 +52,13 @@ class DigraphWithSubgraphs {
 
   @override
   String toString() {
-    return '''
+    return _dotFormat('''
 digraph "$id" {
-label="$label"; labelloc=top;
+label="$label";
+labelloc=top;
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
-}''';
+}''');
   }
 }
 
@@ -72,8 +74,48 @@ class Subgraph {
   String toString() {
     return '''
 subgraph "cluster~$id" {
-label="$label"; labelloc=top;
+label="$label";
 ${nodes.join('\n')}
-${subgraphs.join('\n')}}''';
+${subgraphs.join('\n')}
+}''';
   }
+}
+
+String _trimLines(String dot) {
+  return dot.split('\n').map((line) => line.trim()).join('\n');
+}
+
+String _dotFormat(String dot, {String indent = '  '}) {
+  var level = 0;
+  var newTokens = <String>[];
+  for (var token in _trimLines(dot).split('')) {
+    switch (token) {
+      case '\n':
+        continue;
+      case ';':
+        newTokens.add(';\n');
+        for (var i = 0; i < level; i++) {
+          newTokens.add(indent);
+        }
+        break;
+      case '{':
+        newTokens.add('{\n');
+        level++;
+        for (var i = 0; i < level; i++) {
+          newTokens.add(indent);
+        }
+        break;
+      case '}':
+        newTokens.removeLast(); // Unindent
+        newTokens.add('}\n');
+        level--;
+        for (var i = 0; i < level; i++) {
+          newTokens.add(indent);
+        }
+        break;
+      default:
+        newTokens.add(token);
+    }
+  }
+  return newTokens.join('');
 }
