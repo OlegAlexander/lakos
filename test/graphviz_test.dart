@@ -12,7 +12,7 @@ void main() {
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Digraph simple";
+label="Digraph simple"; labelloc=top;
 "a" [label="a"];
 "b" [label="b"];
 "c" [label="c"];
@@ -33,9 +33,9 @@ label="Digraph simple";
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Subgraph simple";
+label="Subgraph simple"; labelloc=top;
 subgraph "cluster~zero" {
-label="zero";
+label="zero"; labelloc=top;
 "a" [label="a"];
 "b" [label="b"];
 "c" [label="c"];
@@ -59,13 +59,13 @@ label="zero";
     print(g);
     expect(g.toString(), '''
 digraph "G" {
-label="Subgraph nested";
+label="Subgraph nested"; labelloc=top;
 subgraph "cluster~zero" {
-label="zero";
+label="zero"; labelloc=top;
 "a" [label="a"];
 "b" [label="b"];
 subgraph "cluster~one" {
-label="one";
+label="one"; labelloc=top;
 "c" [label="c"];
 }}
 "a" -> "b";

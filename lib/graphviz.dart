@@ -10,7 +10,7 @@ class DigraphSimple {
   String toString() {
     return '''
 digraph "$id" {
-label="$label";
+label="$label"; labelloc=top;
 ${nodes.join('\n')}
 ${edges.join('\n')}
 }''';
@@ -53,7 +53,7 @@ class DigraphWithSubgraphs {
   String toString() {
     return '''
 digraph "$id" {
-label="$label";
+label="$label"; labelloc=top;
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
 }''';
@@ -72,7 +72,7 @@ class Subgraph {
   String toString() {
     return '''
 subgraph "cluster~$id" {
-label="$label";
+label="$label"; labelloc=top;
 ${nodes.join('\n')}
 ${subgraphs.join('\n')}}''';
   }

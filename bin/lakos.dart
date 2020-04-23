@@ -4,7 +4,7 @@
 import 'dart:io' as io;
 import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
-import 'package:gviz/gviz.dart' as gviz;
+import 'package:lakos/graphviz.dart' as gv;
 
 const usage = '''
 Usage: lakos <mode> <rootDir>
@@ -33,20 +33,15 @@ String parseImportLine(String line) {
 }
 
 String generateDotGraph(Map<String, List<String>> dartFiles) {
-  var graph = gviz.Gviz();
+  var graph = gv.DigraphSimple('G', 'Dependency Graph');
   // Add nodes
   for (var file in dartFiles.keys) {
-    var properties = {
-      'label': path.basenameWithoutExtension(file)
-      // 'style': 'filled',
-      // 'fillcolor': 'lavender'
-    };
-    graph.addNode(file, properties: properties);
+    graph.nodes.add(gv.Node(file, path.basenameWithoutExtension(file)));
   }
   // Add edges
   for (var source in dartFiles.keys) {
     for (var target in dartFiles[source]) {
-      graph.addEdge(source, target);
+      graph.edges.add(gv.Edge(source, target));
     }
   }
   return graph.toString();
