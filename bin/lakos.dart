@@ -37,8 +37,9 @@ String generateDotGraph(Map<String, List<String>> dartFiles) {
   // Add nodes
   for (var file in dartFiles.keys) {
     var properties = {
-      'label': path.basenameWithoutExtension(file),
-      'style': 'filled'
+      'label': path.basenameWithoutExtension(file)
+      // 'style': 'filled',
+      // 'fillcolor': 'lavender'
     };
     graph.addNode(file, properties: properties);
   }

@@ -1,5 +1,4 @@
 import 'dart:io' as io;
-import 'package:json_serializable/type_helper.dart';
 import 'package:test/test.dart';
 import 'package:pub_cache/pub_cache.dart' as pub_cache;
 
@@ -87,22 +86,23 @@ void main() {
 
 /* TODO: Here's what needs to happen:
 digraph the_graph {
-    subgraph cluster_0 {
+    node [style=filled, fillcolor=wheat];
+    subgraph cluster0 {
         label=example;
-        "example/list.dart" [label=list, style=filled];
+        "example/list.dart" [label=list];
     }
-    subgraph cluster_1 {
+    subgraph cluster1 {
         label=lib;
-        "lib/pub_cache.dart" [label=pub_cache, style=filled];
-        subgraph cluster_3 {
+        "lib/pub_cache.dart" [label=pub_cache];
+        subgraph cluster2 {
             label=src;
-            "lib/src/impl.dart" [label=impl, style=filled];
+            "lib/src/impl.dart" [label=impl];
         }
     }
-    subgraph cluster_4 {
+    subgraph cluster3 {
         label=test;
-        "test/all.dart" [label=all, style=filled];
-        "test/pub_cache_test.dart" [label=pub_cache_test, style=filled];
+        "test/all.dart" [label=all];
+        "test/pub_cache_test.dart" [label=pub_cache_test];
     }
   "lib/pub_cache.dart" -> "lib/src/impl.dart";
   "lib/src/impl.dart" -> "lib/pub_cache.dart";
