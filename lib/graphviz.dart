@@ -3,8 +3,9 @@ class DigraphSimple {
   String label;
   List<Node> nodes = [];
   List<Edge> edges = [];
+  bool rankdirLR;
 
-  DigraphSimple(this.id, this.label);
+  DigraphSimple(this.id, this.label, {this.rankdirLR = false});
 
   @override
   String toString() {
@@ -12,6 +13,7 @@ class DigraphSimple {
 digraph "$id" {
 label="$label";
 labelloc=top;
+${rankdirLR ? 'rankdir=LR;' : ''}
 ${nodes.join('\n')}
 ${edges.join('\n')}
 }''');
@@ -47,8 +49,9 @@ class DigraphWithSubgraphs {
   String label;
   List<Subgraph> subgraphs = [];
   List<Edge> edges = [];
+  bool rankdirLR;
 
-  DigraphWithSubgraphs(this.id, this.label);
+  DigraphWithSubgraphs(this.id, this.label, {this.rankdirLR = false});
 
   @override
   String toString() {
@@ -56,6 +59,7 @@ class DigraphWithSubgraphs {
 digraph "$id" {
 label="$label";
 labelloc=top;
+${rankdirLR ? 'rankdir=LR;' : ''}
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
 }''');

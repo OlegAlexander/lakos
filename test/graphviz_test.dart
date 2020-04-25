@@ -21,6 +21,27 @@ digraph "G" {
   "a" -> "c";
 }
 ''');
+
+    // rankdirLR
+    g = DigraphSimple('G', 'Digraph simple', rankdirLR: true);
+    g.nodes.add(Node('a', 'a'));
+    g.nodes.add(Node('b', 'b'));
+    g.nodes.add(Node('c', 'c'));
+    g.edges.add(Edge('a', 'b'));
+    g.edges.add(Edge('a', 'c'));
+    print(g);
+    expect(g.toString(), '''
+digraph "G" {
+  label="Digraph simple";
+  labelloc=top;
+  rankdir=LR;
+  "a" [label="a"];
+  "b" [label="b"];
+  "c" [label="c"];
+  "a" -> "b";
+  "a" -> "c";
+}
+''');
   });
 
   test('Subgraph simple', () {
@@ -37,6 +58,32 @@ digraph "G" {
 digraph "G" {
   label="Subgraph simple";
   labelloc=top;
+  subgraph "cluster~zero" {
+    label="zero";
+    "a" [label="a"];
+    "b" [label="b"];
+    "c" [label="c"];
+  }
+  "a" -> "b";
+  "a" -> "c";
+}
+''');
+
+    // rankdirLR
+    g = DigraphWithSubgraphs('G', 'Subgraph simple', rankdirLR: true);
+    c0 = Subgraph('zero', 'zero');
+    c0.nodes.add(Node('a', 'a'));
+    c0.nodes.add(Node('b', 'b'));
+    c0.nodes.add(Node('c', 'c'));
+    g.subgraphs.add(c0);
+    g.edges.add(Edge('a', 'b'));
+    g.edges.add(Edge('a', 'c'));
+    print(g);
+    expect(g.toString(), '''
+digraph "G" {
+  label="Subgraph simple";
+  labelloc=top;
+  rankdir=LR;
   subgraph "cluster~zero" {
     label="zero";
     "a" [label="a"];

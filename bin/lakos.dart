@@ -51,6 +51,43 @@ String getPrettyJSONString(jsonObject) {
   return convert.JsonEncoder.withIndent('    ').convert(jsonObject);
 }
 
+gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
+  var tree = gv.DigraphWithSubgraphs('G', '');
+  var dirs = [rootDir];
+  var subgraphs = [
+    gv.Subgraph(rootDir.path.replaceFirst(rootDir.parent.path, ''),
+        path.basename(rootDir.path))
+  ];
+  tree.subgraphs.add(subgraphs.first);
+  while (dirs.isNotEmpty) {
+    var currentDir = dirs.removeAt(0);
+    var currentSubgraph = subgraphs.removeAt(0);
+    var currentDirItems =
+        currentDir.listSync(recursive: false, followLinks: false);
+    Iterable<io.Directory> dirsOnly = currentDirItems.whereType();
+    Iterable<io.File> filesOnly = currentDirItems.whereType();
+
+    // Add directories as subgraphs
+    for (var dir in dirsOnly) {
+      var subgraph = gv.Subgraph(dir.path.replaceFirst(rootDir.parent.path, ''),
+          path.basename(dir.path));
+      currentSubgraph.subgraphs.add(subgraph);
+    }
+
+    // Add dart files as nodes
+    for (var file in filesOnly) {
+      if (file.path.endsWith('.dart')) {
+        currentSubgraph.nodes.add(gv.Node(
+            file.path.replaceFirst(rootDir.parent.path, ''),
+            path.basenameWithoutExtension(file.path)));
+      }
+    }
+    dirs.addAll(dirsOnly);
+    subgraphs.addAll(currentSubgraph.subgraphs);
+  }
+  return tree;
+}
+
 void main(List<String> args) {
   if (args.length != 2) {
     print('Wrong number of arguments.');
@@ -68,6 +105,9 @@ void main(List<String> args) {
     print('rootDir does not exist: ${rootDir.path}');
     io.exit(1);
   }
+
+  var tree = getDirTree(rootDir);
+  print(tree);
 
   var dartFiles = <String, List<String>>{};
   var entities = rootDir.listSync(recursive: true, followLinks: false);
