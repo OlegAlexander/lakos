@@ -58,6 +58,7 @@ digraph "G" {
 digraph "G" {
   label="Subgraph simple";
   labelloc=top;
+  style=rounded;
   subgraph "cluster~zero" {
     label="zero";
     "a" [label="a"];
@@ -83,6 +84,7 @@ digraph "G" {
 digraph "G" {
   label="Subgraph simple";
   labelloc=top;
+  style=rounded;
   rankdir=LR;
   subgraph "cluster~zero" {
     label="zero";
@@ -112,6 +114,7 @@ digraph "G" {
 digraph "G" {
   label="Subgraph nested";
   labelloc=top;
+  style=rounded;
   subgraph "cluster~zero" {
     label="zero";
     "a" [label="a"];

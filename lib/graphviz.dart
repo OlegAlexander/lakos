@@ -59,6 +59,7 @@ class DigraphWithSubgraphs {
 digraph "$id" {
 label="$label";
 labelloc=top;
+style=rounded;
 ${rankdirLR ? 'rankdir=LR;' : ''}
 ${subgraphs.join('\n')}
 ${edges.join('\n')}

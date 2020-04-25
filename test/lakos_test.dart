@@ -45,14 +45,14 @@ void main() {
     var packageLocation = getPackageLocation('json_serializable', '3.3.0');
     expect(packageLocation, isNotNull);
     var result = io.Process.runSync(
-        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '/lib']);
+        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '\\lib']);
     print(result.stdout);
     io.Process.runSync(
         'dart',
         [
           'bin/lakos.dart',
           'dot',
-          packageLocation.path + '/lib',
+          packageLocation.path + '\\lib',
           '|',
           'dot',
           '-Tpng',
@@ -83,46 +83,20 @@ void main() {
           'dot_images/pub_cache.png'
         ],
         runInShell: true);
-
-/* TODO: Here's what needs to happen:
-digraph the_graph {
-    node [style=filled, fillcolor=wheat];
-    subgraph cluster0 {
-        label=example;
-        "example/list.dart" [label=list];
-    }
-    subgraph cluster1 {
-        label=lib;
-        "lib/pub_cache.dart" [label=pub_cache];
-        subgraph cluster2 {
-            label=src;
-            "lib/src/impl.dart" [label=impl];
-        }
-    }
-    subgraph cluster3 {
-        label=test;
-        "test/all.dart" [label=all];
-        "test/pub_cache_test.dart" [label=pub_cache_test];
-    }
-  "lib/pub_cache.dart" -> "lib/src/impl.dart";
-  "lib/src/impl.dart" -> "lib/pub_cache.dart";
-  "test/all.dart" -> "test/pub_cache_test.dart";
-}
-*/
   });
 
   test('test', () {
     var packageLocation = getPackageLocation('test', '1.14.2');
     expect(packageLocation, isNotNull);
     var result = io.Process.runSync(
-        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '/lib']);
+        'dart', ['bin/lakos.dart', 'dot', packageLocation.path + '\\lib']);
     print(result.stdout);
     io.Process.runSync(
         'dart',
         [
           'bin/lakos.dart',
           'dot',
-          packageLocation.path + '/lib',
+          packageLocation.path + '\\lib',
           '|',
           'dot',
           '-Tpng',

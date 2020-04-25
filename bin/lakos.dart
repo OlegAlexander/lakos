@@ -59,13 +59,17 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
         path.basename(rootDir.path))
   ];
   tree.subgraphs.add(subgraphs.first);
+
+  // The trick is to keep track of two lists (dirs and subgraphs)
+  // in the while loop at the same time.
   while (dirs.isNotEmpty) {
     var currentDir = dirs.removeAt(0);
     var currentSubgraph = subgraphs.removeAt(0);
+
     var currentDirItems =
         currentDir.listSync(recursive: false, followLinks: false);
-    Iterable<io.Directory> dirsOnly = currentDirItems.whereType();
-    Iterable<io.File> filesOnly = currentDirItems.whereType();
+    var dirsOnly = currentDirItems.whereType<io.Directory>();
+    var filesOnly = currentDirItems.whereType<io.File>();
 
     // Add directories as subgraphs
     for (var dir in dirsOnly) {
@@ -82,10 +86,51 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
             path.basenameWithoutExtension(file.path)));
       }
     }
+
+    // Recurse breadth first
     dirs.addAll(dirsOnly);
     subgraphs.addAll(currentSubgraph.subgraphs);
   }
+
   return tree;
+}
+
+List<gv.Edge> getEdges(io.Directory rootDir) {
+  var edges = <gv.Edge>[];
+  var entities = rootDir.listSync(recursive: true, followLinks: false);
+  var dartFiles = entities
+      .whereType<io.File>()
+      .where((file) => file.path.endsWith('.dart'));
+
+  for (var dartFile in dartFiles) {
+    var from = dartFile.path.replaceFirst(rootDir.parent.path, '');
+
+    // Grab the imports from the dart file
+    var lines = dartFile.readAsLinesSync().map((line) => line.trim());
+    for (var line in lines) {
+      if (line.startsWith('import')) {
+        var parsedImportLine = parseImportLine(line);
+
+        // Don't support dart: and package: yet
+        if (parsedImportLine.startsWith('dart:') ||
+            parsedImportLine.startsWith('package:')) {
+          continue;
+        }
+
+        // Resolve relative path
+        // TODO: Need to handle package:<currentPackage> import
+        var uri = Uri.file(dartFile.path);
+        var resolvedFile = io.File(uri.resolve(parsedImportLine).toFilePath());
+
+        // Only add dart files that exist--account for imports inside strings, etc.
+        if (resolvedFile.existsSync()) {
+          edges.add(gv.Edge(
+              from, resolvedFile.path.replaceFirst(rootDir.parent.path, '')));
+        }
+      }
+    }
+  }
+  return edges;
 }
 
 void main(List<String> args) {
@@ -107,48 +152,12 @@ void main(List<String> args) {
   }
 
   var tree = getDirTree(rootDir);
-  print(tree);
-
-  var dartFiles = <String, List<String>>{};
-  var entities = rootDir.listSync(recursive: true, followLinks: false);
-  for (var entity in entities) {
-    if (entity.path.endsWith('.dart')) {
-      var dartFileForwardSlashes = entity.path.replaceAll('\\', '/');
-      var rootDirForwardSlashes = rootDir.path.replaceAll('\\', '/');
-      var dartFile =
-          dartFileForwardSlashes.replaceFirst(rootDirForwardSlashes + '/', '');
-      dartFiles[dartFile] = [];
-
-      // Grab the imports from the dart file
-      var lines = io.File(entity.path).readAsLinesSync();
-      for (var line in lines) {
-        var trimmedLine = line.trim();
-        if (trimmedLine.startsWith('import')) {
-          var parsedImportLine = parseImportLine(trimmedLine);
-          // Don't support dart: and package: yet
-          if (parsedImportLine.startsWith('dart:') ||
-              parsedImportLine.startsWith('package:')) {
-            continue;
-          }
-          var uri = Uri.file(dartFile);
-          var resolvedUri = uri.resolve(parsedImportLine).toString();
-          // Only add files that exist--account for imports inside strings, etc.
-          if (io.File(rootDir.path + '/' + resolvedUri).existsSync()) {
-            dartFiles[dartFile].add(resolvedUri);
-          }
-        }
-      }
-    }
-  }
-
-  var jsonText = getPrettyJSONString(dartFiles);
-  // print(jsonText);
+  tree.edges.addAll(getEdges(rootDir));
 
   switch (mode) {
     case 'dot':
       {
-        var dotString = generateDotGraph(dartFiles);
-        print(dotString);
+        print(tree);
         break;
       }
     case 'metrics':
