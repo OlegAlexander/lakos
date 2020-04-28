@@ -90,30 +90,30 @@ digraph "G" {
   style=rounded;
   subgraph "cluster~\pub_cache-0.2.3" {
     label="pub_cache-0.2.3";
-    subgraph "cluster~\pub_cache-0.2.3\example" {
+    subgraph "cluster~/pub_cache-0.2.3/example" {
       label="example";
-      "\pub_cache-0.2.3\example\list.dart" [label="list"];
+      "/pub_cache-0.2.3/example/list.dart" [label="list"];
     }
-    subgraph "cluster~\pub_cache-0.2.3\lib" {
+    subgraph "cluster~/pub_cache-0.2.3/lib" {
       label="lib";
-      "\pub_cache-0.2.3\lib\pub_cache.dart" [label="pub_cache"];
-      subgraph "cluster~\pub_cache-0.2.3\lib\src" {
+      "/pub_cache-0.2.3/lib/pub_cache.dart" [label="pub_cache"];
+      subgraph "cluster~/pub_cache-0.2.3/lib/src" {
         label="src";
-        "\pub_cache-0.2.3\lib\src\impl.dart" [label="impl"];
+        "/pub_cache-0.2.3/lib/src/impl.dart" [label="impl"];
       }
     }
-    subgraph "cluster~\pub_cache-0.2.3\test" {
+    subgraph "cluster~/pub_cache-0.2.3/test" {
       label="test";
-      "\pub_cache-0.2.3\test\all.dart" [label="all"];
-      "\pub_cache-0.2.3\test\pub_cache_test.dart" [label="pub_cache_test"];
+      "/pub_cache-0.2.3/test/all.dart" [label="all"];
+      "/pub_cache-0.2.3/test/pub_cache_test.dart" [label="pub_cache_test"];
     }
-    subgraph "cluster~\pub_cache-0.2.3\tool" {
+    subgraph "cluster~/pub_cache-0.2.3/tool" {
       label="tool";
     }
   }
-  "\pub_cache-0.2.3\lib\pub_cache.dart" -> "\pub_cache-0.2.3\lib\src\impl.dart";
-  "\pub_cache-0.2.3\lib\src\impl.dart" -> "\pub_cache-0.2.3\lib\pub_cache.dart";
-  "\pub_cache-0.2.3\test\all.dart" -> "\pub_cache-0.2.3\test\pub_cache_test.dart";
+  "/pub_cache-0.2.3/lib/pub_cache.dart" -> "/pub_cache-0.2.3/lib/src/impl.dart";
+  "/pub_cache-0.2.3/lib/src/impl.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
+  "/pub_cache-0.2.3/test/all.dart" -> "/pub_cache-0.2.3/test/pub_cache_test.dart";
 }
 ''');
   });

@@ -73,7 +73,8 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
 
     // Add directories as subgraphs
     for (var dir in dirsOnly) {
-      var subgraph = gv.Subgraph(dir.path.replaceFirst(rootDir.parent.path, ''),
+      var subgraph = gv.Subgraph(
+          dir.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basename(dir.path));
       currentSubgraph.subgraphs.add(subgraph);
     }
@@ -82,7 +83,9 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
     for (var file in filesOnly) {
       if (file.path.endsWith('.dart')) {
         currentSubgraph.nodes.add(gv.Node(
-            file.path.replaceFirst(rootDir.parent.path, ''),
+            file.path
+                .replaceFirst(rootDir.parent.path, '')
+                .replaceAll('\\', '/'),
             path.basenameWithoutExtension(file.path)));
       }
     }
@@ -103,7 +106,9 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
       .where((file) => file.path.endsWith('.dart'));
 
   for (var dartFile in dartFiles) {
-    var from = dartFile.path.replaceFirst(rootDir.parent.path, '');
+    var from = dartFile.path
+        .replaceFirst(rootDir.parent.path, '')
+        .replaceAll('\\', '/');
 
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync().map((line) => line.trim());
@@ -125,7 +130,10 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
         // Only add dart files that exist--account for imports inside strings, etc.
         if (resolvedFile.existsSync()) {
           edges.add(gv.Edge(
-              from, resolvedFile.path.replaceFirst(rootDir.parent.path, '')));
+              from,
+              resolvedFile.path
+                  .replaceFirst(rootDir.parent.path, '')
+                  .replaceAll('\\', '/')));
         }
       }
     }
