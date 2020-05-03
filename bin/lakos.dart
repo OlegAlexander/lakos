@@ -113,7 +113,7 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync().map((line) => line.trim());
     for (var line in lines) {
-      if (line.startsWith('import')) {
+      if (line.startsWith('import') || line.startsWith('export')) {
         var parsedImportLine = parseImportLine(line);
 
         // Don't support dart: and package: yet

@@ -1,5 +1,5 @@
 name: lakos
-description: Visualize imports as a dot graph.
+description: Visualize library dependencies as a dot graph.
 # version: 1.0.0
 # homepage: https://www.example.com
 
@@ -17,3 +17,5 @@ dev_dependencies:
   test: 1.14.2
   pub_cache: 0.2.3
   json_serializable: 3.3.0
+  analyzer: 0.39.8
+  package_config: 1.9.3

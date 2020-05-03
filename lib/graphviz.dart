@@ -9,7 +9,7 @@ class DigraphSimple {
 
   @override
   String toString() {
-    return _dotFormat('''
+    return prettyPrintDot('''
 digraph "$id" {
 label="$label";
 labelloc=top;
@@ -55,7 +55,7 @@ class DigraphWithSubgraphs {
 
   @override
   String toString() {
-    return _dotFormat('''
+    return prettyPrintDot('''
 digraph "$id" {
 label="$label";
 labelloc=top;
@@ -90,7 +90,7 @@ String _trimLines(String dot) {
   return dot.split('\n').map((line) => line.trim()).join('\n');
 }
 
-String _dotFormat(String dot, {String indent = '  '}) {
+String prettyPrintDot(String dot, {String indent = '  '}) {
   var level = 0;
   var newTokens = <String>[];
   for (var token in _trimLines(dot).split('')) {

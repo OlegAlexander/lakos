@@ -79,6 +79,13 @@ void main() {
     print(result);
   });
 
+  test('analyzer', () {
+    var packageLocation = getPackageLocation('analyzer', '0.39.8');
+    var result =
+        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'analyzer');
+    print(result);
+  });
+
   test('pub_cache', () {
     var packageLocation = getPackageLocation('pub_cache', '0.2.3');
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
