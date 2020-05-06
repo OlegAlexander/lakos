@@ -68,12 +68,12 @@ void main() {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
     print(result);
-    expect(result, r'''
+    expect(result, '''
 digraph "G" {
   label="";
   labelloc=top;
   style=rounded;
-  subgraph "cluster~\pub_cache-0.2.3" {
+  subgraph "cluster~/pub_cache-0.2.3" {
     label="pub_cache-0.2.3";
     subgraph "cluster~/pub_cache-0.2.3/example" {
       label="example";
@@ -96,9 +96,11 @@ digraph "G" {
       label="tool";
     }
   }
+  "/pub_cache-0.2.3/example/list.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
   "/pub_cache-0.2.3/lib/pub_cache.dart" -> "/pub_cache-0.2.3/lib/src/impl.dart";
   "/pub_cache-0.2.3/lib/src/impl.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
   "/pub_cache-0.2.3/test/all.dart" -> "/pub_cache-0.2.3/test/pub_cache_test.dart";
+  "/pub_cache-0.2.3/test/pub_cache_test.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
 }
 ''');
   });

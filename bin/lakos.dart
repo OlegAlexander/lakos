@@ -5,6 +5,7 @@ import 'dart:io' as io;
 import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
 import 'package:lakos/graphviz.dart' as gv;
+import 'package:lakos/resolve_imports.dart' as resolve_imports;
 
 const usage = '''
 Usage: lakos <mode> <rootDir>
@@ -55,7 +56,10 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
   var tree = gv.DigraphWithSubgraphs('G', '');
   var dirs = [rootDir];
   var subgraphs = [
-    gv.Subgraph(rootDir.path.replaceFirst(rootDir.parent.path, ''),
+    gv.Subgraph(
+        rootDir.path
+            .replaceFirst(rootDir.parent.path, '')
+            .replaceAll('\\', '/'),
         path.basename(rootDir.path))
   ];
   tree.subgraphs.add(subgraphs.first);
@@ -105,6 +109,8 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
       .whereType<io.File>()
       .where((file) => file.path.endsWith('.dart'));
 
+  var packageConfig = resolve_imports.findPackageConfigUriSync(rootDir);
+
   for (var dartFile in dartFiles) {
     var from = dartFile.path
         .replaceFirst(rootDir.parent.path, '')
@@ -113,22 +119,25 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync().map((line) => line.trim());
     for (var line in lines) {
+      // TODO: Draw a dashed edge for export
       if (line.startsWith('import') || line.startsWith('export')) {
         var parsedImportLine = parseImportLine(line);
 
-        // Don't support dart: and package: yet
-        if (parsedImportLine.startsWith('dart:') ||
-            parsedImportLine.startsWith('package:')) {
-          continue;
+        io.File resolvedFile;
+        if (parsedImportLine.startsWith('package:')) {
+          resolvedFile =
+              resolve_imports.resolvePackage(packageConfig, parsedImportLine);
+        } else if (parsedImportLine.startsWith('dart:')) {
+          continue; // Ignore dart: imports
+        } else {
+          resolvedFile =
+              resolve_imports.resolveFile(dartFile, parsedImportLine);
         }
 
-        // Resolve relative path
-        // TODO: Need to handle package:<currentPackage> import
-        var uri = Uri.file(dartFile.path);
-        var resolvedFile = io.File(uri.resolve(parsedImportLine).toFilePath());
-
-        // Only add dart files that exist--account for imports inside strings, etc.
-        if (resolvedFile.existsSync()) {
+        // Only add dart files that exist--account for imports inside strings, comments, etc.
+        if (resolvedFile != null &&
+            resolvedFile.existsSync() &&
+            path.isWithin(rootDir.path, resolvedFile.path)) {
           edges.add(gv.Edge(
               from,
               resolvedFile.path

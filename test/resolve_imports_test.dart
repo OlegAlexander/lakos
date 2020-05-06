@@ -12,6 +12,20 @@ void main() {
   final packageConfig =
       resolve_imports.findPackageConfigUriSync(thisDartFile.parent);
 
+  test('findPackageConfigUriSync', () {
+    var packageConfig =
+        resolve_imports.findPackageConfigUriSync(thisDartFile.parent);
+    print(packageConfig);
+    expect(packageConfig, isNotNull);
+  });
+
+  test('findPackageConfigUriSync null', () {
+    var packageConfig =
+        resolve_imports.findPackageConfigUriSync(io.Directory('C:/'));
+    print(packageConfig);
+    expect(packageConfig, isNull);
+  });
+
   test('Resolve relative file', () {
     var relativeFile = '../executable_settings.dart';
     var resolvedFile = resolve_imports.resolveFile(thisDartFile, relativeFile);
