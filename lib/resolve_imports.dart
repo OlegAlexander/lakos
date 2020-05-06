@@ -16,6 +16,8 @@ List<analyzer_ast.Directive> parseDirectives(io.File dartFile) {
 }
 
 package_config.PackageConfig findPackageConfigUriSync(io.Directory rootDir) {
+  // Thanks cli.waitFor for not turning this entire project into an async/await dance
+  // just because a single function happens to return a Future!
   return cli.waitFor<package_config.PackageConfig>(package_config
       .findPackageConfigUri(Uri(scheme: 'file', path: rootDir.path)));
 }
@@ -56,7 +58,7 @@ Map<String, io.File> resolveDirectiveToFile(
       return {keyword: io.File.fromUri(resolvedUri)};
 
     default:
-      return null; // Don't support dart: scheme
+      return null;
   }
 }
 
@@ -79,4 +81,20 @@ void usage(io.Directory rootDir) {
       print('    $resolvedFile\n');
     }
   }
+}
+
+io.File resolveFile(io.File thisDartFile, String relativeFile) {
+  var thisDartFileUri = Uri.file(thisDartFile.path);
+  var resolvedUri = thisDartFileUri.resolve(relativeFile);
+  return io.File.fromUri(resolvedUri);
+}
+
+io.File resolvePackage(
+    package_config.PackageConfig packageConfig, String packageFile) {
+  var directiveUri = Uri.parse(packageFile);
+  var resolvedUri = packageConfig.resolve(directiveUri);
+  if (resolvedUri == null) {
+    return null;
+  }
+  return io.File.fromUri(resolvedUri);
 }

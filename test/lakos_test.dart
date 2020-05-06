@@ -1,23 +1,10 @@
 import 'dart:io' as io;
 import 'dart:convert' as convert;
 import 'package:test/test.dart';
-import 'package:pub_cache/pub_cache.dart' as pub_cache;
 import 'package:path/path.dart' as path;
+import 'package:lakos/get_package_location.dart' as gpl;
 
 const outDir = 'dot_images';
-
-/// Return the location of the package on disk.
-/// Or return null if the package doesn't exist in the pub cache.
-io.Directory getPackageLocation(String packageName, String packageVersion) {
-  var cache = pub_cache.PubCache();
-  var allVersions = cache.getAllPackageVersions(packageName);
-  for (var version in allVersions) {
-    if (version.version.toString() == packageVersion) {
-      return version.resolve().location;
-    }
-  }
-  return null;
-}
 
 /// Run lakos dot and return the stdout.
 /// Also save the stdout to a dot file and generate a png.
@@ -56,38 +43,29 @@ void main() {
     expect(result.exitCode, 1);
   });
 
-  test('getPackageLocation', () {
-    var location = getPackageLocation('pub_cache', '0.2.3');
-    expect(location, isNotNull);
-    location = getPackageLocation('pub_cache', '0.2.12345');
-    expect(location, isNull);
-    location = getPackageLocation('pub_cacheeeeee', '0.2.3');
-    expect(location, isNull);
-  });
-
   test('json_serializable', () {
-    var packageLocation = getPackageLocation('json_serializable', '3.3.0');
+    var packageLocation = gpl.getPackageLocation('json_serializable', '3.3.0');
     var result = runLakosDot(
         path.join(packageLocation.path, 'lib'), outDir, 'json_serializable');
     print(result);
   });
 
   test('test', () {
-    var packageLocation = getPackageLocation('test', '1.14.2');
+    var packageLocation = gpl.getPackageLocation('test', '1.14.2');
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'test');
     print(result);
   });
 
   test('analyzer', () {
-    var packageLocation = getPackageLocation('analyzer', '0.39.8');
+    var packageLocation = gpl.getPackageLocation('analyzer', '0.39.8');
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'analyzer');
     print(result);
   });
 
   test('pub_cache', () {
-    var packageLocation = getPackageLocation('pub_cache', '0.2.3');
+    var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
     print(result);
     expect(result, r'''
