@@ -12,13 +12,15 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
   var result = io.Process.runSync('dart', ['bin/lakos.dart', 'dot', rootDir]);
 
   io.File('$outDir/$dotFilename.dot').writeAsStringSync(result.stdout);
-  io.Process.runSync('dot', [
+  var dotResult = io.Process.runSync('dot', [
     '-Tpng',
     '$outDir/$dotFilename.dot',
     '-Gdpi=300',
     '-o',
     '$outDir/$dotFilename.png'
   ]);
+
+  print([dotResult.stdout, dotResult.stderr, dotResult.exitCode]);
 
   // Remove carriage returns on Windows
   var ls = convert.LineSplitter();
@@ -45,6 +47,7 @@ void main() {
 
   test('json_serializable', () {
     var packageLocation = gpl.getPackageLocation('json_serializable', '3.3.0');
+    print(packageLocation);
     var result = runLakosDot(
         path.join(packageLocation.path, 'lib'), outDir, 'json_serializable');
     print(result);
@@ -52,20 +55,31 @@ void main() {
 
   test('test', () {
     var packageLocation = gpl.getPackageLocation('test', '1.14.2');
+    print(packageLocation);
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'test');
     print(result);
   });
 
-  test('analyzer', () {
-    var packageLocation = gpl.getPackageLocation('analyzer', '0.39.8');
-    var result =
-        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'analyzer');
+  // test('analyzer', () {
+  //   var packageLocation = gpl.getPackageLocation('analyzer', '0.39.8');
+  //   print(packageLocation);
+  //   var result =
+  //       runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'analyzer');
+  //   print(result);
+  //   // NOTE: dot fails with "Error: trouble in init_rank"
+  // });
+
+  test('lakos', () {
+    var packageLocation = io.Directory('.');
+    print(packageLocation);
+    var result = runLakosDot(packageLocation.path, outDir, 'lakos');
     print(result);
   });
 
   test('pub_cache', () {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
+    print(packageLocation);
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
     print(result);
     expect(result, '''
@@ -91,9 +105,6 @@ digraph "G" {
       label="test";
       "/pub_cache-0.2.3/test/all.dart" [label="all"];
       "/pub_cache-0.2.3/test/pub_cache_test.dart" [label="pub_cache_test"];
-    }
-    subgraph "cluster~/pub_cache-0.2.3/tool" {
-      label="tool";
     }
   }
   "/pub_cache-0.2.3/example/list.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";

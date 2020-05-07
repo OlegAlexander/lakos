@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 import 'dart:cli' as cli;
 import 'package:package_config/package_config.dart' as package_config;
+import 'package:path/path.dart' as path;
 
 package_config.PackageConfig findPackageConfigUriSync(io.Directory rootDir) {
   // Thanks cli.waitFor for not turning this entire project into an async/await dance
@@ -22,5 +23,7 @@ io.File resolvePackage(
   if (resolvedUri == null) {
     return null;
   }
-  return io.File.fromUri(resolvedUri);
+  // Fix issue with double back slash from . on Windows.
+  var fixedPath = path.normalize(resolvedUri.toFilePath());
+  return io.File(fixedPath);
 }

@@ -72,6 +72,7 @@ class Subgraph {
   String label;
   List<Node> nodes = [];
   List<Subgraph> subgraphs = [];
+  Subgraph parent;
 
   Subgraph(this.id, this.label);
 

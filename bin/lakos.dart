@@ -30,6 +30,9 @@ String parseImportLine(String line) {
       importPath += char;
     }
   }
+  if (importPath.isEmpty) {
+    return null;
+  }
   return importPath;
 }
 
@@ -64,6 +67,9 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
   ];
   tree.subgraphs.add(subgraphs.first);
 
+  var leaves = <gv.Subgraph>[];
+
+  // Recursively build the subgraph tree.
   // The trick is to keep track of two lists (dirs and subgraphs)
   // in the while loop at the same time.
   while (dirs.isNotEmpty) {
@@ -73,7 +79,13 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
     var currentDirItems =
         currentDir.listSync(recursive: false, followLinks: false);
     var dirsOnly = currentDirItems.whereType<io.Directory>();
-    var filesOnly = currentDirItems.whereType<io.File>();
+    var filesOnly = currentDirItems
+        .whereType<io.File>()
+        .where((file) => file.path.endsWith('.dart'));
+
+    if (dirsOnly.isEmpty) {
+      leaves.add(currentSubgraph);
+    }
 
     // Add directories as subgraphs
     for (var dir in dirsOnly) {
@@ -81,22 +93,32 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
           dir.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basename(dir.path));
       currentSubgraph.subgraphs.add(subgraph);
+      subgraph.parent = currentSubgraph;
     }
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      if (file.path.endsWith('.dart')) {
-        currentSubgraph.nodes.add(gv.Node(
-            file.path
-                .replaceFirst(rootDir.parent.path, '')
-                .replaceAll('\\', '/'),
-            path.basenameWithoutExtension(file.path)));
-      }
+      currentSubgraph.nodes.add(gv.Node(
+          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
+          path.basenameWithoutExtension(file.path)));
     }
 
     // Recurse breadth first
     dirs.addAll(dirsOnly);
     subgraphs.addAll(currentSubgraph.subgraphs);
+  }
+
+  // Recursively remove empty subgraphs which don't contain any dart files
+  while (leaves.isNotEmpty) {
+    var leaf = leaves.removeLast();
+    if (leaf.parent != null) {
+      if (leaf.nodes.isEmpty) {
+        leaf.parent.subgraphs.remove(leaf);
+
+        // Recurse up the tree depth first
+        leaves.add(leaf.parent);
+      }
+    }
   }
 
   return tree;
@@ -117,11 +139,14 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
         .replaceAll('\\', '/');
 
     // Grab the imports from the dart file
-    var lines = dartFile.readAsLinesSync().map((line) => line.trim());
+    var lines = dartFile.readAsLinesSync();
     for (var line in lines) {
       // TODO: Draw a dashed edge for export
       if (line.startsWith('import') || line.startsWith('export')) {
         var parsedImportLine = parseImportLine(line);
+        if (parsedImportLine == null) {
+          continue;
+        }
 
         io.File resolvedFile;
         if (parsedImportLine.startsWith('package:')) {
@@ -141,7 +166,7 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
           edges.add(gv.Edge(
               from,
               resolvedFile.path
-                  .replaceFirst(rootDir.parent.path, '')
+                  .replaceFirst(rootDir.absolute.parent.path, '')
                   .replaceAll('\\', '/')));
         }
       }

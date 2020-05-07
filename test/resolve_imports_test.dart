@@ -19,6 +19,20 @@ void main() {
     expect(packageConfig, isNotNull);
   });
 
+  test('findPackageConfigUriSync from .', () {
+    var packageConfig =
+        resolve_imports.findPackageConfigUriSync(io.Directory('.'));
+    print(packageConfig.packages
+        .where((package) => package.name == 'lakos')
+        .first
+        .root);
+    print(packageConfig.packages
+        .where((package) => package.name == 'io')
+        .first
+        .root);
+    expect(packageConfig, isNotNull);
+  });
+
   test('findPackageConfigUriSync null', () {
     var packageConfig =
         resolve_imports.findPackageConfigUriSync(io.Directory('C:/'));
@@ -34,6 +48,25 @@ void main() {
         resolvedFile.path,
         path.join(testPackage.path, 'lib', 'src', 'runner',
             'executable_settings.dart'));
+  });
+
+  test('Resolve relative file from .', () {
+    var relativeFile = 'resolve_imports.dart';
+    var thisDartFile = io.File('./lib/graphviz.dart');
+    var resolvedFile = resolve_imports.resolveFile(thisDartFile, relativeFile);
+    print(resolvedFile);
+    expect(resolvedFile.path, path.join('lib', 'resolve_imports.dart'));
+  });
+
+  test('Resolve package file from .', () {
+    var packageFile = 'package:lakos/graphviz.dart';
+    var thisDirectory = io.Directory('.');
+    var packageConfig = resolve_imports.findPackageConfigUriSync(thisDirectory);
+    var resolvedFile =
+        resolve_imports.resolvePackage(packageConfig, packageFile);
+    print(resolvedFile);
+    expect(resolvedFile.path,
+        path.join(thisDirectory.absolute.parent.path, 'lib', 'graphviz.dart'));
   });
 
   test('Resolve package file', () {
