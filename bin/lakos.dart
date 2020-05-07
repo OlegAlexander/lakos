@@ -112,7 +112,7 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
   while (leaves.isNotEmpty) {
     var leaf = leaves.removeLast();
     if (leaf.parent != null) {
-      if (leaf.nodes.isEmpty) {
+      if (leaf.nodes.isEmpty && leaf.subgraphs.isEmpty) {
         leaf.parent.subgraphs.remove(leaf);
 
         // Recurse up the tree depth first
@@ -166,7 +166,7 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
           edges.add(gv.Edge(
               from,
               resolvedFile.path
-                  .replaceFirst(rootDir.absolute.parent.path, '')
+                  .replaceFirst(rootDir.parent.path, '')
                   .replaceAll('\\', '/')));
         }
       }
@@ -188,6 +188,9 @@ void main(List<String> args) {
     io.exit(1);
   }
   var rootDir = io.Directory(args[1]);
+  if (!rootDir.isAbsolute) {
+    rootDir = rootDir.absolute.parent;
+  }
   if (!rootDir.existsSync()) {
     print('rootDir does not exist: ${rootDir.path}');
     io.exit(1);
