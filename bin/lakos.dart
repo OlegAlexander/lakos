@@ -55,7 +55,8 @@ String getPrettyJSONString(jsonObject) {
   return convert.JsonEncoder.withIndent('    ').convert(jsonObject);
 }
 
-gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
+gv.DigraphWithSubgraphs getDirTree(
+    io.Directory rootDir, List<String> ignoreDirs) {
   var tree = gv.DigraphWithSubgraphs('G', '');
   var dirs = [rootDir];
   var subgraphs = [
@@ -78,7 +79,9 @@ gv.DigraphWithSubgraphs getDirTree(io.Directory rootDir) {
 
     var currentDirItems =
         currentDir.listSync(recursive: false, followLinks: false);
-    var dirsOnly = currentDirItems.whereType<io.Directory>();
+    var dirsOnly = currentDirItems
+        .whereType<io.Directory>()
+        .where((dir) => !ignoreDirs.contains(path.basename(dir.path)));
     var filesOnly = currentDirItems
         .whereType<io.File>()
         .where((file) => file.path.endsWith('.dart'));
@@ -196,7 +199,8 @@ void main(List<String> args) {
     io.exit(1);
   }
 
-  var tree = getDirTree(rootDir);
+  var ignoreDirs = ['.git', '.svn', '.dart_tool', 'doc'];
+  var tree = getDirTree(rootDir, ignoreDirs);
   tree.edges.addAll(getEdges(rootDir));
 
   switch (mode) {
