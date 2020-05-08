@@ -144,7 +144,6 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync();
     for (var line in lines) {
-      // TODO: Draw a dashed edge for export
       if (line.startsWith('import') || line.startsWith('export')) {
         var parsedImportLine = parseImportLine(line);
         if (parsedImportLine == null) {
@@ -170,7 +169,8 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
               from,
               resolvedFile.path
                   .replaceFirst(rootDir.parent.path, '')
-                  .replaceAll('\\', '/')));
+                  .replaceAll('\\', '/'),
+              dashed: line.startsWith('export')));
         }
       }
     }

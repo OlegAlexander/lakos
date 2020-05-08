@@ -35,12 +35,13 @@ class Node {
 class Edge {
   String from;
   String to;
+  bool dashed;
 
-  Edge(this.from, this.to);
+  Edge(this.from, this.to, {this.dashed = false});
 
   @override
   String toString() {
-    return '"$from" -> "$to";';
+    return '"$from" -> "$to"${dashed ? ' [style=dashed]' : ''};';
   }
 }
 

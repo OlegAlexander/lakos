@@ -8,7 +8,7 @@ void main() {
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c'));
+    g.edges.add(Edge('a', 'c', dashed: true));
     print(g);
     expect(g.toString(), '''
 digraph "G" {
@@ -18,7 +18,7 @@ digraph "G" {
   "b" [label="b"];
   "c" [label="c"];
   "a" -> "b";
-  "a" -> "c";
+  "a" -> "c" [style=dashed];
 }
 ''');
 
@@ -28,7 +28,7 @@ digraph "G" {
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c'));
+    g.edges.add(Edge('a', 'c', dashed: true));
     print(g);
     expect(g.toString(), '''
 digraph "G" {
@@ -39,7 +39,7 @@ digraph "G" {
   "b" [label="b"];
   "c" [label="c"];
   "a" -> "b";
-  "a" -> "c";
+  "a" -> "c" [style=dashed];
 }
 ''');
   });
