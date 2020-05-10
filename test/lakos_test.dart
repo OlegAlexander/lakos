@@ -77,6 +77,21 @@ void main() {
     print(result);
   });
 
+  test('path', () {
+    var packageLocation = gpl.getPackageLocation('path', '1.7.0');
+    print(packageLocation);
+    var result =
+        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'path');
+    print(result);
+  });
+
+  test('args', () {
+    var packageLocation = gpl.getPackageLocation('args', '1.6.0');
+    print(packageLocation);
+    var result =
+        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'args');
+    print(result);
+  });
   test('pub_cache', () {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     print(packageLocation);

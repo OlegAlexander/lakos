@@ -11,6 +11,8 @@ executables:
 
 dependencies:
   path: 1.7.0
+  args: 1.6.0
+  package_config: 1.9.3
 
 dev_dependencies:
   pedantic: ^1.8.0
@@ -18,4 +20,3 @@ dev_dependencies:
   pub_cache: 0.2.3
   json_serializable: 3.3.0
   analyzer: 0.39.8
-  package_config: 1.9.3

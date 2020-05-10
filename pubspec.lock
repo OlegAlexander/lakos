@@ -16,7 +16,7 @@ packages:
     source: hosted
     version: "0.39.8"
   args:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: args
       url: "https://pub.dartlang.org"
@@ -226,7 +226,7 @@ packages:
     source: hosted
     version: "1.4.8"
   package_config:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: package_config
       url: "https://pub.dartlang.org"
