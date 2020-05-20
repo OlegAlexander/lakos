@@ -9,7 +9,8 @@ const outDir = 'dot_images';
 /// Run lakos dot and return the stdout.
 /// Also save the stdout to a dot file and generate a png.
 String runLakosDot(String rootDir, String outDir, String dotFilename) {
-  var result = io.Process.runSync('dart', ['bin/lakos.dart', 'dot', rootDir]);
+  var result =
+      io.Process.runSync('dart', ['bin/lakos.dart', 'dot', '-d', rootDir]);
 
   io.File('$outDir/$dotFilename.dot').writeAsStringSync(result.stdout);
   var dotResult = io.Process.runSync('dot', [
@@ -31,18 +32,11 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
 void main() {
   io.Directory('dot_images').createSync();
 
-  test('Wrong number of arguments.', () {
-    var result = io.Process.runSync('dart', ['bin/lakos.dart']);
-    expect(result.stdout.toString().split('\n')[0].trim(),
-        'Wrong number of arguments.');
-    expect(result.exitCode, 1);
-  });
-
-  test('Invalid mode', () {
-    var result = io.Process.runSync('dart', ['bin/lakos.dart', 'beast', '.']);
-    expect(
-        result.stdout.toString().split('\n')[0].trim(), 'Invalid mode: beast');
-    expect(result.exitCode, 1);
+  test('Invalid command', () {
+    var result = io.Process.runSync('dart', ['bin/lakos.dart', 'INVALID']);
+    expect(result.stderr.toString().split('\n')[1].trim(),
+        'Could not find a command named "INVALID".');
+    expect(result.exitCode, 255);
   });
 
   test('json_serializable', () {
@@ -60,15 +54,6 @@ void main() {
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'test');
     print(result);
   });
-
-  // test('analyzer', () {
-  //   var packageLocation = gpl.getPackageLocation('analyzer', '0.39.8');
-  //   print(packageLocation);
-  //   var result =
-  //       runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'analyzer');
-  //   print(result);
-  //   // NOTE: dot fails with "Error: trouble in init_rank"
-  // });
 
   test('lakos', () {
     var packageLocation = io.Directory('.');
@@ -92,6 +77,15 @@ void main() {
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'args');
     print(result);
   });
+
+  test('dart_code_metrics', () {
+    var packageLocation = gpl.getPackageLocation('dart_code_metrics', '1.4.0');
+    print(packageLocation);
+    var result = runLakosDot(
+        path.join(packageLocation.path, 'lib'), outDir, 'dart_code_metrics');
+    print(result);
+  });
+
   test('pub_cache', () {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     print(packageLocation);
