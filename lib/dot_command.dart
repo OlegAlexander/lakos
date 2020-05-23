@@ -116,6 +116,36 @@ gv.DigraphWithSubgraphs getDirTree(
   return tree;
 }
 
+gv.DigraphSimple getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
+  var graph = gv.DigraphSimple('G', '');
+  var dirs = [rootDir];
+
+  while (dirs.isNotEmpty) {
+    var currentDir = dirs.removeAt(0);
+
+    var currentDirItems =
+        currentDir.listSync(recursive: false, followLinks: false);
+    var dirsOnly = currentDirItems
+        .whereType<io.Directory>()
+        .where((dir) => !ignoreDirs.contains(path.basename(dir.path)));
+    var filesOnly = currentDirItems
+        .whereType<io.File>()
+        .where((file) => file.path.endsWith('.dart'));
+
+    // Add dart files as nodes
+    for (var file in filesOnly) {
+      graph.nodes.add(gv.Node(
+          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
+          path.basenameWithoutExtension(file.path)));
+    }
+
+    // Recurse breadth first
+    dirs.addAll(dirsOnly);
+  }
+
+  return graph;
+}
+
 List<gv.Edge> getEdges(io.Directory rootDir) {
   var edges = <gv.Edge>[];
   var entities = rootDir.listSync(recursive: true, followLinks: false);
@@ -167,18 +197,23 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
   return edges;
 }
 
-void dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
+String dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
     String layout) {
   if (!dir.isAbsolute) {
     dir = dir.absolute.parent;
   }
   if (!dir.existsSync()) {
     print('Dir does not exist: ${dir.path}');
+    // TODO Return error or throw exception instead of exit?
     io.exit(1);
   }
 
-  var tree = getDirTree(dir, ignoreDirs);
-  tree.edges.addAll(getEdges(dir));
-
-  print(tree);
+  // TODO I don't like the duplication here. But I don't want to use a dynamic graph either.
+  if (tree) {
+    var graph = getDirTree(dir, ignoreDirs)..edges.addAll(getEdges(dir));
+    return graph.toString();
+  } else {
+    var graph = getDartFiles(dir, ignoreDirs)..edges.addAll(getEdges(dir));
+    return graph.toString();
+  }
 }

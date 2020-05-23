@@ -68,7 +68,8 @@ class DotCommand extends command_runner.Command {
     var ignoreDirs = globalResults['ignore-dirs'] as List<String>;
     var tree = argResults['tree'] as bool;
     var layout = argResults['layout'] as String;
-    dot_command.dot(dir, output, ignoreDirs, tree, layout);
+    var dotString = dot_command.dot(dir, output, ignoreDirs, tree, layout);
+    print(dotString);
   }
 }
 
