@@ -5,7 +5,7 @@ import 'package:lakos/get_package_location.dart' as gpl;
 import 'package:path/path.dart' as path;
 
 void main() {
-  final testPackage = gpl.getPackageLocation('test', '1.14.2');
+  final testPackage = gpl.getPackageLocation('test', '1.14.3');
   final pathPackage = gpl.getPackageLocation('path', '1.7.0');
   final thisDartFile = io.File(path.join(
       testPackage.path, 'lib', 'src', 'runner', 'browser', 'phantom_js.dart'));
