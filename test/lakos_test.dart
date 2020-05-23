@@ -48,7 +48,7 @@ void main() {
   });
 
   test('test', () {
-    var packageLocation = gpl.getPackageLocation('test', '1.14.2');
+    var packageLocation = gpl.getPackageLocation('test', '1.14.3');
     print(packageLocation);
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'test');
