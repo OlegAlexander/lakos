@@ -46,7 +46,7 @@ void main() {
     print(packageLocation);
     var result = runLakosDot(
         path.join(packageLocation.path, 'lib'), outDir, 'json_serializable');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('test', () {
@@ -54,14 +54,14 @@ void main() {
     print(packageLocation);
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'test');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('lakos', () {
     var packageLocation = io.Directory('.');
     print(packageLocation);
     var result = runLakosDot(packageLocation.path, outDir, 'lakos');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('path', () {
@@ -69,7 +69,7 @@ void main() {
     print(packageLocation);
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'path');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('args', () {
@@ -77,7 +77,7 @@ void main() {
     print(packageLocation);
     var result =
         runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'args');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('dart_code_metrics', () {
@@ -85,45 +85,13 @@ void main() {
     print(packageLocation);
     var result = runLakosDot(
         path.join(packageLocation.path, 'lib'), outDir, 'dart_code_metrics');
-    print(result);
+    expect(result, isNotEmpty);
   });
 
   test('pub_cache', () {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     print(packageLocation);
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
-    print(result);
-    expect(result, '''
-digraph "G" {
-  label="";
-  labelloc=top;
-  style=rounded;
-  subgraph "cluster~/pub_cache-0.2.3" {
-    label="pub_cache-0.2.3";
-    subgraph "cluster~/pub_cache-0.2.3/example" {
-      label="example";
-      "/pub_cache-0.2.3/example/list.dart" [label="list"];
-    }
-    subgraph "cluster~/pub_cache-0.2.3/lib" {
-      label="lib";
-      "/pub_cache-0.2.3/lib/pub_cache.dart" [label="pub_cache"];
-      subgraph "cluster~/pub_cache-0.2.3/lib/src" {
-        label="src";
-        "/pub_cache-0.2.3/lib/src/impl.dart" [label="impl"];
-      }
-    }
-    subgraph "cluster~/pub_cache-0.2.3/test" {
-      label="test";
-      "/pub_cache-0.2.3/test/all.dart" [label="all"];
-      "/pub_cache-0.2.3/test/pub_cache_test.dart" [label="pub_cache_test"];
-    }
-  }
-  "/pub_cache-0.2.3/example/list.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
-  "/pub_cache-0.2.3/lib/pub_cache.dart" -> "/pub_cache-0.2.3/lib/src/impl.dart";
-  "/pub_cache-0.2.3/lib/src/impl.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
-  "/pub_cache-0.2.3/test/all.dart" -> "/pub_cache-0.2.3/test/pub_cache_test.dart";
-  "/pub_cache-0.2.3/test/pub_cache_test.dart" -> "/pub_cache-0.2.3/lib/pub_cache.dart";
-}
-''');
+    expect(result, isNotEmpty);
   });
 }

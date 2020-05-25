@@ -4,16 +4,16 @@
 
 FROM google/dart
 
-WORKDIR /app
+WORKDIR /lakos
 
 # Install Graphviz dot
 RUN apt update
 RUN apt install graphviz -y
 
 # Get dependencies
-ADD pubspec.* /app/
+ADD pubspec.* /lakos/
 RUN pub get
-ADD . /app
+ADD . /lakos
 RUN pub get --offline
 
 # Run all tests

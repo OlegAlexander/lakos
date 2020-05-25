@@ -153,7 +153,7 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
       .whereType<io.File>()
       .where((file) => file.path.endsWith('.dart'));
 
-  var packageConfig = resolve_imports.findPackageConfigUriSync(rootDir);
+  var pubspecYaml = resolve_imports.findPubspecYaml(rootDir);
 
   for (var dartFile in dartFiles) {
     var from = dartFile.path
@@ -171,8 +171,8 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
 
         io.File resolvedFile;
         if (parsedImportLine.startsWith('package:')) {
-          resolvedFile =
-              resolve_imports.resolvePackage(packageConfig, parsedImportLine);
+          resolvedFile = resolve_imports.resolvePackageFileFromPubspecYaml(
+              pubspecYaml, parsedImportLine);
         } else if (parsedImportLine.startsWith('dart:')) {
           continue; // Ignore dart: imports
         } else {

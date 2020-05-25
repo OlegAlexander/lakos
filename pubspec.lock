@@ -240,7 +240,7 @@ packages:
     source: hosted
     version: "1.4.8"
   package_config:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: package_config
       url: "https://pub.dartlang.org"
