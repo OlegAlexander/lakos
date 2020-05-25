@@ -200,7 +200,7 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
 String dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
     String layout) {
   if (!dir.isAbsolute) {
-    dir = dir.absolute.parent;
+    dir = io.Directory(path.normalize(dir.absolute.path));
   }
   if (!dir.existsSync()) {
     print('Dir does not exist: ${dir.path}');

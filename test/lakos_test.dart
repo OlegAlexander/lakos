@@ -12,6 +12,8 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
   var result =
       io.Process.runSync('dart', ['bin/lakos.dart', 'dot', '-d', rootDir]);
 
+  print(['lakosResult', result.stdout, result.stderr, result.exitCode]);
+
   io.File('$outDir/$dotFilename.dot').writeAsStringSync(result.stdout);
   var dotResult = io.Process.runSync('dot', [
     '-Tpng',
@@ -21,7 +23,7 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
     '$outDir/$dotFilename.png'
   ]);
 
-  print([dotResult.stdout, dotResult.stderr, dotResult.exitCode]);
+  print(['dotResult', dotResult.stdout, dotResult.stderr, dotResult.exitCode]);
 
   // Remove carriage returns on Windows
   var ls = convert.LineSplitter();

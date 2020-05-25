@@ -85,4 +85,28 @@ void main() {
     print(resolvedFile);
     expect(resolvedFile, isNull);
   });
+
+  test('find pubspec.yaml', () {
+    var pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('.'));
+    expect(pubspecYaml, isNotNull);
+    pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('./lib'));
+    expect(pubspecYaml, isNotNull);
+    pubspecYaml = resolve_imports.findPubspecYaml(testPackage);
+    expect(pubspecYaml, isNotNull);
+    pubspecYaml = resolve_imports.findPubspecYaml(pathPackage);
+    expect(pubspecYaml, isNotNull);
+    pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('..'));
+    expect(pubspecYaml, isNull);
+  });
+
+  test('resolvePackageFileFromPubspecYaml', () {
+    var pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('.'));
+    var resolvedPackageFile = resolve_imports.resolvePackageFileFromPubspecYaml(
+        pubspecYaml, 'package:lakos/graphviz.dart');
+    var pathParts = path.split(resolvedPackageFile.path);
+    var lastThreeParts = path
+        .joinAll(pathParts.sublist(pathParts.length - 3))
+        .replaceAll('\\', '/');
+    expect(lastThreeParts, 'lakos/lib/graphviz.dart');
+  });
 }
