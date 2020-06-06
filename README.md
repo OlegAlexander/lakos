@@ -8,3 +8,7 @@ A Dart tool for [modular programming](https://en.wikipedia.org/wiki/Modular_prog
 - Compute the Normalized Cumulative Component Dependency (NCCD) metric.
 
 The tool is named after John Lakos, author of Large-Scale C++ Software Design.
+
+## Similar Tools
+
+- cinclude2dot (C/C++)

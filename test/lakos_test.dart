@@ -9,8 +9,7 @@ const outDir = 'dot_images';
 /// Run lakos dot and return the stdout.
 /// Also save the stdout to a dot file and generate a png.
 String runLakosDot(String rootDir, String outDir, String dotFilename) {
-  var result =
-      io.Process.runSync('dart', ['bin/lakos.dart', 'dot', '-d', rootDir]);
+  var result = io.Process.runSync('dart', ['bin/lakos.dart', rootDir]);
 
   print(['lakosResult', result.stdout, result.stderr, result.exitCode]);
 
@@ -34,11 +33,20 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
 void main() {
   io.Directory('dot_images').createSync();
 
-  test('Invalid command', () {
-    var result = io.Process.runSync('dart', ['bin/lakos.dart', 'INVALID']);
-    expect(result.stderr.toString().split('\n')[1].trim(),
-        'Could not find a command named "INVALID".');
-    expect(result.exitCode, 255);
+  test('Invalid option', () {
+    var result = io.Process.runSync('dart', ['bin/lakos.dart', '--invalid']);
+    print([result.stdout, result.stderr, result.exitCode]);
+    expect(result.stdout.toString().split('\n')[0].trim(),
+        'FormatException: Could not find an option named "invalid".');
+    expect(result.exitCode, 1);
+  });
+
+  test('No directory specified', () {
+    var result = io.Process.runSync('dart', ['bin/lakos.dart']);
+    print([result.stdout, result.stderr, result.exitCode]);
+    expect(result.stdout.toString().split('\n')[0].trim(),
+        'No directory specified.');
+    expect(result.exitCode, 2);
   });
 
   test('json_serializable', () {
