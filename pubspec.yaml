@@ -12,6 +12,7 @@ executables:
 dependencies:
   path: 1.7.0
   args: 1.6.0
+  directed_graph: 0.1.3
 
 dev_dependencies:
   pedantic: ^1.8.0

@@ -14,6 +14,7 @@ void main() {
 digraph "G" {
   label="Digraph simple";
   labelloc=top;
+  rankdir=TB;
   "a" [label="a"];
   "b" [label="b"];
   "c" [label="c"];
@@ -22,8 +23,8 @@ digraph "G" {
 }
 ''');
 
-    // rankdirLR
-    g = DigraphSimple('G', 'Digraph simple', rankdirLR: true);
+    // rankdir LR
+    g = DigraphSimple('G', 'Digraph simple', rankdir: 'LR');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -59,6 +60,7 @@ digraph "G" {
   label="Subgraph simple";
   labelloc=top;
   style=rounded;
+  rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
     "a" [label="a"];
@@ -71,7 +73,7 @@ digraph "G" {
 ''');
 
     // rankdirLR
-    g = DigraphWithSubgraphs('G', 'Subgraph simple', rankdirLR: true);
+    g = DigraphWithSubgraphs('G', 'Subgraph simple', rankdir: 'LR');
     c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -115,6 +117,7 @@ digraph "G" {
   label="Subgraph nested";
   labelloc=top;
   style=rounded;
+  rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
     "a" [label="a"];

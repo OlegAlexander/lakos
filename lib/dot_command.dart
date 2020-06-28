@@ -41,13 +41,13 @@ String generateDotGraph(Map<String, List<String>> dartFiles) {
   return graph.toString();
 }
 
-String getPrettyJSONString(jsonObject) {
-  return convert.JsonEncoder.withIndent('    ').convert(jsonObject);
+String prettyJson(jsonObject) {
+  return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 
 gv.DigraphWithSubgraphs getDirTree(
-    io.Directory rootDir, List<String> ignoreDirs) {
-  var tree = gv.DigraphWithSubgraphs('G', '');
+    io.Directory rootDir, List<String> ignoreDirs, String layout) {
+  var tree = gv.DigraphWithSubgraphs('G', '', rankdir: layout);
   var dirs = [rootDir];
   var subgraphs = [
     gv.Subgraph(
@@ -117,8 +117,9 @@ gv.DigraphWithSubgraphs getDirTree(
   return tree;
 }
 
-gv.DigraphSimple getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
-  var graph = gv.DigraphSimple('G', '');
+gv.DigraphSimple getDartFiles(
+    io.Directory rootDir, List<String> ignoreDirs, String layout) {
+  var graph = gv.DigraphSimple('G', '', rankdir: layout);
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -211,10 +212,12 @@ String dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
 
   // TODO I don't like the duplication here. But I don't want to use a dynamic graph either.
   if (tree) {
-    var graph = getDirTree(dir, ignoreDirs)..edges.addAll(getEdges(dir));
+    var graph = getDirTree(dir, ignoreDirs, layout)
+      ..edges.addAll(getEdges(dir));
     return graph.toString();
   } else {
-    var graph = getDartFiles(dir, ignoreDirs)..edges.addAll(getEdges(dir));
+    var graph = getDartFiles(dir, ignoreDirs, layout)
+      ..edges.addAll(getEdges(dir));
     return graph.toString();
   }
 }

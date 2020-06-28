@@ -96,6 +96,13 @@ void main() {
     expect(result, isNotEmpty);
   });
 
+  test('directed_graph', () {
+    var packageLocation = gpl.getPackageLocation('directed_graph', '0.1.3');
+    print(packageLocation);
+    var result = runLakosDot(packageLocation.path, outDir, 'directed_graph');
+    expect(result, isNotEmpty);
+  });
+
   test('pub_cache', () {
     var packageLocation = gpl.getPackageLocation('pub_cache', '0.2.3');
     print(packageLocation);
