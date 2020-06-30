@@ -191,7 +191,9 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
               resolvedFile.path
                   .replaceFirst(rootDir.parent.path, '')
                   .replaceAll('\\', '/'),
-              dashed: line.startsWith('export')));
+              directive: line.startsWith('import')
+                  ? gv.Directive.Import
+                  : gv.Directive.Export));
         }
       }
     }
@@ -199,8 +201,8 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
   return edges;
 }
 
-String dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
-    String layout) {
+String lakos(io.Directory dir, String format, io.File output,
+    List<String> ignoreDirs, bool tree, String layout) {
   if (!dir.isAbsolute) {
     dir = io.Directory(path.normalize(dir.absolute.path));
   }
@@ -214,10 +216,20 @@ String dot(io.Directory dir, io.File output, List<String> ignoreDirs, bool tree,
   if (tree) {
     var graph = getDirTree(dir, ignoreDirs, layout)
       ..edges.addAll(getEdges(dir));
-    return graph.toString();
+    switch (format) {
+      case 'dot':
+        return graph.toString();
+      case 'json':
+        return prettyJson(graph.toJson());
+    }
   } else {
     var graph = getDartFiles(dir, ignoreDirs, layout)
       ..edges.addAll(getEdges(dir));
-    return graph.toString();
+    switch (format) {
+      case 'dot':
+        return graph.toString();
+      case 'json':
+        return prettyJson(graph.toJson());
+    }
   }
 }

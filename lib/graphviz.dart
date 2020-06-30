@@ -4,6 +4,7 @@ class DigraphSimple {
   List<Node> nodes = [];
   List<Edge> edges = [];
   String rankdir;
+  Metrics metrics;
 
   DigraphSimple(this.id, this.label, {this.rankdir = 'TB'});
 
@@ -16,8 +17,18 @@ labelloc=top;
 rankdir=$rankdir;
 ${nodes.join('\n')}
 ${edges.join('\n')}
+${metrics ?? ''}
 }''');
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'rankdir': rankdir,
+        'nodes': nodes,
+        'edges': edges,
+        'metrics': metrics
+      };
 }
 
 class Node {
@@ -30,19 +41,29 @@ class Node {
   String toString() {
     return '"$id" [label="$label"];';
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'label': label};
 }
+
+enum Directive { Import, Export }
 
 class Edge {
   String from;
   String to;
-  bool dashed;
+  Directive directive;
 
-  Edge(this.from, this.to, {this.dashed = false});
+  Edge(this.from, this.to, {this.directive = Directive.Import});
 
   @override
   String toString() {
-    return '"$from" -> "$to"${dashed ? ' [style=dashed]' : ''};';
+    return '"$from" -> "$to"${directive == Directive.Export ? ' [style=dashed]' : ''};';
   }
+
+  Map<String, dynamic> toJson() => {
+        'from': from,
+        'to': to,
+        'directive': directive.toString().split('.').last.toLowerCase()
+      };
 }
 
 class DigraphWithSubgraphs {
@@ -51,6 +72,7 @@ class DigraphWithSubgraphs {
   List<Subgraph> subgraphs = [];
   List<Edge> edges = [];
   String rankdir;
+  Metrics metrics;
 
   DigraphWithSubgraphs(this.id, this.label, {this.rankdir = 'TB'});
 
@@ -64,8 +86,18 @@ style=rounded;
 rankdir=$rankdir;
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
+${metrics ?? ''}
 }''');
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'rankdir': rankdir,
+        'subgraphs': subgraphs,
+        'edges': edges,
+        'metrics': metrics
+      };
 }
 
 class Subgraph {
@@ -86,6 +118,35 @@ ${nodes.join('\n')}
 ${subgraphs.join('\n')}
 }''';
   }
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'label': label, 'nodes': nodes, 'subgraphs': subgraphs};
+}
+
+class Metrics {
+  bool isAcyclic;
+  int ccd;
+  double acd;
+  double nccd;
+
+  Metrics(
+    this.isAcyclic,
+    this.ccd,
+    this.acd,
+    this.nccd,
+  );
+
+  @override
+  String toString() {
+    return '"metrics" [label="isAcyclic: $isAcyclic \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l", shape=rect];';
+  }
+
+  Map<String, dynamic> toJson() => {
+        'isAcyclic': isAcyclic,
+        'ccd': ccd,
+        'acd': acd,
+        'nccd': nccd,
+      };
 }
 
 String _trimLines(String dot) {

@@ -100,10 +100,12 @@ void main(List<String> arguments) {
   }
 
   var dir = io.Directory(argResults.rest[0]);
+  var format = argResults['format'] as String;
   var output = io.File(argResults['output']);
   var tree = argResults['tree'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
-  var dotString = dot_command.dot(dir, output, ignoreDirs, tree, layout);
+  var dotString =
+      dot_command.lakos(dir, format, output, ignoreDirs, tree, layout);
   print(dotString);
 }

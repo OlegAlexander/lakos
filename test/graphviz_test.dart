@@ -1,5 +1,10 @@
 import 'package:test/test.dart';
 import 'package:lakos/graphviz.dart';
+import 'dart:convert';
+
+String prettyJson(jsonObject) {
+  return JsonEncoder.withIndent('  ').convert(jsonObject);
+}
 
 void main() {
   test('Digraph simple', () {
@@ -8,7 +13,7 @@ void main() {
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c', dashed: true));
+    g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
     expect(g.toString(), '''
 digraph "G" {
@@ -29,7 +34,7 @@ digraph "G" {
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c', dashed: true));
+    g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
     expect(g.toString(), '''
 digraph "G" {
@@ -43,6 +48,8 @@ digraph "G" {
   "a" -> "c" [style=dashed];
 }
 ''');
+
+    print(prettyJson(g));
   });
 
   test('Subgraph simple', () {
@@ -131,5 +138,36 @@ digraph "G" {
   "a" -> "c";
 }
 ''');
+
+    print(prettyJson(g));
+  });
+
+  test('Node', () {
+    var node = Node('a', 'a');
+    print(node);
+    expect(node.toString(), '"a" [label="a"];');
+    print(jsonEncode(node));
+    expect(jsonEncode(node), '{"id":"a","label":"a"}');
+  });
+
+  test('Edge', () {
+    var edge = Edge('a', 'b');
+    print(edge);
+    expect(edge.toString(), '"a" -> "b";');
+    edge = Edge('a', 'b', directive: Directive.Export);
+    print(edge);
+    expect(edge.toString(), '"a" -> "b" [style=dashed];');
+    print(jsonEncode(edge));
+    expect(jsonEncode(edge), '{"from":"a","to":"b","directive":"export"}');
+  });
+
+  test('Metrics', () {
+    var metrics = Metrics(true, 40, 12.3, 1.2);
+    print(metrics);
+    expect(metrics.toString(),
+        '"metrics" [label="isAcyclic: true \\l ccd: 40 \\l acd: 12.3 \\l nccd: 1.2 \\l", shape=rect];');
+    print(jsonEncode(metrics));
+    expect(jsonEncode(metrics),
+        '{"isAcyclic":true,"ccd":40,"acd":12.3,"nccd":1.2}');
   });
 }
