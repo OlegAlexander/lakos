@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 import 'package:args/args.dart' as args;
-import 'package:lakos/dot_command.dart' as dot_command;
+import 'package:lakos/lakos_command.dart' as lakos_command;
 
 enum ExitCodes { Ok, InvalidOption, NoDirectorySpecified }
 
@@ -106,6 +106,6 @@ void main(List<String> arguments) {
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
   var dotString =
-      dot_command.lakos(dir, format, output, ignoreDirs, tree, layout);
+      lakos_command.lakos(dir, format, output, ignoreDirs, tree, layout);
   print(dotString);
 }

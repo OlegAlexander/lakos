@@ -1,7 +1,7 @@
 import 'dart:io' as io;
 import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
-import 'package:lakos/graphviz.dart' as gv;
+import 'package:lakos/model.dart' as model;
 import 'package:lakos/resolve_imports.dart' as resolve_imports;
 
 // TODO Do another pass on this function.
@@ -27,15 +27,15 @@ String parseImportLine(String line) {
 }
 
 String generateDotGraph(Map<String, List<String>> dartFiles) {
-  var graph = gv.DigraphSimple('G', 'Dependency Graph');
+  var graph = model.Digraph('G', 'Dependency Graph');
   // Add nodes
   for (var file in dartFiles.keys) {
-    graph.nodes.add(gv.Node(file, path.basenameWithoutExtension(file)));
+    graph.nodes.add(model.Node(file, path.basenameWithoutExtension(file)));
   }
   // Add edges
   for (var source in dartFiles.keys) {
     for (var target in dartFiles[source]) {
-      graph.edges.add(gv.Edge(source, target));
+      graph.edges.add(model.Edge(source, target));
     }
   }
   return graph.toString();
@@ -45,12 +45,12 @@ String prettyJson(jsonObject) {
   return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 
-gv.DigraphWithSubgraphs getDirTree(
+model.Digraph getDirTree(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var tree = gv.DigraphWithSubgraphs('G', '', rankdir: layout);
+  var tree = model.Digraph('G', '', rankdir: layout);
   var dirs = [rootDir];
   var subgraphs = [
-    gv.Subgraph(
+    model.Subgraph(
         rootDir.path
             .replaceFirst(rootDir.parent.path, '')
             .replaceAll('\\', '/'),
@@ -58,7 +58,7 @@ gv.DigraphWithSubgraphs getDirTree(
   ];
   tree.subgraphs.add(subgraphs.first);
 
-  var leaves = <gv.Subgraph>[];
+  var leaves = <model.Subgraph>[];
 
   // Recursively build the subgraph tree.
   // The trick is to keep track of two lists (dirs and subgraphs)
@@ -82,7 +82,7 @@ gv.DigraphWithSubgraphs getDirTree(
 
     // Add directories as subgraphs
     for (var dir in dirsOnly) {
-      var subgraph = gv.Subgraph(
+      var subgraph = model.Subgraph(
           dir.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basename(dir.path));
       currentSubgraph.subgraphs.add(subgraph);
@@ -91,7 +91,7 @@ gv.DigraphWithSubgraphs getDirTree(
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      currentSubgraph.nodes.add(gv.Node(
+      currentSubgraph.nodes.add(model.Node(
           file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basenameWithoutExtension(file.path)));
     }
@@ -117,9 +117,9 @@ gv.DigraphWithSubgraphs getDirTree(
   return tree;
 }
 
-gv.DigraphSimple getDartFiles(
+model.Digraph getDartFiles(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var graph = gv.DigraphSimple('G', '', rankdir: layout);
+  var graph = model.Digraph('G', '', rankdir: layout);
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -136,7 +136,7 @@ gv.DigraphSimple getDartFiles(
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      graph.nodes.add(gv.Node(
+      graph.nodes.add(model.Node(
           file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basenameWithoutExtension(file.path)));
     }
@@ -148,8 +148,8 @@ gv.DigraphSimple getDartFiles(
   return graph;
 }
 
-List<gv.Edge> getEdges(io.Directory rootDir) {
-  var edges = <gv.Edge>[];
+List<model.Edge> getEdges(io.Directory rootDir) {
+  var edges = <model.Edge>[];
   var entities = rootDir.listSync(recursive: true, followLinks: false);
   var dartFiles = entities
       .whereType<io.File>()
@@ -186,19 +186,32 @@ List<gv.Edge> getEdges(io.Directory rootDir) {
         if (resolvedFile != null &&
             resolvedFile.existsSync() &&
             path.isWithin(rootDir.path, resolvedFile.path)) {
-          edges.add(gv.Edge(
+          edges.add(model.Edge(
               from,
               resolvedFile.path
                   .replaceFirst(rootDir.parent.path, '')
                   .replaceAll('\\', '/'),
               directive: line.startsWith('import')
-                  ? gv.Directive.Import
-                  : gv.Directive.Export));
+                  ? model.Directive.Import
+                  : model.Directive.Export));
         }
       }
     }
   }
   return edges;
+}
+
+String getOutput(model.Digraph graph, String format) {
+  var output = '';
+  switch (format) {
+    case 'dot':
+      output = graph.toString();
+      break;
+    case 'json':
+      output = prettyJson(graph.toJson());
+      break;
+  }
+  return output;
 }
 
 String lakos(io.Directory dir, String format, io.File output,
@@ -212,24 +225,14 @@ String lakos(io.Directory dir, String format, io.File output,
     io.exit(1);
   }
 
-  // TODO I don't like the duplication here. But I don't want to use a dynamic graph either.
+  // TODO Still a little bit of duplication here with add edges.
   if (tree) {
     var graph = getDirTree(dir, ignoreDirs, layout)
       ..edges.addAll(getEdges(dir));
-    switch (format) {
-      case 'dot':
-        return graph.toString();
-      case 'json':
-        return prettyJson(graph.toJson());
-    }
+    return getOutput(graph, format);
   } else {
     var graph = getDartFiles(dir, ignoreDirs, layout)
       ..edges.addAll(getEdges(dir));
-    switch (format) {
-      case 'dot':
-        return graph.toString();
-      case 'json':
-        return prettyJson(graph.toJson());
-    }
+    return getOutput(graph, format);
   }
 }

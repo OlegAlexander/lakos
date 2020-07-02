@@ -1,12 +1,14 @@
-class DigraphSimple {
+/// Main container class to hold the data model.
+class Digraph {
   String id;
   String label;
-  List<Node> nodes = [];
-  List<Edge> edges = [];
   String rankdir;
+  List<Node> nodes = [];
+  List<Subgraph> subgraphs = [];
+  List<Edge> edges = [];
   Metrics metrics;
 
-  DigraphSimple(this.id, this.label, {this.rankdir = 'TB'});
+  Digraph(this.id, this.label, {this.rankdir = 'TB'});
 
   @override
   String toString() {
@@ -14,8 +16,10 @@ class DigraphSimple {
 digraph "$id" {
 label="$label";
 labelloc=top;
+style=rounded;
 rankdir=$rankdir;
 ${nodes.join('\n')}
+${subgraphs.join('\n')}
 ${edges.join('\n')}
 ${metrics ?? ''}
 }''');
@@ -26,11 +30,13 @@ ${metrics ?? ''}
         'label': label,
         'rankdir': rankdir,
         'nodes': nodes,
+        'subgraphs': subgraphs,
         'edges': edges,
         'metrics': metrics
       };
 }
 
+/// Dart libraries are represented as nodes in a directed graph.
 class Node {
   String id;
   String label;
@@ -47,6 +53,7 @@ class Node {
 
 enum Directive { Import, Export }
 
+/// Import/Export dependencies are represented as edges in the graph.
 class Edge {
   String from;
   String to;
@@ -66,40 +73,7 @@ class Edge {
       };
 }
 
-class DigraphWithSubgraphs {
-  String id;
-  String label;
-  List<Subgraph> subgraphs = [];
-  List<Edge> edges = [];
-  String rankdir;
-  Metrics metrics;
-
-  DigraphWithSubgraphs(this.id, this.label, {this.rankdir = 'TB'});
-
-  @override
-  String toString() {
-    return prettyPrintDot('''
-digraph "$id" {
-label="$label";
-labelloc=top;
-style=rounded;
-rankdir=$rankdir;
-${subgraphs.join('\n')}
-${edges.join('\n')}
-${metrics ?? ''}
-}''');
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'label': label,
-        'rankdir': rankdir,
-        'subgraphs': subgraphs,
-        'edges': edges,
-        'metrics': metrics
-      };
-}
-
+/// Subfolders are represented as subgraphs.
 class Subgraph {
   String id;
   String label;
@@ -123,6 +97,7 @@ ${subgraphs.join('\n')}
       {'id': id, 'label': label, 'nodes': nodes, 'subgraphs': subgraphs};
 }
 
+/// Store global metrics here.
 class Metrics {
   bool isAcyclic;
   int ccd;
@@ -153,6 +128,7 @@ String _trimLines(String dot) {
   return dot.split('\n').map((line) => line.trim()).join('\n');
 }
 
+/// Properly indent dot string.
 String prettyPrintDot(String dot, {String indent = '  '}) {
   var level = 0;
   var newTokens = <String>[];

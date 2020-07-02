@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:lakos/graphviz.dart';
+import 'package:lakos/model.dart';
 import 'dart:convert';
 
 String prettyJson(jsonObject) {
@@ -8,7 +8,7 @@ String prettyJson(jsonObject) {
 
 void main() {
   test('Digraph simple', () {
-    var g = DigraphSimple('G', 'Digraph simple');
+    var g = Digraph('G', 'Digraph simple');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -19,6 +19,7 @@ void main() {
 digraph "G" {
   label="Digraph simple";
   labelloc=top;
+  style=rounded;
   rankdir=TB;
   "a" [label="a"];
   "b" [label="b"];
@@ -29,7 +30,7 @@ digraph "G" {
 ''');
 
     // rankdir LR
-    g = DigraphSimple('G', 'Digraph simple', rankdir: 'LR');
+    g = Digraph('G', 'Digraph simple', rankdir: 'LR');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -40,6 +41,7 @@ digraph "G" {
 digraph "G" {
   label="Digraph simple";
   labelloc=top;
+  style=rounded;
   rankdir=LR;
   "a" [label="a"];
   "b" [label="b"];
@@ -53,7 +55,7 @@ digraph "G" {
   });
 
   test('Subgraph simple', () {
-    var g = DigraphWithSubgraphs('G', 'Subgraph simple');
+    var g = Digraph('G', 'Subgraph simple');
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -80,7 +82,7 @@ digraph "G" {
 ''');
 
     // rankdirLR
-    g = DigraphWithSubgraphs('G', 'Subgraph simple', rankdir: 'LR');
+    g = Digraph('G', 'Subgraph simple', rankdir: 'LR');
     c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -108,7 +110,7 @@ digraph "G" {
   });
 
   test('Subgraph nested', () {
-    var g = DigraphWithSubgraphs('G', 'Subgraph nested');
+    var g = Digraph('G', 'Subgraph nested');
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
