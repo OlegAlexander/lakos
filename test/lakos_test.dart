@@ -69,7 +69,8 @@ void main() {
   test('lakos', () {
     var packageLocation = io.Directory('.');
     print(packageLocation);
-    var result = runLakosDot(packageLocation.path, outDir, 'lakos');
+    var result =
+        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'lakos');
     expect(result, isNotEmpty);
   });
 

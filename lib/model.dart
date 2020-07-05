@@ -3,6 +3,7 @@ class Model {
   String id;
   String label;
   String rankdir;
+  String rootDir;
   List<Node> nodes = [];
   List<Subgraph> subgraphs = [];
   List<Edge> edges = [];
@@ -29,6 +30,7 @@ ${metrics ?? ''}
         'id': id,
         'label': label,
         'rankdir': rankdir,
+        'rootDir': rootDir,
         'nodes': nodes,
         'subgraphs': subgraphs,
         'edges': edges,
@@ -105,30 +107,31 @@ class Metrics {
   int numLevels;
   int ccd;
   double acd;
+  double acdp;
   double nccd;
 
   Metrics(
     this.icdMap,
     this.isAcyclic,
     this.numNodes,
-    this.numLevels,
     this.ccd,
     this.acd,
+    this.acdp,
     this.nccd,
   );
 
   @override
   String toString() {
-    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l numLevels: $numLevels \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l", shape=rect];';
+    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l ccd: $ccd \\l acd: $acd \\l acdp: $acdp% \\l nccd: $nccd \\l", shape=rect];';
   }
 
   Map<String, dynamic> toJson() => {
         'icdMap': icdMap,
         'isAcyclic': isAcyclic,
         'numNodes': numNodes,
-        'numLevels': numLevels,
         'ccd': ccd,
         'acd': acd,
+        'acdp': acdp,
         'nccd': nccd,
       };
 }

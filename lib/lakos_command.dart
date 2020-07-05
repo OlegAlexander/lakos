@@ -48,7 +48,8 @@ String prettyJson(jsonObject) {
 
 model.Model getDirTree(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var tree = model.Model('G', '', rankdir: layout);
+  var tree = model.Model('G', '', rankdir: layout)
+    ..rootDir = rootDir.path.replaceAll('\\', '/');
   var dirs = [rootDir];
   var subgraphs = [
     model.Subgraph(
@@ -120,7 +121,8 @@ model.Model getDirTree(
 
 model.Model getDartFiles(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var graph = model.Model('G', '', rankdir: layout);
+  var graph = model.Model('G', '', rankdir: layout)
+    ..rootDir = rootDir.path.replaceAll('\\', '/');
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -187,14 +189,16 @@ List<model.Edge> getEdges(io.Directory rootDir) {
         if (resolvedFile != null &&
             resolvedFile.existsSync() &&
             path.isWithin(rootDir.path, resolvedFile.path)) {
-          edges.add(model.Edge(
-              from,
-              resolvedFile.path
-                  .replaceFirst(rootDir.parent.path, '')
-                  .replaceAll('\\', '/'),
-              directive: line.startsWith('import')
-                  ? model.Directive.Import
-                  : model.Directive.Export));
+          var to = resolvedFile.path
+              .replaceFirst(rootDir.parent.path, '')
+              .replaceAll('\\', '/');
+          // No self loops
+          if (from != to) {
+            edges.add(model.Edge(from, to,
+                directive: line.startsWith('import')
+                    ? model.Directive.Import
+                    : model.Directive.Export));
+          }
         }
       }
     }

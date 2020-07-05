@@ -58,6 +58,7 @@ Map<String, int> computeICDMap(dg.DirectedGraph<String> graph) {
 
 /// Return the cumulative component dependency, which is the sum of all individual component dependencies.
 /// The CCD can be interpreted as the total "complexity" of the graph.
+/// Lower is better.
 int computeCCD(Map<String, int> icdMap) {
   var sumOfAllICDs = icdMap.values.fold(0, (prev, curr) => prev + curr);
   return sumOfAllICDs;
@@ -66,15 +67,15 @@ int computeCCD(Map<String, int> icdMap) {
 /// Return the average component dependency.
 /// ACD = CCD / numNodes
 /// It can be interpreted as the average number of nodes that will need to change when one node changes.
+/// Lower is better.
 double computeACD(int ccd, int numNodes) => ccd / numNodes;
 
-/// Return the average component dependency as a percentage.
-/// ACDP = (CCD / numNodes^2) * 100
+/// Return the average component dependency as a percentage of numNodes.
+/// ACDP = (ACD / numNodes) * 100 = (CCD / numNodes^2) * 100
 /// It can be interpreted as the average percentage of nodes that will need to change when one node changes.
-/// It can also be interpreted as (CCD / worstCaseCDD) * 100, because worstCaseCDD = numNodes^2.
-/// This metric is my original research.
-/// Unlike the ACD, the ACDP remains relatively constant across graphs of different sizes. (Not true.)
-/// It's probably best to keep the ACDP under 20% (Depends on size of graph).
+/// As a general trend, every new node added should reduce the ACDP.
+/// This metric is my original research. Use at your own risk.
+/// Lower is better.
 double computeACDP(int ccd, int numNodes) =>
     (ccd / (numNodes * numNodes)) * 100;
 
@@ -88,7 +89,8 @@ double binaryTreeCCD(int n) => (n + 1) * log2(n + 1) - n;
 /// This is the CCD divided by a CCD of a binary tree of the same size.
 /// If the NCCD is below 1.0, the graph is "horizontal".
 /// If the NCCD is above 1.0, the graph is "vertical".
-/// If the NCCD is significantly above 1.0, the graph probably contains cycles.
+/// If the NCCD is above 2.0, the graph probably contains cycles.
+/// Lower is better.
 double computeNCCD(int ccd, int numNodes) => ccd / binaryTreeCCD(numNodes);
 
 /// Round to precision.
@@ -104,15 +106,13 @@ m.Metrics computeAllMetrics(m.Model model) {
   var icdMap = computeICDMap(digraph);
   var ccd = computeCCD(icdMap);
   var numNodes = digraph.vertices.length;
-  var localSources = digraph.localSources();
-  var numLevels = localSources != null ? localSources.length : null;
   var metrics = m.Metrics(
       icdMap,
       digraph.isAcyclic(),
       numNodes,
-      numLevels,
       ccd,
       computeACD(ccd, numNodes).toPrecision(2),
+      computeACDP(ccd, numNodes).toPrecision(2),
       computeNCCD(ccd, numNodes).toPrecision(2));
   return metrics;
 }

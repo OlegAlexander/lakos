@@ -164,12 +164,12 @@ digraph "G" {
   });
 
   test('Metrics', () {
-    var metrics = Metrics({}, true, 10, 3, 40, 12.3, 1.2);
+    var metrics = Metrics({}, true, 10, 40, 12.3, 2.5, 1.2);
     print(metrics);
     expect(metrics.toString(),
-        '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l numLevels: 3 \\l ccd: 40 \\l acd: 12.3 \\l nccd: 1.2 \\l", shape=rect];');
+        '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l ccd: 40 \\l acd: 12.3 \\l acdp: 2.5% \\l nccd: 1.2 \\l", shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"icdMap":{},"isAcyclic":true,"numNodes":10,"numLevels":3,"ccd":40,"acd":12.3,"nccd":1.2}');
+        '{"icdMap":{},"isAcyclic":true,"numNodes":10,"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2}');
   });
 }
