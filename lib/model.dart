@@ -1,5 +1,5 @@
 /// Main container class to hold the data model.
-class Digraph {
+class Model {
   String id;
   String label;
   String rankdir;
@@ -8,7 +8,7 @@ class Digraph {
   List<Edge> edges = [];
   Metrics metrics;
 
-  Digraph(this.id, this.label, {this.rankdir = 'TB'});
+  Model(this.id, this.label, {this.rankdir = 'TB'});
 
   @override
   String toString() {
@@ -99,13 +99,19 @@ ${subgraphs.join('\n')}
 
 /// Store global metrics here.
 class Metrics {
+  Map<String, int> icdMap;
   bool isAcyclic;
+  int numNodes;
+  int numLevels;
   int ccd;
   double acd;
   double nccd;
 
   Metrics(
+    this.icdMap,
     this.isAcyclic,
+    this.numNodes,
+    this.numLevels,
     this.ccd,
     this.acd,
     this.nccd,
@@ -113,11 +119,14 @@ class Metrics {
 
   @override
   String toString() {
-    return '"metrics" [label="isAcyclic: $isAcyclic \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l", shape=rect];';
+    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l numLevels: $numLevels \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l", shape=rect];';
   }
 
   Map<String, dynamic> toJson() => {
+        'icdMap': icdMap,
         'isAcyclic': isAcyclic,
+        'numNodes': numNodes,
+        'numLevels': numLevels,
         'ccd': ccd,
         'acd': acd,
         'nccd': nccd,

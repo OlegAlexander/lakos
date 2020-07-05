@@ -3,6 +3,7 @@ import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
 import 'package:lakos/model.dart' as model;
 import 'package:lakos/resolve_imports.dart' as resolve_imports;
+import 'package:lakos/metrics.dart' as metrics;
 
 // TODO Do another pass on this function.
 String parseImportLine(String line) {
@@ -27,7 +28,7 @@ String parseImportLine(String line) {
 }
 
 String generateDotGraph(Map<String, List<String>> dartFiles) {
-  var graph = model.Digraph('G', 'Dependency Graph');
+  var graph = model.Model('G', 'Dependency Graph');
   // Add nodes
   for (var file in dartFiles.keys) {
     graph.nodes.add(model.Node(file, path.basenameWithoutExtension(file)));
@@ -45,9 +46,9 @@ String prettyJson(jsonObject) {
   return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 
-model.Digraph getDirTree(
+model.Model getDirTree(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var tree = model.Digraph('G', '', rankdir: layout);
+  var tree = model.Model('G', '', rankdir: layout);
   var dirs = [rootDir];
   var subgraphs = [
     model.Subgraph(
@@ -117,9 +118,9 @@ model.Digraph getDirTree(
   return tree;
 }
 
-model.Digraph getDartFiles(
+model.Model getDartFiles(
     io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var graph = model.Digraph('G', '', rankdir: layout);
+  var graph = model.Model('G', '', rankdir: layout);
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -201,7 +202,7 @@ List<model.Edge> getEdges(io.Directory rootDir) {
   return edges;
 }
 
-String getOutput(model.Digraph graph, String format) {
+String getOutput(model.Model graph, String format) {
   var output = '';
   switch (format) {
     case 'dot':
@@ -214,6 +215,7 @@ String getOutput(model.Digraph graph, String format) {
   return output;
 }
 
+// TODO Make this function return an exit code instead of a string.
 String lakos(io.Directory dir, String format, io.File output,
     List<String> ignoreDirs, bool tree, String layout) {
   if (!dir.isAbsolute) {
@@ -233,6 +235,7 @@ String lakos(io.Directory dir, String format, io.File output,
   } else {
     var graph = getDartFiles(dir, ignoreDirs, layout)
       ..edges.addAll(getEdges(dir));
+    graph.metrics = metrics.computeAllMetrics(graph);
     return getOutput(graph, format);
   }
 }

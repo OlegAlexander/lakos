@@ -9,7 +9,8 @@ const outDir = 'dot_images';
 /// Run lakos dot and return the stdout.
 /// Also save the stdout to a dot file and generate a png.
 String runLakosDot(String rootDir, String outDir, String dotFilename) {
-  var result = io.Process.runSync('dart', ['bin/lakos.dart', rootDir]);
+  var result =
+      io.Process.runSync('dart', ['bin/lakos.dart', '--no-tree', rootDir]);
 
   print(['lakosResult', result.stdout, result.stderr, result.exitCode]);
 

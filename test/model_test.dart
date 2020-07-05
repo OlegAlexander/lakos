@@ -8,7 +8,7 @@ String prettyJson(jsonObject) {
 
 void main() {
   test('Digraph simple', () {
-    var g = Digraph('G', 'Digraph simple');
+    var g = Model('G', 'Digraph simple');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -30,7 +30,7 @@ digraph "G" {
 ''');
 
     // rankdir LR
-    g = Digraph('G', 'Digraph simple', rankdir: 'LR');
+    g = Model('G', 'Digraph simple', rankdir: 'LR');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -55,7 +55,7 @@ digraph "G" {
   });
 
   test('Subgraph simple', () {
-    var g = Digraph('G', 'Subgraph simple');
+    var g = Model('G', 'Subgraph simple');
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -82,7 +82,7 @@ digraph "G" {
 ''');
 
     // rankdirLR
-    g = Digraph('G', 'Subgraph simple', rankdir: 'LR');
+    g = Model('G', 'Subgraph simple', rankdir: 'LR');
     c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -110,7 +110,7 @@ digraph "G" {
   });
 
   test('Subgraph nested', () {
-    var g = Digraph('G', 'Subgraph nested');
+    var g = Model('G', 'Subgraph nested');
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add(Node('a', 'a'));
     c0.nodes.add(Node('b', 'b'));
@@ -164,12 +164,12 @@ digraph "G" {
   });
 
   test('Metrics', () {
-    var metrics = Metrics(true, 40, 12.3, 1.2);
+    var metrics = Metrics({}, true, 10, 3, 40, 12.3, 1.2);
     print(metrics);
     expect(metrics.toString(),
-        '"metrics" [label="isAcyclic: true \\l ccd: 40 \\l acd: 12.3 \\l nccd: 1.2 \\l", shape=rect];');
+        '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l numLevels: 3 \\l ccd: 40 \\l acd: 12.3 \\l nccd: 1.2 \\l", shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"isAcyclic":true,"ccd":40,"acd":12.3,"nccd":1.2}');
+        '{"icdMap":{},"isAcyclic":true,"numNodes":10,"numLevels":3,"ccd":40,"acd":12.3,"nccd":1.2}');
   });
 }
