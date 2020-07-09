@@ -79,7 +79,7 @@ class Edge {
 class Subgraph {
   String id;
   String label;
-  List<Node> nodes = [];
+  List<String> nodes = [];
   List<Subgraph> subgraphs = [];
   Subgraph parent;
 
@@ -87,10 +87,11 @@ class Subgraph {
 
   @override
   String toString() {
+    var wrappedNodes = nodes.map((x) => '"$x";');
     return '''
 subgraph "cluster~$id" {
 label="$label";
-${nodes.join('\n')}
+${wrappedNodes.join('\n')}
 ${subgraphs.join('\n')}
 }''';
   }

@@ -57,9 +57,9 @@ digraph "G" {
   test('Subgraph simple', () {
     var g = Model('G', 'Subgraph simple');
     var c0 = Subgraph('zero', 'zero');
-    c0.nodes.add(Node('a', 'a'));
-    c0.nodes.add(Node('b', 'b'));
-    c0.nodes.add(Node('c', 'c'));
+    c0.nodes.add('a');
+    c0.nodes.add('b');
+    c0.nodes.add('c');
     g.subgraphs.add(c0);
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c'));
@@ -72,9 +72,9 @@ digraph "G" {
   rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
-    "a" [label="a"];
-    "b" [label="b"];
-    "c" [label="c"];
+    "a";
+    "b";
+    "c";
   }
   "a" -> "b";
   "a" -> "c";
@@ -84,9 +84,9 @@ digraph "G" {
     // rankdirLR
     g = Model('G', 'Subgraph simple', rankdir: 'LR');
     c0 = Subgraph('zero', 'zero');
-    c0.nodes.add(Node('a', 'a'));
-    c0.nodes.add(Node('b', 'b'));
-    c0.nodes.add(Node('c', 'c'));
+    c0.nodes.add('a');
+    c0.nodes.add('b');
+    c0.nodes.add('c');
     g.subgraphs.add(c0);
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c'));
@@ -99,9 +99,9 @@ digraph "G" {
   rankdir=LR;
   subgraph "cluster~zero" {
     label="zero";
-    "a" [label="a"];
-    "b" [label="b"];
-    "c" [label="c"];
+    "a";
+    "b";
+    "c";
   }
   "a" -> "b";
   "a" -> "c";
@@ -112,10 +112,10 @@ digraph "G" {
   test('Subgraph nested', () {
     var g = Model('G', 'Subgraph nested');
     var c0 = Subgraph('zero', 'zero');
-    c0.nodes.add(Node('a', 'a'));
-    c0.nodes.add(Node('b', 'b'));
+    c0.nodes.add('a');
+    c0.nodes.add('b');
     var c1 = Subgraph('one', 'one');
-    c1.nodes.add(Node('c', 'c'));
+    c1.nodes.add('c');
     c0.subgraphs.add(c1);
     g.subgraphs.add(c0);
     g.edges.add(Edge('a', 'b'));
@@ -129,11 +129,11 @@ digraph "G" {
   rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
-    "a" [label="a"];
-    "b" [label="b"];
+    "a";
+    "b";
     subgraph "cluster~one" {
       label="one";
-      "c" [label="c"];
+      "c";
     }
   }
   "a" -> "b";

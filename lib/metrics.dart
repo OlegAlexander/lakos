@@ -7,7 +7,6 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   var edgeMap = <String, List<String>>{};
 
   // Add nodes
-  // TODO Make the nodes list required in model.
   for (var node in model.nodes) {
     if (!edgeMap.containsKey(node.id)) {
       edgeMap[node.id] = [];

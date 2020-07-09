@@ -46,10 +46,7 @@ String prettyJson(jsonObject) {
   return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 
-model.Model getDirTree(
-    io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var tree = model.Model('G', '', rankdir: layout)
-    ..rootDir = rootDir.path.replaceAll('\\', '/');
+List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
   var dirs = [rootDir];
   var subgraphs = [
     model.Subgraph(
@@ -58,7 +55,8 @@ model.Model getDirTree(
             .replaceAll('\\', '/'),
         path.basename(rootDir.path))
   ];
-  tree.subgraphs.add(subgraphs.first);
+  var treeSubgraphs = <model.Subgraph>[];
+  treeSubgraphs.add(subgraphs.first);
 
   var leaves = <model.Subgraph>[];
 
@@ -93,9 +91,9 @@ model.Model getDirTree(
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      currentSubgraph.nodes.add(model.Node(
-          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
-          path.basenameWithoutExtension(file.path)));
+      currentSubgraph.nodes.add(file.path
+          .replaceFirst(rootDir.parent.path, '')
+          .replaceAll('\\', '/'));
     }
 
     // Recurse breadth first
@@ -116,13 +114,11 @@ model.Model getDirTree(
     }
   }
 
-  return tree;
+  return treeSubgraphs;
 }
 
-model.Model getDartFiles(
-    io.Directory rootDir, List<String> ignoreDirs, String layout) {
-  var graph = model.Model('G', '', rankdir: layout)
-    ..rootDir = rootDir.path.replaceAll('\\', '/');
+List<model.Node> getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
+  var nodes = <model.Node>[];
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -139,7 +135,7 @@ model.Model getDartFiles(
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      graph.nodes.add(model.Node(
+      nodes.add(model.Node(
           file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
           path.basenameWithoutExtension(file.path)));
     }
@@ -148,7 +144,7 @@ model.Model getDartFiles(
     dirs.addAll(dirsOnly);
   }
 
-  return graph;
+  return nodes;
 }
 
 List<model.Edge> getEdges(io.Directory rootDir) {
@@ -220,26 +216,25 @@ String getOutput(model.Model graph, String format) {
 }
 
 // TODO Make this function return an exit code instead of a string.
-String lakos(io.Directory dir, String format, io.File output,
+// TODO Add --metrics and --no-metrics option.
+String lakos(io.Directory rootDir, String format, io.File output,
     List<String> ignoreDirs, bool tree, String layout) {
-  if (!dir.isAbsolute) {
-    dir = io.Directory(path.normalize(dir.absolute.path));
+  if (!rootDir.isAbsolute) {
+    rootDir = io.Directory(path.normalize(rootDir.absolute.path));
   }
-  if (!dir.existsSync()) {
-    print('Dir does not exist: ${dir.path}');
+  if (!rootDir.existsSync()) {
+    print('Dir does not exist: ${rootDir.path}');
     // TODO Return error or throw exception instead of exit?
     io.exit(1);
   }
 
-  // TODO Still a little bit of duplication here with add edges.
+  var graph = model.Model('G', '', rankdir: layout)
+    ..rootDir = rootDir.path.replaceAll('\\', '/')
+    ..nodes = getDartFiles(rootDir, ignoreDirs);
   if (tree) {
-    var graph = getDirTree(dir, ignoreDirs, layout)
-      ..edges.addAll(getEdges(dir));
-    return getOutput(graph, format);
-  } else {
-    var graph = getDartFiles(dir, ignoreDirs, layout)
-      ..edges.addAll(getEdges(dir));
-    graph.metrics = metrics.computeAllMetrics(graph);
-    return getOutput(graph, format);
+    graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
+  graph.edges.addAll(getEdges(rootDir));
+  graph.metrics = metrics.computeAllMetrics(graph);
+  return getOutput(graph, format);
 }
