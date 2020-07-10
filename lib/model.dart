@@ -1,5 +1,6 @@
 /// Main container class to hold the data model.
 class Model {
+  // TODO Get rid of id, label, and labelloc.
   String id;
   String label;
   String rankdir;
@@ -40,6 +41,8 @@ ${metrics ?? ''}
 
 /// Dart libraries are represented as nodes in a directed graph.
 class Node {
+  // TODO Consider adding icd, sloc, inDegree, outDegree, isOrphan fields here.
+  // Maybe isOrphan can be rendered with a bold circle.
   String id;
   String label;
 

@@ -216,9 +216,9 @@ String getOutput(model.Model graph, String format) {
 }
 
 // TODO Make this function return an exit code instead of a string.
-// TODO Add --metrics and --no-metrics option.
+// TODO Add output.
 String lakos(io.Directory rootDir, String format, io.File output,
-    List<String> ignoreDirs, bool tree, String layout) {
+    List<String> ignoreDirs, bool tree, bool showMetrics, String layout) {
   if (!rootDir.isAbsolute) {
     rootDir = io.Directory(path.normalize(rootDir.absolute.path));
   }
@@ -228,13 +228,17 @@ String lakos(io.Directory rootDir, String format, io.File output,
     io.exit(1);
   }
 
-  var graph = model.Model('G', '', rankdir: layout)
+  // TODO Consider making this section into a function that returns the Model. For library usage.
+  var graph = model.Model('', '', rankdir: layout)
     ..rootDir = rootDir.path.replaceAll('\\', '/')
     ..nodes = getDartFiles(rootDir, ignoreDirs);
   if (tree) {
     graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
   graph.edges.addAll(getEdges(rootDir));
-  graph.metrics = metrics.computeAllMetrics(graph);
+  if (showMetrics) {
+    graph.metrics = metrics.computeAllMetrics(graph);
+  }
+  // Until here.
   return getOutput(graph, format);
 }

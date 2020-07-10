@@ -37,7 +37,7 @@ void printUsage(args.ArgParser parser) {
 }
 
 void main(List<String> arguments) {
-  // Validate args > Create dependency graph > compute metrics > output formats > fail if thresholds exceeded
+  // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
   // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
 
   var parser = args.ArgParser()
@@ -55,6 +55,11 @@ void main(List<String> arguments) {
     ..addFlag('tree',
         abbr: 't',
         help: 'Show directory structure as subgraphs.',
+        defaultsTo: true,
+        negatable: true)
+    ..addFlag('metrics',
+        abbr: 'm',
+        help: 'Compute and show metrics.',
         defaultsTo: true,
         negatable: true)
     ..addMultiOption('ignore-dirs',
@@ -103,9 +108,10 @@ void main(List<String> arguments) {
   var format = argResults['format'] as String;
   var output = io.File(argResults['output']);
   var tree = argResults['tree'] as bool;
+  var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
-  var dotString =
-      lakos_command.lakos(dir, format, output, ignoreDirs, tree, layout);
+  var dotString = lakos_command.lakos(
+      dir, format, output, ignoreDirs, tree, metrics, layout);
   print(dotString);
 }
