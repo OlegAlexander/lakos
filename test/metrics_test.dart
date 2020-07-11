@@ -5,7 +5,7 @@ import 'package:lakos/metrics.dart';
 // TODO Add more tests/expects.
 void main() {
   test('convertModelToDigraph', () {
-    var g = Model('G', 'Digraph simple');
+    var g = Model();
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -28,7 +28,7 @@ void main() {
   });
 
   test('computeCCD', () {
-    var g = Model('G', 'Digraph simple');
+    var g = Model();
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -62,7 +62,7 @@ void main() {
   });
 
   test('computeAllMetrics', () {
-    var g = Model('G', 'Digraph simple');
+    var g = Model();
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));

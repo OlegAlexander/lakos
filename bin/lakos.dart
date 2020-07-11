@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 import 'package:args/args.dart' as args;
-import 'package:lakos/lakos_command.dart' as lakos_command;
+import 'package:lakos/build_model.dart' as build_model;
 
 enum ExitCodes { Ok, InvalidOption, NoDirectorySpecified }
 
@@ -39,6 +39,7 @@ void printUsage(args.ArgParser parser) {
 void main(List<String> arguments) {
   // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
   // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
+  // SLOC command: cloc --include-lang=Dart --by-file .
 
   var parser = args.ArgParser()
     ..addOption('format',
@@ -111,7 +112,7 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
-  var dotString = lakos_command.lakos(
+  var outputString = build_model.buildModel(
       dir, format, output, ignoreDirs, tree, metrics, layout);
-  print(dotString);
+  print(outputString);
 }

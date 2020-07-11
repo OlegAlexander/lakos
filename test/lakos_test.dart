@@ -2,7 +2,7 @@ import 'dart:io' as io;
 import 'dart:convert' as convert;
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
-import 'package:lakos/get_package_location.dart' as gpl;
+import 'get_package_location.dart' as gpl;
 
 const outDir = 'dot_images';
 
@@ -68,8 +68,7 @@ void main() {
   test('lakos', () {
     var packageLocation = io.Directory('.');
     print(packageLocation);
-    var result =
-        runLakosDot(path.join(packageLocation.path, 'lib'), outDir, 'lakos');
+    var result = runLakosDot(packageLocation.path, outDir, 'lakos');
     expect(result, isNotEmpty);
   });
 

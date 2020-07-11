@@ -8,7 +8,7 @@ String prettyJson(jsonObject) {
 
 void main() {
   test('Digraph simple', () {
-    var g = Model('G', 'Digraph simple');
+    var g = Model();
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -16,9 +16,7 @@ void main() {
     g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
     expect(g.toString(), '''
-digraph "G" {
-  label="Digraph simple";
-  labelloc=top;
+digraph "" {
   style=rounded;
   rankdir=TB;
   "a" [label="a"];
@@ -30,7 +28,7 @@ digraph "G" {
 ''');
 
     // rankdir LR
-    g = Model('G', 'Digraph simple', rankdir: 'LR');
+    g = Model(rankdir: 'LR');
     g.nodes.add(Node('a', 'a'));
     g.nodes.add(Node('b', 'b'));
     g.nodes.add(Node('c', 'c'));
@@ -38,9 +36,7 @@ digraph "G" {
     g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
     expect(g.toString(), '''
-digraph "G" {
-  label="Digraph simple";
-  labelloc=top;
+digraph "" {
   style=rounded;
   rankdir=LR;
   "a" [label="a"];
@@ -50,12 +46,43 @@ digraph "G" {
   "a" -> "c" [style=dashed];
 }
 ''');
-
     print(prettyJson(g));
+    expect(prettyJson(g), '''
+{
+  "rootDir": ".",
+  "nodes": [
+    {
+      "id": "a",
+      "label": "a"
+    },
+    {
+      "id": "b",
+      "label": "b"
+    },
+    {
+      "id": "c",
+      "label": "c"
+    }
+  ],
+  "subgraphs": [],
+  "edges": [
+    {
+      "from": "a",
+      "to": "b",
+      "directive": "import"
+    },
+    {
+      "from": "a",
+      "to": "c",
+      "directive": "export"
+    }
+  ],
+  "metrics": null
+}''');
   });
 
   test('Subgraph simple', () {
-    var g = Model('G', 'Subgraph simple');
+    var g = Model();
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add('a');
     c0.nodes.add('b');
@@ -65,9 +92,7 @@ digraph "G" {
     g.edges.add(Edge('a', 'c'));
     print(g);
     expect(g.toString(), '''
-digraph "G" {
-  label="Subgraph simple";
-  labelloc=top;
+digraph "" {
   style=rounded;
   rankdir=TB;
   subgraph "cluster~zero" {
@@ -82,7 +107,7 @@ digraph "G" {
 ''');
 
     // rankdirLR
-    g = Model('G', 'Subgraph simple', rankdir: 'LR');
+    g = Model(rankdir: 'LR');
     c0 = Subgraph('zero', 'zero');
     c0.nodes.add('a');
     c0.nodes.add('b');
@@ -92,9 +117,7 @@ digraph "G" {
     g.edges.add(Edge('a', 'c'));
     print(g);
     expect(g.toString(), '''
-digraph "G" {
-  label="Subgraph simple";
-  labelloc=top;
+digraph "" {
   style=rounded;
   rankdir=LR;
   subgraph "cluster~zero" {
@@ -110,7 +133,7 @@ digraph "G" {
   });
 
   test('Subgraph nested', () {
-    var g = Model('G', 'Subgraph nested');
+    var g = Model();
     var c0 = Subgraph('zero', 'zero');
     c0.nodes.add('a');
     c0.nodes.add('b');
@@ -122,9 +145,7 @@ digraph "G" {
     g.edges.add(Edge('a', 'c'));
     print(g);
     expect(g.toString(), '''
-digraph "G" {
-  label="Subgraph nested";
-  labelloc=top;
+digraph "" {
   style=rounded;
   rankdir=TB;
   subgraph "cluster~zero" {
@@ -142,6 +163,44 @@ digraph "G" {
 ''');
 
     print(prettyJson(g));
+    expect(prettyJson(g), '''
+{
+  "rootDir": ".",
+  "nodes": [],
+  "subgraphs": [
+    {
+      "id": "zero",
+      "label": "zero",
+      "nodes": [
+        "a",
+        "b"
+      ],
+      "subgraphs": [
+        {
+          "id": "one",
+          "label": "one",
+          "nodes": [
+            "c"
+          ],
+          "subgraphs": []
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "a",
+      "to": "b",
+      "directive": "import"
+    },
+    {
+      "from": "a",
+      "to": "c",
+      "directive": "import"
+    }
+  ],
+  "metrics": null
+}''');
   });
 
   test('Node', () {

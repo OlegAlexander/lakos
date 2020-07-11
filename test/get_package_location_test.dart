@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:lakos/get_package_location.dart' as gpl;
+import 'get_package_location.dart' as gpl;
 
 void main() {
   test('getPackageLocation', () {

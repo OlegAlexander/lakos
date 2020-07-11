@@ -1,23 +1,18 @@
 /// Main container class to hold the data model.
 class Model {
-  // TODO Get rid of id, label, and labelloc.
-  String id;
-  String label;
-  String rankdir;
   String rootDir;
+  String rankdir;
   List<Node> nodes = [];
   List<Subgraph> subgraphs = [];
   List<Edge> edges = [];
   Metrics metrics;
 
-  Model(this.id, this.label, {this.rankdir = 'TB'});
+  Model({this.rootDir = '.', this.rankdir = 'TB'});
 
   @override
   String toString() {
     return prettyPrintDot('''
-digraph "$id" {
-label="$label";
-labelloc=top;
+digraph "" {
 style=rounded;
 rankdir=$rankdir;
 ${nodes.join('\n')}
@@ -28,9 +23,6 @@ ${metrics ?? ''}
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'label': label,
-        'rankdir': rankdir,
         'rootDir': rootDir,
         'nodes': nodes,
         'subgraphs': subgraphs,

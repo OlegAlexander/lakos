@@ -6,6 +6,7 @@ import 'package:lakos/resolve_imports.dart' as resolve_imports;
 import 'package:lakos/metrics.dart' as metrics;
 
 // TODO Do another pass on this function.
+// TODO Maybe move this function and similar functionality, like sloc counting, to a parse library.
 String parseImportLine(String line) {
   var openQuote = false;
   var importPath = '';
@@ -25,25 +26,6 @@ String parseImportLine(String line) {
     return null;
   }
   return importPath;
-}
-
-String generateDotGraph(Map<String, List<String>> dartFiles) {
-  var graph = model.Model('G', 'Dependency Graph');
-  // Add nodes
-  for (var file in dartFiles.keys) {
-    graph.nodes.add(model.Node(file, path.basenameWithoutExtension(file)));
-  }
-  // Add edges
-  for (var source in dartFiles.keys) {
-    for (var target in dartFiles[source]) {
-      graph.edges.add(model.Edge(source, target));
-    }
-  }
-  return graph.toString();
-}
-
-String prettyJson(jsonObject) {
-  return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 
 List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
@@ -202,6 +184,10 @@ List<model.Edge> getEdges(io.Directory rootDir) {
   return edges;
 }
 
+String prettyJson(jsonObject) {
+  return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
+}
+
 String getOutput(model.Model graph, String format) {
   var output = '';
   switch (format) {
@@ -217,7 +203,7 @@ String getOutput(model.Model graph, String format) {
 
 // TODO Make this function return an exit code instead of a string.
 // TODO Add output.
-String lakos(io.Directory rootDir, String format, io.File output,
+String buildModel(io.Directory rootDir, String format, io.File output,
     List<String> ignoreDirs, bool tree, bool showMetrics, String layout) {
   if (!rootDir.isAbsolute) {
     rootDir = io.Directory(path.normalize(rootDir.absolute.path));
@@ -229,9 +215,9 @@ String lakos(io.Directory rootDir, String format, io.File output,
   }
 
   // TODO Consider making this section into a function that returns the Model. For library usage.
-  var graph = model.Model('', '', rankdir: layout)
-    ..rootDir = rootDir.path.replaceAll('\\', '/')
-    ..nodes = getDartFiles(rootDir, ignoreDirs);
+  var graph =
+      model.Model(rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
+        ..nodes = getDartFiles(rootDir, ignoreDirs);
   if (tree) {
     graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
