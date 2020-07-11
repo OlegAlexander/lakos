@@ -136,6 +136,7 @@ List<model.Edge> getEdges(io.Directory rootDir) {
       .whereType<io.File>()
       .where((file) => file.path.endsWith('.dart'));
 
+  // TODO Move this upstream and fail if pubspec.yaml doesn't exist.
   var pubspecYaml = resolve_imports.findPubspecYaml(rootDir);
 
   for (var dartFile in dartFiles) {
@@ -201,10 +202,9 @@ String getOutput(model.Model graph, String format) {
   return output;
 }
 
-// TODO Make this function return an exit code instead of a string.
-// TODO Add output.
-String buildModel(io.Directory rootDir, String format, io.File output,
-    List<String> ignoreDirs, bool tree, bool showMetrics, String layout) {
+model.Model buildModel(io.Directory rootDir, List<String> ignoreDirs,
+    bool showTree, bool showMetrics, String layout) {
+  // TODO Consider moving these error checks into lakos.dart
   if (!rootDir.isAbsolute) {
     rootDir = io.Directory(path.normalize(rootDir.absolute.path));
   }
@@ -214,17 +214,16 @@ String buildModel(io.Directory rootDir, String format, io.File output,
     io.exit(1);
   }
 
-  // TODO Consider making this section into a function that returns the Model. For library usage.
   var graph =
       model.Model(rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
         ..nodes = getDartFiles(rootDir, ignoreDirs);
-  if (tree) {
+  if (showTree) {
     graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
   graph.edges.addAll(getEdges(rootDir));
   if (showMetrics) {
     graph.metrics = metrics.computeAllMetrics(graph);
   }
-  // Until here.
-  return getOutput(graph, format);
+
+  return graph;
 }

@@ -33,11 +33,13 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   return dg.DirectedGraph<String>(vertexEdgeMap);
 }
 
-/// Return a map of the individual component dependencies.
-Map<String, int> computeICDMap(dg.DirectedGraph<String> graph) {
-  var icdMap = <String, int>{};
+/// Return a map of the component dependencies.
+/// The component dependency (CD) is the number of nodes a particular node depends on
+/// directly or indirectly, including itself.
+Map<String, int> computeCDMap(dg.DirectedGraph<String> graph) {
+  var cdMap = <String, int>{};
   for (var v in graph.vertices) {
-    icdMap[v.data] = 0;
+    cdMap[v.data] = 0;
   }
   for (var v in graph.vertices) {
     var nodes = [v];
@@ -46,21 +48,21 @@ Map<String, int> computeICDMap(dg.DirectedGraph<String> graph) {
       var next = nodes.removeAt(0);
       // Only visit each node once
       if (!visited.contains(next.data)) {
-        icdMap[v.data] += 1;
+        cdMap[v.data] += 1;
         visited.add(next.data);
         nodes.addAll(graph.edges(next));
       }
     }
   }
-  return icdMap;
+  return cdMap;
 }
 
-/// Return the cumulative component dependency, which is the sum of all individual component dependencies.
-/// The CCD can be interpreted as the total "complexity" of the graph.
+/// Return the cumulative component dependency, which is the sum of all component dependencies.
+/// The CCD can be interpreted as the total "coupling" of the graph.
 /// Lower is better.
-int computeCCD(Map<String, int> icdMap) {
-  var sumOfAllICDs = icdMap.values.fold(0, (prev, curr) => prev + curr);
-  return sumOfAllICDs;
+int computeCCD(Map<String, int> cdMap) {
+  var sumOfAllCDs = cdMap.values.fold(0, (prev, curr) => prev + curr);
+  return sumOfAllCDs;
 }
 
 /// Return the average component dependency.
@@ -102,11 +104,11 @@ extension NumberRounding on num {
 
 m.Metrics computeAllMetrics(m.Model model) {
   var digraph = convertModelToDigraph(model);
-  var icdMap = computeICDMap(digraph);
-  var ccd = computeCCD(icdMap);
+  var cdMap = computeCDMap(digraph);
+  var ccd = computeCCD(cdMap);
   var numNodes = digraph.vertices.length;
   var metrics = m.Metrics(
-      icdMap,
+      cdMap,
       digraph.isAcyclic(),
       numNodes,
       ccd,

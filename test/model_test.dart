@@ -229,6 +229,6 @@ digraph "" {
         '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l ccd: 40 \\l acd: 12.3 \\l acdp: 2.5% \\l nccd: 1.2 \\l", shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"icdMap":{},"isAcyclic":true,"numNodes":10,"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2}');
+        '{"cdMap":{},"isAcyclic":true,"numNodes":10,"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2}');
   });
 }

@@ -33,7 +33,7 @@ ${metrics ?? ''}
 
 /// Dart libraries are represented as nodes in a directed graph.
 class Node {
-  // TODO Consider adding icd, sloc, inDegree, outDegree, isOrphan fields here.
+  // TODO Consider adding cd, sloc, inDegree, outDegree, isOrphan fields here.
   // Maybe isOrphan can be rendered with a bold circle.
   String id;
   String label;
@@ -97,7 +97,7 @@ ${subgraphs.join('\n')}
 
 /// Store global metrics here.
 class Metrics {
-  Map<String, int> icdMap;
+  Map<String, int> cdMap;
   bool isAcyclic;
   int numNodes;
   int numLevels;
@@ -107,7 +107,7 @@ class Metrics {
   double nccd;
 
   Metrics(
-    this.icdMap,
+    this.cdMap,
     this.isAcyclic,
     this.numNodes,
     this.ccd,
@@ -122,7 +122,7 @@ class Metrics {
   }
 
   Map<String, dynamic> toJson() => {
-        'icdMap': icdMap,
+        'cdMap': cdMap,
         'isAcyclic': isAcyclic,
         'numNodes': numNodes,
         'ccd': ccd,

@@ -45,7 +45,7 @@ void main() {
     var result = io.Process.runSync('dart', ['bin/lakos.dart']);
     print([result.stdout, result.stderr, result.exitCode]);
     expect(result.stdout.toString().split('\n')[0].trim(),
-        'No directory specified.');
+        'No root directory specified.');
     expect(result.exitCode, 2);
   });
 

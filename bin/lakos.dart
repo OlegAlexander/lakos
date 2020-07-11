@@ -2,11 +2,11 @@ import 'dart:io' as io;
 import 'package:args/args.dart' as args;
 import 'package:lakos/build_model.dart' as build_model;
 
-enum ExitCodes { Ok, InvalidOption, NoDirectorySpecified }
+enum ExitCodes { Ok, InvalidOption, NoRootDirectorySpecified }
 
 const usageHeader = '''
 
-Usage: lakos [options] <directory>
+Usage: lakos [options] <root-dir>
 ''';
 
 const usageFooter = '''
@@ -100,9 +100,9 @@ void main(List<String> arguments) {
   }
 
   if (argResults.rest.length != 1) {
-    print('No directory specified.');
+    print('No root directory specified.');
     printUsage(parser);
-    io.exit(ExitCodes.NoDirectorySpecified.index);
+    io.exit(ExitCodes.NoRootDirectorySpecified.index);
   }
 
   var dir = io.Directory(argResults.rest[0]);
@@ -112,7 +112,8 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
-  var outputString = build_model.buildModel(
-      dir, format, output, ignoreDirs, tree, metrics, layout);
-  print(outputString);
+  var model = build_model.buildModel(dir, ignoreDirs, tree, metrics, layout);
+
+  print(build_model.getOutput(model, format));
+  // TODO Add output.
 }
