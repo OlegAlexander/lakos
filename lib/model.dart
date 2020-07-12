@@ -11,7 +11,7 @@ class Model {
 
   @override
   String toString() {
-    return prettyPrintDot('''
+    return _prettyPrintDot('''
 digraph "" {
 style=rounded;
 rankdir=$rankdir;
@@ -29,6 +29,8 @@ ${metrics ?? ''}
         'edges': edges,
         'metrics': metrics
       };
+
+  // TODO Maybe add save method here.
 }
 
 /// Dart libraries are represented as nodes in a directed graph.
@@ -137,7 +139,7 @@ String _trimLines(String dot) {
 }
 
 /// Properly indent dot string.
-String prettyPrintDot(String dot, {String indent = '  '}) {
+String _prettyPrintDot(String dot, {String indent = '  '}) {
   var level = 0;
   var newTokens = <String>[];
   for (var token in _trimLines(dot).split('')) {

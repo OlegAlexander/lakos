@@ -1,12 +1,13 @@
 import 'dart:io' as io;
 import 'package:args/args.dart' as args;
 import 'package:lakos/build_model.dart' as build_model;
+import 'package:lakos/model.dart' as model;
 
-enum ExitCodes { Ok, InvalidOption, NoRootDirectorySpecified }
+enum ExitCodes { Ok, InvalidOption, NoRootDirectorySpecified, BuildModelFailed }
 
 const usageHeader = '''
 
-Usage: lakos [options] <root-dir>
+Usage: lakos [options] <root-directory>
 ''';
 
 const usageFooter = '''
@@ -112,8 +113,19 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
-  var model = build_model.buildModel(dir, ignoreDirs, tree, metrics, layout);
 
-  print(build_model.getOutput(model, format));
-  // TODO Add output.
+  model.Model graph;
+  try {
+    graph = build_model.buildModel(dir,
+        ignoreDirs: ignoreDirs,
+        showTree: tree,
+        showMetrics: metrics,
+        layout: layout);
+  } catch (e) {
+    print(e);
+    io.exit(ExitCodes.BuildModelFailed.index);
+  }
+
+  print(build_model.getOutput(graph, format));
+  // TODO Add output to file.
 }

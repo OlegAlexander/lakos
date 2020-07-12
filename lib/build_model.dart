@@ -129,15 +129,12 @@ List<model.Node> getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
   return nodes;
 }
 
-List<model.Edge> getEdges(io.Directory rootDir) {
+List<model.Edge> getEdges(io.Directory rootDir, io.File pubspecYaml) {
   var edges = <model.Edge>[];
   var entities = rootDir.listSync(recursive: true, followLinks: false);
   var dartFiles = entities
       .whereType<io.File>()
       .where((file) => file.path.endsWith('.dart'));
-
-  // TODO Move this upstream and fail if pubspec.yaml doesn't exist.
-  var pubspecYaml = resolve_imports.findPubspecYaml(rootDir);
 
   for (var dartFile in dartFiles) {
     var from = dartFile.path
@@ -202,16 +199,31 @@ String getOutput(model.Model graph, String format) {
   return output;
 }
 
-model.Model buildModel(io.Directory rootDir, List<String> ignoreDirs,
-    bool showTree, bool showMetrics, String layout) {
-  // TODO Consider moving these error checks into lakos.dart
+class PubspecYamlNotFoundException implements Exception {
+  final String message;
+  PubspecYamlNotFoundException(this.message);
+  @override
+  String toString() => 'PubspecYamlNotFoundException: $message';
+}
+
+/// This is the main function for API usage.
+/// Returns the Model object.
+/// Throws FileSystemException if rootDir doesn't exist.
+/// Throws PubspecYamlNotFoundException if pubspec.yaml can't be found in or above the rootDir.
+model.Model buildModel(io.Directory rootDir,
+    {List<String> ignoreDirs = const ['.git', '.dart_tool'],
+    bool showTree = true,
+    bool showMetrics = true,
+    String layout = 'TB'}) {
+  // Convert relative to absolute path.
   if (!rootDir.isAbsolute) {
     rootDir = io.Directory(path.normalize(rootDir.absolute.path));
   }
-  if (!rootDir.existsSync()) {
-    print('Dir does not exist: ${rootDir.path}');
-    // TODO Return error or throw exception instead of exit?
-    io.exit(1);
+
+  var pubspecYaml = resolve_imports.findPubspecYaml(rootDir);
+  if (pubspecYaml == null) {
+    throw PubspecYamlNotFoundException(
+        'pubspec.yaml not found in or above the root directory.');
   }
 
   var graph =
@@ -220,7 +232,7 @@ model.Model buildModel(io.Directory rootDir, List<String> ignoreDirs,
   if (showTree) {
     graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
-  graph.edges.addAll(getEdges(rootDir));
+  graph.edges.addAll(getEdges(rootDir, pubspecYaml));
   if (showMetrics) {
     graph.metrics = metrics.computeAllMetrics(graph);
   }

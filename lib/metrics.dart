@@ -33,9 +33,9 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   return dg.DirectedGraph<String>(vertexEdgeMap);
 }
 
-/// Return a map of the component dependencies.
+/// Return a map of component dependencies.
 /// The component dependency (CD) is the number of nodes a particular node depends on
-/// directly or indirectly, including itself.
+/// directly or transitively, including itself.
 Map<String, int> computeCDMap(dg.DirectedGraph<String> graph) {
   var cdMap = <String, int>{};
   for (var v in graph.vertices) {
