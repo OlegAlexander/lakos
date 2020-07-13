@@ -3,7 +3,15 @@ import 'package:args/args.dart' as args;
 import 'package:lakos/build_model.dart' as build_model;
 import 'package:lakos/model.dart' as model;
 
-enum ExitCodes { Ok, InvalidOption, NoRootDirectorySpecified, BuildModelFailed }
+enum ExitCodes {
+  Ok,
+  InvalidOption,
+  NoRootDirectorySpecified,
+  BuildModelFailed,
+  WriteToFileFailed
+}
+
+const outputDefault = 'STDOUT';
 
 const usageHeader = '''
 
@@ -41,6 +49,7 @@ void main(List<String> arguments) {
   // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
   // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
   // SLOC command: cloc --include-lang=Dart --by-file .
+  // TODO Consider not using import as everywhere.
 
   var parser = args.ArgParser()
     ..addOption('format',
@@ -53,7 +62,7 @@ void main(List<String> arguments) {
         abbr: 'o',
         help: 'Save output to a file instead of printing it.',
         valueHelp: 'file',
-        defaultsTo: 'STDOUT')
+        defaultsTo: outputDefault)
     ..addFlag('tree',
         abbr: 't',
         help: 'Show directory structure as subgraphs.',
@@ -90,6 +99,7 @@ void main(List<String> arguments) {
         },
         defaultsTo: 'TB');
 
+  // Parse args.
   args.ArgResults argResults;
 
   try {
@@ -106,14 +116,16 @@ void main(List<String> arguments) {
     io.exit(ExitCodes.NoRootDirectorySpecified.index);
   }
 
+  // Get options.
   var dir = io.Directory(argResults.rest[0]);
   var format = argResults['format'] as String;
-  var output = io.File(argResults['output']);
+  var output = argResults['output'] as String;
   var tree = argResults['tree'] as bool;
   var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
 
+  // Build model.
   model.Model graph;
   try {
     graph = build_model.buildModel(dir,
@@ -126,6 +138,18 @@ void main(List<String> arguments) {
     io.exit(ExitCodes.BuildModelFailed.index);
   }
 
-  print(build_model.getOutput(graph, format));
-  // TODO Add output to file.
+  // Write output to STDOUT or file.
+  var contents = build_model.getOutput(graph, format);
+  if (output == outputDefault) {
+    print(contents);
+  } else {
+    try {
+      io.File(output).writeAsStringSync(contents);
+    } catch (e) {
+      print(e);
+      io.exit(ExitCodes.WriteToFileFailed.index);
+    }
+  }
+
+  // TODO Add metrics thresholds.
 }
