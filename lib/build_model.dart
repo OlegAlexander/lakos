@@ -1,5 +1,4 @@
 import 'dart:io' as io;
-import 'dart:convert' as convert;
 import 'package:path/path.dart' as path;
 import 'package:lakos/model.dart' as model;
 import 'package:lakos/resolve_imports.dart' as resolve_imports;
@@ -180,23 +179,6 @@ List<model.Edge> getEdges(io.Directory rootDir, io.File pubspecYaml) {
     }
   }
   return edges;
-}
-
-String prettyJson(jsonObject) {
-  return convert.JsonEncoder.withIndent('  ').convert(jsonObject);
-}
-
-String getOutput(model.Model graph, String format) {
-  var output = '';
-  switch (format) {
-    case 'dot':
-      output = graph.toString();
-      break;
-    case 'json':
-      output = prettyJson(graph.toJson());
-      break;
-  }
-  return output;
 }
 
 class PubspecYamlNotFoundException implements Exception {

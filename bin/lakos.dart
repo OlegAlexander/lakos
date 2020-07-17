@@ -3,7 +3,7 @@ import 'package:args/args.dart' as args;
 import 'package:lakos/build_model.dart' as build_model;
 import 'package:lakos/model.dart' as model;
 
-enum ExitCodes {
+enum ExitCode {
   Ok,
   InvalidOption,
   NoRootDirectorySpecified,
@@ -85,7 +85,7 @@ void main(List<String> arguments) {
     // .git, .dart_tool should be implied.
     // Otherwise, if you can start deeper in the package, then ignore-dirs may be
     // dirs deeper in the package and you may even have ignore-files
-    // or just a generic ignore flag supporting glob paths.
+    // TODO or just a generic ignore flag supporting glob paths.
     ..addOption('layout',
         abbr: 'l',
         help: 'Graph layout direction. AKA "rankdir" in Graphviz.',
@@ -107,17 +107,17 @@ void main(List<String> arguments) {
   } catch (e) {
     print(e);
     printUsage(parser);
-    io.exit(ExitCodes.InvalidOption.index);
+    io.exit(ExitCode.InvalidOption.index);
   }
 
   if (argResults.rest.length != 1) {
     print('No root directory specified.');
     printUsage(parser);
-    io.exit(ExitCodes.NoRootDirectorySpecified.index);
+    io.exit(ExitCode.NoRootDirectorySpecified.index);
   }
 
   // Get options.
-  var dir = io.Directory(argResults.rest[0]);
+  var rootDir = io.Directory(argResults.rest[0]);
   var format = argResults['format'] as String;
   var output = argResults['output'] as String;
   var tree = argResults['tree'] as bool;
@@ -128,18 +128,27 @@ void main(List<String> arguments) {
   // Build model.
   model.Model graph;
   try {
-    graph = build_model.buildModel(dir,
+    graph = build_model.buildModel(rootDir,
         ignoreDirs: ignoreDirs,
         showTree: tree,
         showMetrics: metrics,
         layout: layout);
   } catch (e) {
     print(e);
-    io.exit(ExitCodes.BuildModelFailed.index);
+    io.exit(ExitCode.BuildModelFailed.index);
   }
 
-  // Write output to STDOUT or file.
-  var contents = build_model.getOutput(graph, format);
+  // Write output to STDOUT or a file.
+  var contents = '';
+  switch (format) {
+    case 'dot':
+      contents = graph.getOutput(model.OutputFormat.Dot);
+      break;
+    case 'json':
+      contents = graph.getOutput(model.OutputFormat.Json);
+      break;
+  }
+
   if (output == outputDefault) {
     print(contents);
   } else {
@@ -147,7 +156,7 @@ void main(List<String> arguments) {
       io.File(output).writeAsStringSync(contents);
     } catch (e) {
       print(e);
-      io.exit(ExitCodes.WriteToFileFailed.index);
+      io.exit(ExitCode.WriteToFileFailed.index);
     }
   }
 

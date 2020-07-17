@@ -1,3 +1,5 @@
+import 'dart:convert' as convert;
+
 /// Main container class to hold the data model.
 class Model {
   String rootDir;
@@ -30,8 +32,18 @@ ${metrics ?? ''}
         'metrics': metrics
       };
 
-  // TODO Maybe add save method here.
+  String getOutput(OutputFormat format) {
+    switch (format) {
+      case OutputFormat.Dot:
+        return toString();
+      case OutputFormat.Json:
+        return _prettyJson(toJson());
+    }
+    return ''; // Will never reach here.
+  }
 }
+
+enum OutputFormat { Dot, Json }
 
 /// Dart libraries are represented as nodes in a directed graph.
 class Node {
@@ -132,6 +144,10 @@ class Metrics {
         'acdp': acdp,
         'nccd': nccd,
       };
+}
+
+String _prettyJson(jsonObject, {String indent = '  '}) {
+  return convert.JsonEncoder.withIndent(indent).convert(jsonObject);
 }
 
 String _trimLines(String dot) {
