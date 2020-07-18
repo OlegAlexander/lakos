@@ -8,10 +8,13 @@ enum ExitCode {
   InvalidOption,
   NoRootDirectorySpecified,
   BuildModelFailed,
-  WriteToFileFailed
+  WriteToFileFailed,
+  CyclesDetected,
+  MetricsThresholdExceeded
 }
 
 const outputDefault = 'STDOUT';
+const defaultNccdThreshold = '2.0';
 
 const usageHeader = '''
 
@@ -97,7 +100,19 @@ void main(List<String> arguments) {
           'BT': 'bottom to top',
           'RL': 'right to left'
         },
-        defaultsTo: 'TB');
+        defaultsTo: 'TB')
+    ..addFlag('cycles-allowed',
+        abbr: 'c',
+        help:
+            'Fail with a non-zero exit code if dependency cycles are detected. Only works when --metrics is true.',
+        defaultsTo: false,
+        negatable: true)
+    ..addOption('nccd-threshold',
+        abbr: 'n',
+        help:
+            'Fail with a non-zero exit code if the NCCD exceeds the threshold. The threshold must be a positive double. Only works when --metrics is true.',
+        valueHelp: defaultNccdThreshold,
+        defaultsTo: defaultNccdThreshold);
 
   // Parse args.
   args.ArgResults argResults;
@@ -124,6 +139,15 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
+  var cyclesAllowed = argResults['cycles-allowed'] as bool;
+  var nccdThreshold = 0.0;
+  try {
+    nccdThreshold = double.parse(argResults['nccd-threshold']);
+  } catch (e) {
+    print(e);
+    printUsage(parser);
+    io.exit(ExitCode.InvalidOption.index);
+  }
 
   // Build model.
   model.Model graph;
@@ -160,5 +184,15 @@ void main(List<String> arguments) {
     }
   }
 
-  // TODO Add metrics thresholds.
+  // Metrics thresholds.
+  if (metrics) {
+    if (!cyclesAllowed) {
+      if (!graph.metrics.isAcyclic) {
+        io.exit(ExitCode.CyclesDetected.index);
+      }
+    }
+    if (graph.metrics.nccd > nccdThreshold) {
+      io.exit(ExitCode.MetricsThresholdExceeded.index);
+    }
+  }
 }
