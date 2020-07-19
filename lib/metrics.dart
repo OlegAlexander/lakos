@@ -33,13 +33,12 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   return dg.DirectedGraph<String>(vertexEdgeMap);
 }
 
-/// Return a map of component dependencies.
+/// Compute the component dependency of each node.
 /// The component dependency (CD) is the number of nodes a particular node depends on
 /// directly or transitively, including itself.
-Map<String, int> computeCDMap(dg.DirectedGraph<String> graph) {
-  var cdMap = <String, int>{};
+void computeNodeCDs(dg.DirectedGraph<String> graph, m.Model model) {
   for (var v in graph.vertices) {
-    cdMap[v.data] = 0;
+    model.nodes[v.data].cd = 0;
   }
   for (var v in graph.vertices) {
     var nodes = [v];
@@ -48,21 +47,23 @@ Map<String, int> computeCDMap(dg.DirectedGraph<String> graph) {
       var next = nodes.removeAt(0);
       // Only visit each node once
       if (!visited.contains(next.data)) {
-        cdMap[v.data] += 1;
+        model.nodes[v.data].cd += 1;
         visited.add(next.data);
         nodes.addAll(graph.edges(next));
       }
     }
   }
-  return cdMap;
 }
 
 /// Return the cumulative component dependency, which is the sum of all component dependencies.
 /// The CCD can be interpreted as the total "coupling" of the graph.
 /// Lower is better.
-int computeCCD(Map<String, int> cdMap) {
-  var sumOfAllCDs = cdMap.values.fold(0, (prev, curr) => prev + curr);
-  return sumOfAllCDs;
+int computeCCD(m.Model model) {
+  var ccd = 0;
+  for (var node in model.nodes.values) {
+    ccd += node.cd;
+  }
+  return ccd;
 }
 
 /// Return the average component dependency.
@@ -104,8 +105,8 @@ extension NumberRounding on num {
 
 m.Metrics computeAllMetrics(m.Model model) {
   var digraph = convertModelToDigraph(model);
-  var cdMap = computeCDMap(digraph);
-  var ccd = computeCCD(cdMap);
+  computeNodeCDs(digraph, model);
+  var ccd = computeCCD(model);
   var numNodes = digraph.vertices.length;
   var metrics = m.Metrics(
       digraph.isAcyclic(),

@@ -47,7 +47,7 @@ enum OutputFormat { Dot, Json }
 
 /// Dart libraries are represented as nodes in a directed graph.
 class Node {
-  // TODO Consider adding cd, sloc, inDegree, outDegree, isOrphan fields here.
+  // TODO Consider adding more fields like sloc, inDegree, outDegree, and isOrphan.
   // Maybe isOrphan can be rendered with a bold circle.
   String id;
   String label;
@@ -57,6 +57,7 @@ class Node {
 
   @override
   String toString() {
+    // TODO Add --node-metrics flag
     return '"$id" [label="$label"];';
   }
 

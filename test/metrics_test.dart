@@ -44,9 +44,8 @@ void main() {
     print(digraph.edgeMap);
     print('isAcyclic: ${digraph.isAcyclic()}');
     print('levels: ${digraph.localSources()}');
-    var cdMap = computeCDMap(digraph);
-    print('cdMap: $cdMap');
-    var ccd = computeCCD(cdMap);
+    computeNodeCDs(digraph, g);
+    var ccd = computeCCD(g);
     print('ccd: $ccd');
     print('acd: ${computeACD(ccd, digraph.vertices.length)}');
     print('acdp: ${computeACDP(ccd, digraph.vertices.length)}%');
