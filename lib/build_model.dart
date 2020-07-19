@@ -98,8 +98,9 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
   return treeSubgraphs;
 }
 
-List<model.Node> getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
-  var nodes = <model.Node>[];
+Map<String, model.Node> getDartFiles(
+    io.Directory rootDir, List<String> ignoreDirs) {
+  var nodes = <String, model.Node>{};
   var dirs = [rootDir];
 
   while (dirs.isNotEmpty) {
@@ -116,9 +117,10 @@ List<model.Node> getDartFiles(io.Directory rootDir, List<String> ignoreDirs) {
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      nodes.add(model.Node(
-          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
-          path.basenameWithoutExtension(file.path)));
+      var id =
+          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/');
+      var label = path.basenameWithoutExtension(file.path);
+      nodes[id] = model.Node(id, label);
     }
 
     // Recurse breadth first

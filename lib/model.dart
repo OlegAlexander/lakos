@@ -4,7 +4,7 @@ import 'dart:convert' as convert;
 class Model {
   String rootDir;
   String rankdir;
-  List<Node> nodes = [];
+  Map<String, Node> nodes = {};
   List<Subgraph> subgraphs = [];
   List<Edge> edges = [];
   Metrics metrics;
@@ -17,7 +17,7 @@ class Model {
 digraph "" {
 style=rounded;
 rankdir=$rankdir;
-${nodes.join('\n')}
+${nodes.values.join('\n')}
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
 ${metrics ?? ''}
@@ -51,6 +51,7 @@ class Node {
   // Maybe isOrphan can be rendered with a bold circle.
   String id;
   String label;
+  int cd;
 
   Node(this.id, this.label);
 
@@ -59,7 +60,7 @@ class Node {
     return '"$id" [label="$label"];';
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'label': label};
+  Map<String, dynamic> toJson() => {'id': id, 'label': label, 'cd': cd};
 }
 
 enum Directive { Import, Export }
@@ -111,7 +112,6 @@ ${subgraphs.join('\n')}
 
 /// Store global metrics here.
 class Metrics {
-  Map<String, int> cdMap;
   bool isAcyclic;
   int numNodes;
   int numLevels;
@@ -121,7 +121,6 @@ class Metrics {
   double nccd;
 
   Metrics(
-    this.cdMap,
     this.isAcyclic,
     this.numNodes,
     this.ccd,
@@ -136,7 +135,6 @@ class Metrics {
   }
 
   Map<String, dynamic> toJson() => {
-        'cdMap': cdMap,
         'isAcyclic': isAcyclic,
         'numNodes': numNodes,
         'ccd': ccd,

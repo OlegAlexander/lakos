@@ -6,11 +6,11 @@ import 'package:lakos/metrics.dart';
 void main() {
   test('convertModelToDigraph', () {
     var g = Model();
-    g.nodes.add(Node('a', 'a'));
-    g.nodes.add(Node('b', 'b'));
-    g.nodes.add(Node('c', 'c'));
-    g.nodes.add(Node('d', 'd'));
-    g.nodes.add(Node('e', 'e')); // Orphan
+    g.nodes['a'] = Node('a', 'a');
+    g.nodes['b'] = Node('b', 'b');
+    g.nodes['c'] = Node('c', 'c');
+    g.nodes['d'] = Node('d', 'd');
+    g.nodes['e'] = Node('e', 'e'); // Orphan
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c'));
     g.edges.add(Edge('b', 'd'));
@@ -29,11 +29,11 @@ void main() {
 
   test('computeCCD', () {
     var g = Model();
-    g.nodes.add(Node('a', 'a'));
-    g.nodes.add(Node('b', 'b'));
-    g.nodes.add(Node('c', 'c'));
-    g.nodes.add(Node('d', 'd'));
-    g.nodes.add(Node('e', 'e')); // Orphan
+    g.nodes['a'] = Node('a', 'a');
+    g.nodes['b'] = Node('b', 'b');
+    g.nodes['c'] = Node('c', 'c');
+    g.nodes['d'] = Node('d', 'd');
+    g.nodes['e'] = Node('e', 'e'); // Orphan
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c'));
     g.edges.add(Edge('b', 'd'));
@@ -63,11 +63,11 @@ void main() {
 
   test('computeAllMetrics', () {
     var g = Model();
-    g.nodes.add(Node('a', 'a'));
-    g.nodes.add(Node('b', 'b'));
-    g.nodes.add(Node('c', 'c'));
-    g.nodes.add(Node('d', 'd'));
-    // g.nodes.add(Node('e', 'e')); // Orphan
+    g.nodes['a'] = Node('a', 'a');
+    g.nodes['b'] = Node('b', 'b');
+    g.nodes['c'] = Node('c', 'c');
+    g.nodes['d'] = Node('d', 'd');
+    // g.nodes['e'] = Node('e', 'e'); // Orphan
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c'));
     g.edges.add(Edge('b', 'd'));

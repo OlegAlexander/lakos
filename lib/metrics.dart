@@ -7,7 +7,7 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   var edgeMap = <String, List<String>>{};
 
   // Add nodes
-  for (var node in model.nodes) {
+  for (var node in model.nodes.values) {
     if (!edgeMap.containsKey(node.id)) {
       edgeMap[node.id] = [];
     }
@@ -108,7 +108,6 @@ m.Metrics computeAllMetrics(m.Model model) {
   var ccd = computeCCD(cdMap);
   var numNodes = digraph.vertices.length;
   var metrics = m.Metrics(
-      cdMap,
       digraph.isAcyclic(),
       numNodes,
       ccd,

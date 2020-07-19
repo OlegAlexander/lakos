@@ -9,9 +9,9 @@ String prettyJson(jsonObject) {
 void main() {
   test('Digraph simple', () {
     var g = Model();
-    g.nodes.add(Node('a', 'a'));
-    g.nodes.add(Node('b', 'b'));
-    g.nodes.add(Node('c', 'c'));
+    g.nodes['a'] = Node('a', 'a');
+    g.nodes['b'] = Node('b', 'b');
+    g.nodes['c'] = Node('c', 'c');
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
@@ -29,9 +29,9 @@ digraph "" {
 
     // rankdir LR
     g = Model(rankdir: 'LR');
-    g.nodes.add(Node('a', 'a'));
-    g.nodes.add(Node('b', 'b'));
-    g.nodes.add(Node('c', 'c'));
+    g.nodes['a'] = Node('a', 'a');
+    g.nodes['b'] = Node('b', 'b');
+    g.nodes['c'] = Node('c', 'c');
     g.edges.add(Edge('a', 'b'));
     g.edges.add(Edge('a', 'c', directive: Directive.Export));
     print(g);
@@ -50,20 +50,23 @@ digraph "" {
     expect(prettyJson(g), '''
 {
   "rootDir": ".",
-  "nodes": [
-    {
+  "nodes": {
+    "a": {
       "id": "a",
-      "label": "a"
+      "label": "a",
+      "cd": null
     },
-    {
+    "b": {
       "id": "b",
-      "label": "b"
+      "label": "b",
+      "cd": null
     },
-    {
+    "c": {
       "id": "c",
-      "label": "c"
+      "label": "c",
+      "cd": null
     }
-  ],
+  },
   "subgraphs": [],
   "edges": [
     {
@@ -166,7 +169,7 @@ digraph "" {
     expect(prettyJson(g), '''
 {
   "rootDir": ".",
-  "nodes": [],
+  "nodes": {},
   "subgraphs": [
     {
       "id": "zero",
@@ -208,7 +211,7 @@ digraph "" {
     print(node);
     expect(node.toString(), '"a" [label="a"];');
     print(jsonEncode(node));
-    expect(jsonEncode(node), '{"id":"a","label":"a"}');
+    expect(jsonEncode(node), '{"id":"a","label":"a","cd":null}');
   });
 
   test('Edge', () {
@@ -223,12 +226,12 @@ digraph "" {
   });
 
   test('Metrics', () {
-    var metrics = Metrics({}, true, 10, 40, 12.3, 2.5, 1.2);
+    var metrics = Metrics(true, 10, 40, 12.3, 2.5, 1.2);
     print(metrics);
     expect(metrics.toString(),
         '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l ccd: 40 \\l acd: 12.3 \\l acdp: 2.5% \\l nccd: 1.2 \\l", shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"cdMap":{},"isAcyclic":true,"numNodes":10,"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2}');
+        '{"isAcyclic":true,"numNodes":10,"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2}');
   });
 }
