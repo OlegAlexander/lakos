@@ -212,6 +212,10 @@ digraph "" {
     expect(node.toString(), '"a" [label="a"];');
     print(jsonEncode(node));
     expect(jsonEncode(node), '{"id":"a","label":"a","cd":null}');
+
+    node = Node('a', 'a', showNodeMetrics: true);
+    print(node);
+    expect(node.toString(), '"a" [label="a\\ncd: null"];');
   });
 
   test('Edge', () {

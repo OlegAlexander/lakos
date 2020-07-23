@@ -67,14 +67,16 @@ void main(List<String> arguments) {
         valueHelp: 'file',
         defaultsTo: outputDefault)
     ..addFlag('tree',
-        abbr: 't',
         help: 'Show directory structure as subgraphs.',
         defaultsTo: true,
         negatable: true)
     ..addFlag('metrics',
-        abbr: 'm',
-        help: 'Compute and show metrics.',
+        help: 'Compute and show global metrics.',
         defaultsTo: true,
+        negatable: true)
+    ..addFlag('node-metrics',
+        help: 'Show node metrics. Only works when --metrics is true.',
+        defaultsTo: false,
         negatable: true)
     ..addMultiOption('ignore-dirs',
         abbr: 'i',
@@ -102,13 +104,11 @@ void main(List<String> arguments) {
         },
         defaultsTo: 'TB')
     ..addFlag('cycles-allowed',
-        abbr: 'c',
         help:
             'Fail with a non-zero exit code if dependency cycles are detected. Only works when --metrics is true.',
         defaultsTo: false,
         negatable: true)
     ..addOption('nccd-threshold',
-        abbr: 'n',
         help:
             'Fail with a non-zero exit code if the NCCD exceeds the threshold. The threshold must be a positive double. Only works when --metrics is true.',
         valueHelp: defaultNccdThreshold,
@@ -137,6 +137,7 @@ void main(List<String> arguments) {
   var output = argResults['output'] as String;
   var tree = argResults['tree'] as bool;
   var metrics = argResults['metrics'] as bool;
+  var nodeMetrics = argResults['node-metrics'] as bool;
   var ignoreDirs = argResults['ignore-dirs'] as List<String>;
   var layout = argResults['layout'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
@@ -156,6 +157,7 @@ void main(List<String> arguments) {
         ignoreDirs: ignoreDirs,
         showTree: tree,
         showMetrics: metrics,
+        showNodeMetrics: nodeMetrics,
         layout: layout);
   } catch (e) {
     print(e);

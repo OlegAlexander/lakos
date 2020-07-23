@@ -52,13 +52,13 @@ class Node {
   String id;
   String label;
   int cd;
+  bool showNodeMetrics;
 
-  Node(this.id, this.label);
+  Node(this.id, this.label, {this.showNodeMetrics = false});
 
   @override
   String toString() {
-    // TODO Add --node-metrics flag
-    return '"$id" [label="$label"];';
+    return '"$id" [label="$label${showNodeMetrics ? '\\ncd: $cd' : ''}"];';
   }
 
   Map<String, dynamic> toJson() => {'id': id, 'label': label, 'cd': cd};
@@ -120,6 +120,7 @@ class Metrics {
   double acd;
   double acdp;
   double nccd;
+  // TODO Add avgSLOC with min and max thresholds.
 
   Metrics(
     this.isAcyclic,

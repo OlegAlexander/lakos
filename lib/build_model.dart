@@ -99,7 +99,7 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
 }
 
 Map<String, model.Node> getDartFiles(
-    io.Directory rootDir, List<String> ignoreDirs) {
+    io.Directory rootDir, List<String> ignoreDirs, bool showNodeMetrics) {
   var nodes = <String, model.Node>{};
   var dirs = [rootDir];
 
@@ -120,7 +120,7 @@ Map<String, model.Node> getDartFiles(
       var id =
           file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/');
       var label = path.basenameWithoutExtension(file.path);
-      nodes[id] = model.Node(id, label);
+      nodes[id] = model.Node(id, label, showNodeMetrics: showNodeMetrics);
     }
 
     // Recurse breadth first
@@ -198,6 +198,7 @@ model.Model buildModel(io.Directory rootDir,
     {List<String> ignoreDirs = const ['.git', '.dart_tool'],
     bool showTree = true,
     bool showMetrics = true,
+    bool showNodeMetrics = false,
     String layout = 'TB'}) {
   // Convert relative to absolute path.
   if (!rootDir.isAbsolute) {
@@ -212,7 +213,8 @@ model.Model buildModel(io.Directory rootDir,
 
   var graph =
       model.Model(rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
-        ..nodes = getDartFiles(rootDir, ignoreDirs);
+        ..nodes =
+            getDartFiles(rootDir, ignoreDirs, showNodeMetrics && showMetrics);
   if (showTree) {
     graph.subgraphs = getDirTree(rootDir, ignoreDirs);
   }
