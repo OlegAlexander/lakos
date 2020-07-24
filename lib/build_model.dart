@@ -72,9 +72,8 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      currentSubgraph.nodes.add(file.path
-          .replaceFirst(rootDir.parent.path, '')
-          .replaceAll('\\', '/'));
+      currentSubgraph.nodes
+          .add(file.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/'));
     }
 
     // Recurse breadth first
@@ -117,8 +116,7 @@ Map<String, model.Node> getDartFiles(
 
     // Add dart files as nodes
     for (var file in filesOnly) {
-      var id =
-          file.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/');
+      var id = file.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/');
       var label = path.basenameWithoutExtension(file.path);
       nodes[id] = model.Node(id, label, showNodeMetrics: showNodeMetrics);
     }
@@ -138,9 +136,8 @@ List<model.Edge> getEdges(io.Directory rootDir, io.File pubspecYaml) {
       .where((file) => file.path.endsWith('.dart'));
 
   for (var dartFile in dartFiles) {
-    var from = dartFile.path
-        .replaceFirst(rootDir.parent.path, '')
-        .replaceAll('\\', '/');
+    var from =
+        dartFile.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/');
 
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync();
@@ -167,7 +164,7 @@ List<model.Edge> getEdges(io.Directory rootDir, io.File pubspecYaml) {
             resolvedFile.existsSync() &&
             path.isWithin(rootDir.path, resolvedFile.path)) {
           var to = resolvedFile.path
-              .replaceFirst(rootDir.parent.path, '')
+              .replaceFirst(rootDir.path, '')
               .replaceAll('\\', '/');
           // No self loops
           if (from != to) {
@@ -194,6 +191,7 @@ class PubspecYamlNotFoundException implements Exception {
 /// Returns the Model object.
 /// Throws FileSystemException if rootDir doesn't exist.
 /// Throws PubspecYamlNotFoundException if pubspec.yaml can't be found in or above the rootDir.
+// TODO Consider exporting this function and Metrics in lib and hiding everything underneath in lib/src.
 model.Model buildModel(io.Directory rootDir,
     {List<String> ignoreDirs = const ['.git', '.dart_tool'],
     bool showTree = true,

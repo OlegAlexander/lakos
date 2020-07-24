@@ -39,6 +39,7 @@ Examples:
 Notes:
 
   * Exports are drawn with a dashed edge.
+  * Orphan nodes are bold.
   * Only 'import' and 'export' directives are supported; 'library' and 'part' are not.
 ''';
 

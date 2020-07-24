@@ -47,21 +47,31 @@ enum OutputFormat { Dot, Json }
 
 /// Dart libraries are represented as nodes in a directed graph.
 class Node {
-  // TODO Consider adding more fields like sloc, inDegree, outDegree, and isOrphan.
-  // Maybe isOrphan can be rendered with a bold circle.
   String id;
   String label;
   int cd;
+  int inDegree;
+  int outDegree;
+  double instability;
+  int sloc;
   bool showNodeMetrics;
 
   Node(this.id, this.label, {this.showNodeMetrics = false});
 
   @override
   String toString() {
-    return '"$id" [label="$label${showNodeMetrics ? '\\ncd: $cd' : ''}"];';
+    return '"$id" [label="$label${showNodeMetrics ? ' \\n cd: $cd \\n inDegree: $inDegree \\n outDegree: $outDegree \\n instability: $instability \\n sloc: $sloc' : ''}"${inDegree == 0 && outDegree == 0 ? ', style=bold' : ''}];';
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'label': label, 'cd': cd};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'cd': cd,
+        'inDegree': inDegree,
+        'outDegree': outDegree,
+        'instability': instability,
+        'sloc': sloc
+      };
 }
 
 enum Directive { Import, Export }
@@ -115,34 +125,33 @@ ${subgraphs.join('\n')}
 class Metrics {
   bool isAcyclic;
   int numNodes;
-  int numLevels;
+  List<String> orphans = [];
   int ccd;
   double acd;
   double acdp;
   double nccd;
-  // TODO Add avgSLOC with min and max thresholds.
+  int totalSloc;
+  double avgSloc;
+  // TODO Maybe add min, max, median, and standard deviation sloc?
 
-  Metrics(
-    this.isAcyclic,
-    this.numNodes,
-    this.ccd,
-    this.acd,
-    this.acdp,
-    this.nccd,
-  );
+  Metrics(this.isAcyclic, this.numNodes, this.orphans, this.ccd, this.acd,
+      this.acdp, this.nccd, this.totalSloc, this.avgSloc);
 
   @override
   String toString() {
-    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l ccd: $ccd \\l acd: $acd \\l acdp: $acdp% \\l nccd: $nccd \\l", shape=rect];';
+    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l acdp: $acdp% \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l", shape=rect];';
   }
 
   Map<String, dynamic> toJson() => {
         'isAcyclic': isAcyclic,
         'numNodes': numNodes,
+        'orphans': orphans,
         'ccd': ccd,
         'acd': acd,
         'acdp': acdp,
         'nccd': nccd,
+        'totalSloc': totalSloc,
+        'avgSloc': avgSloc
       };
 }
 

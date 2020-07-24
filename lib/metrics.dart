@@ -1,6 +1,9 @@
+import 'dart:math';
+import 'dart:io';
 import 'package:lakos/model.dart' as m;
 import 'package:directed_graph/directed_graph.dart' as dg;
-import 'dart:math';
+
+const precision = 2;
 
 /// Convert model to digraph.
 dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
@@ -55,6 +58,26 @@ void computeNodeCDs(dg.DirectedGraph<String> graph, m.Model model) {
   }
 }
 
+/// Compute node inDegree, outDegree, isOrphan, and instability.
+/// inDegree is the number of nodes that depend on this node.
+/// outDegree is the number of nodes this node depends on.
+/// Instability is a node metric by Robert C. Martin related to the Stable-Dependencies Principle:
+/// Depend in the direction of stability.
+/// Instability = outDegree / (inDegree + outDegree)
+/// In general, node instability should decrease in the direction of dependency.
+/// In other words, lower level nodes should be more stable and more reusable than higher level nodes.
+void computeNodeDegreeMetrics(dg.DirectedGraph<String> graph, m.Model model) {
+  for (var v in graph.vertices) {
+    model.nodes[v.data].inDegree = graph.inDegree(v);
+    model.nodes[v.data].outDegree = graph.outDegree(v);
+    if (model.nodes[v.data].inDegree + model.nodes[v.data].outDegree > 0) {
+      model.nodes[v.data].instability = (model.nodes[v.data].outDegree /
+              (model.nodes[v.data].inDegree + model.nodes[v.data].outDegree))
+          .toPrecision(precision);
+    }
+  }
+}
+
 /// Return the cumulative component dependency, which is the sum of all component dependencies.
 /// The CCD can be interpreted as the total "coupling" of the graph.
 /// Lower is better.
@@ -64,6 +87,17 @@ int computeCCD(m.Model model) {
     ccd += node.cd;
   }
   return ccd;
+}
+
+/// A node that has inDegree and outDegree of 0 is an orphan.
+List<String> computeOrphans(m.Model model) {
+  var orphans = <String>[];
+  for (var node in model.nodes.values) {
+    if (node.inDegree == 0 && node.outDegree == 0) {
+      orphans.add(node.id);
+    }
+  }
+  return orphans;
 }
 
 /// Return the average component dependency.
@@ -95,6 +129,57 @@ double binaryTreeCCD(int n) => (n + 1) * log2(n + 1) - n;
 /// Lower is better.
 double computeNCCD(int ccd, int numNodes) => ccd / binaryTreeCCD(numNodes);
 
+/// Return the number of lines of code ignoring comments and blank lines.
+/// This is a naive SLOC counter. It doesn't deal correctly with
+/// comments inside multi-line strings
+/// or multi-line comments in the middle of code.
+int countSloc(File dartFile) {
+  var lines = dartFile.readAsLinesSync();
+  var sloc = 0;
+  var multilineComment = false;
+  for (var line in lines) {
+    line = line.trim();
+    if (line.startsWith('//')) {
+      continue;
+    }
+    if (line == '') {
+      continue;
+    }
+    if (line.startsWith('/*')) {
+      multilineComment = true;
+      continue;
+    }
+    if (multilineComment) {
+      if (line.endsWith('*/')) {
+        multilineComment = false;
+      }
+      continue;
+    }
+    sloc += 1;
+  }
+  return sloc;
+}
+
+void computeNodeSlocs(m.Model model) {
+  for (var node in model.nodes.values) {
+    try {
+      node.sloc = countSloc(File('${model.rootDir}${node.id}'));
+    } catch (e) {
+      node.sloc = null;
+    }
+  }
+}
+
+int computeTotalSloc(m.Model model) {
+  var total = 0;
+  for (var node in model.nodes.values) {
+    if (node.sloc != null) {
+      total += node.sloc;
+    }
+  }
+  return total;
+}
+
 /// Round to precision.
 /// Source: https://stackoverflow.com/a/32205216
 extension NumberRounding on num {
@@ -106,14 +191,22 @@ extension NumberRounding on num {
 m.Metrics computeAllMetrics(m.Model model) {
   var digraph = convertModelToDigraph(model);
   computeNodeCDs(digraph, model);
+  computeNodeDegreeMetrics(digraph, model);
+  computeNodeSlocs(model);
   var ccd = computeCCD(model);
+  var orphans = computeOrphans(model);
   var numNodes = digraph.vertices.length;
+  var totalSloc = computeTotalSloc(model);
+  var avgSloc = totalSloc / numNodes;
   var metrics = m.Metrics(
       digraph.isAcyclic(),
       numNodes,
+      orphans,
       ccd,
-      computeACD(ccd, numNodes).toPrecision(2),
-      computeACDP(ccd, numNodes).toPrecision(2),
-      computeNCCD(ccd, numNodes).toPrecision(2));
+      computeACD(ccd, numNodes).toPrecision(precision),
+      computeACDP(ccd, numNodes).toPrecision(precision),
+      computeNCCD(ccd, numNodes).toPrecision(precision),
+      totalSloc,
+      avgSloc.toPrecision(precision));
   return metrics;
 }
