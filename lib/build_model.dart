@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 import 'package:path/path.dart' as path;
+import 'package:glob/glob.dart' as glob;
 import 'package:lakos/model.dart' as model;
 import 'package:lakos/resolve_imports.dart' as resolve_imports;
 import 'package:lakos/metrics.dart' as metrics;
@@ -27,7 +28,7 @@ String parseImportLine(String line) {
   return importPath;
 }
 
-List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
+List<model.Subgraph> getDirTree(io.Directory rootDir, String ignore) {
   var dirs = [rootDir];
   var subgraphs = [
     model.Subgraph(
@@ -41,6 +42,10 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
 
   var leaves = <model.Subgraph>[];
 
+  var dartFilesGlob = glob.Glob('*.dart');
+  var ignoreGlob =
+      glob.Glob(ignore, context: path.Context(current: rootDir.path));
+
   // Recursively build the subgraph tree.
   // The trick is to keep track of two lists (dirs and subgraphs)
   // in the while loop at the same time.
@@ -48,14 +53,14 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
     var currentDir = dirs.removeAt(0);
     var currentSubgraph = subgraphs.removeAt(0);
 
-    var currentDirItems =
-        currentDir.listSync(recursive: false, followLinks: false);
-    var dirsOnly = currentDirItems
+    var dirsOnly = currentDir
+        .listSync(recursive: false, followLinks: false)
         .whereType<io.Directory>()
-        .where((dir) => !ignoreDirs.contains(path.basename(dir.path)));
-    var filesOnly = currentDirItems
+        .where((dir) => !ignoreGlob.matches(dir.path));
+    var filesOnly = dartFilesGlob
+        .listSync(root: currentDir.path, followLinks: false)
         .whereType<io.File>()
-        .where((file) => file.path.endsWith('.dart'));
+        .where((file) => !ignoreGlob.matches(file.path));
 
     if (dirsOnly.isEmpty) {
       leaves.add(currentSubgraph);
@@ -97,43 +102,36 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, List<String> ignoreDirs) {
   return treeSubgraphs;
 }
 
-Map<String, model.Node> getDartFiles(
-    io.Directory rootDir, List<String> ignoreDirs, bool showNodeMetrics) {
+Iterable<io.File> _getDartFiles(io.Directory rootDir, String ignore) {
+  var dartFilesGlob = glob.Glob('**.dart');
+  var ignoreGlob =
+      glob.Glob(ignore, context: path.Context(current: rootDir.path));
+  var dartFiles = dartFilesGlob
+      .listSync(root: rootDir.path, followLinks: false)
+      .whereType<io.File>()
+      .where((file) => !ignoreGlob.matches(file.path));
+  return dartFiles;
+}
+
+Map<String, model.Node> getDartFileNodes(
+    io.Directory rootDir, String ignore, bool showNodeMetrics) {
+  var dartFiles = _getDartFiles(rootDir, ignore);
+
+  // Add dart files as nodes
   var nodes = <String, model.Node>{};
-  var dirs = [rootDir];
-
-  while (dirs.isNotEmpty) {
-    var currentDir = dirs.removeAt(0);
-
-    var currentDirItems =
-        currentDir.listSync(recursive: false, followLinks: false);
-    var dirsOnly = currentDirItems
-        .whereType<io.Directory>()
-        .where((dir) => !ignoreDirs.contains(path.basename(dir.path)));
-    var filesOnly = currentDirItems
-        .whereType<io.File>()
-        .where((file) => file.path.endsWith('.dart'));
-
-    // Add dart files as nodes
-    for (var file in filesOnly) {
-      var id = file.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/');
-      var label = path.basenameWithoutExtension(file.path);
-      nodes[id] = model.Node(id, label, showNodeMetrics: showNodeMetrics);
-    }
-
-    // Recurse breadth first
-    dirs.addAll(dirsOnly);
+  for (var file in dartFiles) {
+    var id = file.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/');
+    var label = path.basenameWithoutExtension(file.path);
+    nodes[id] = model.Node(id, label, showNodeMetrics: showNodeMetrics);
   }
-
   return nodes;
 }
 
-List<model.Edge> getEdges(io.Directory rootDir, io.File pubspecYaml) {
+List<model.Edge> getEdges(
+    io.Directory rootDir, String ignore, io.File pubspecYaml) {
   var edges = <model.Edge>[];
-  var entities = rootDir.listSync(recursive: true, followLinks: false);
-  var dartFiles = entities
-      .whereType<io.File>()
-      .where((file) => file.path.endsWith('.dart'));
+
+  var dartFiles = _getDartFiles(rootDir, ignore);
 
   for (var dartFile in dartFiles) {
     var from =
@@ -193,7 +191,7 @@ class PubspecYamlNotFoundException implements Exception {
 /// Throws PubspecYamlNotFoundException if pubspec.yaml can't be found in or above the rootDir.
 // TODO Consider exporting this function and Metrics in lib and hiding everything underneath in lib/src.
 model.Model buildModel(io.Directory rootDir,
-    {List<String> ignoreDirs = const ['.git', '.dart_tool'],
+    {String ignoreGlob = '!**',
     bool showTree = true,
     bool showMetrics = true,
     bool showNodeMetrics = false,
@@ -209,14 +207,17 @@ model.Model buildModel(io.Directory rootDir,
         'pubspec.yaml not found in or above the root directory.');
   }
 
-  var graph =
-      model.Model(rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
-        ..nodes =
-            getDartFiles(rootDir, ignoreDirs, showNodeMetrics && showMetrics);
+  var graph = model.Model(
+      rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
+    ..nodes =
+        getDartFileNodes(rootDir, ignoreGlob, showNodeMetrics && showMetrics);
+
   if (showTree) {
-    graph.subgraphs = getDirTree(rootDir, ignoreDirs);
+    graph.subgraphs = getDirTree(rootDir, ignoreGlob);
   }
-  graph.edges.addAll(getEdges(rootDir, pubspecYaml));
+
+  graph.edges.addAll(getEdges(rootDir, ignoreGlob, pubspecYaml));
+
   if (showMetrics) {
     graph.metrics = metrics.computeAllMetrics(graph);
   }

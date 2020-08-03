@@ -59,13 +59,13 @@ void main(List<String> arguments) {
     ..addOption('format',
         abbr: 'f',
         help: 'Output format.',
-        valueHelp: 'format',
+        valueHelp: 'FORMAT',
         allowed: ['dot', 'json'],
         defaultsTo: 'dot')
     ..addOption('output',
         abbr: 'o',
         help: 'Save output to a file instead of printing it.',
-        valueHelp: 'file',
+        valueHelp: 'FILE',
         defaultsTo: outputDefault)
     ..addFlag('tree',
         help: 'Show directory structure as subgraphs.',
@@ -79,19 +79,11 @@ void main(List<String> arguments) {
         help: 'Show node metrics. Only works when --metrics is true.',
         defaultsTo: false,
         negatable: true)
-    ..addMultiOption('ignore-dirs',
+    ..addOption('ignore',
         abbr: 'i',
-        help: 'A comma-separated list of directories to ignore.',
-        valueHelp: '.git,.dart_tool',
-        defaultsTo: ['.git', '.dart_tool'])
-    // TODO Should we always start in the package root?
-    // Or are we allowed to start deeper in the package?
-    // If you always start at the package root, then ignore-dirs may be test, bin, etc.
-    // Or it can be glob paths relative to the package root.
-    // .git, .dart_tool should be implied.
-    // Otherwise, if you can start deeper in the package, then ignore-dirs may be
-    // dirs deeper in the package and you may even have ignore-files
-    // TODO or just a generic ignore flag supporting glob paths.
+        help: 'Exclude files and directories with a glob pattern.',
+        valueHelp: 'GLOB',
+        defaultsTo: '!**')
     ..addOption('layout',
         abbr: 'l',
         help: 'Graph layout direction. AKA "rankdir" in Graphviz.',
@@ -139,9 +131,10 @@ void main(List<String> arguments) {
   var tree = argResults['tree'] as bool;
   var metrics = argResults['metrics'] as bool;
   var nodeMetrics = argResults['node-metrics'] as bool;
-  var ignoreDirs = argResults['ignore-dirs'] as List<String>;
+  var ignore = argResults['ignore'] as String;
   var layout = argResults['layout'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
+  // TODO Consider removing the nccdThreshold
   var nccdThreshold = 0.0;
   try {
     nccdThreshold = double.parse(argResults['nccd-threshold']);
@@ -155,7 +148,7 @@ void main(List<String> arguments) {
   model.Model graph;
   try {
     graph = build_model.buildModel(rootDir,
-        ignoreDirs: ignoreDirs,
+        ignoreGlob: ignore,
         showTree: tree,
         showMetrics: metrics,
         showNodeMetrics: nodeMetrics,
