@@ -199,7 +199,7 @@ Metrics computeAllMetrics(Model model) {
   var totalSloc = computeTotalSloc(model);
   var avgSloc = totalSloc / numNodes;
   var metrics = Metrics(
-      digraph.isAcyclic(),
+      digraph.isAcyclic,
       numNodes,
       orphans,
       ccd,

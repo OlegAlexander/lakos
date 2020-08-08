@@ -105,13 +105,12 @@ List<Subgraph> getDirTree(Directory rootDir, String ignore) {
   return treeSubgraphs;
 }
 
-Iterable<File> _getDartFiles(Directory rootDir, String ignore) {
+Iterable<File> getDartFiles(Directory rootDir, String ignore) {
   var dartFilesGlob = Glob('**.dart');
   var ignoreGlob = Glob(ignore, context: Context(current: rootDir.path));
   var alwaysIgnoreGlob =
       Glob(alwaysIgnore, context: Context(current: rootDir.path));
 
-  // TODO Filtering after the fact might be slow. Consider doing your own recursion using alwaysIgnoreGlob.
   var dartFiles = dartFilesGlob
       .listSync(root: rootDir.path, followLinks: false)
       .whereType<File>()
@@ -122,7 +121,7 @@ Iterable<File> _getDartFiles(Directory rootDir, String ignore) {
 
 Map<String, Node> getDartFileNodes(
     Directory rootDir, String ignore, bool showNodeMetrics) {
-  var dartFiles = _getDartFiles(rootDir, ignore);
+  var dartFiles = getDartFiles(rootDir, ignore);
 
   // Add dart files as nodes
   var nodes = <String, Node>{};
@@ -137,7 +136,7 @@ Map<String, Node> getDartFileNodes(
 List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
   var edges = <Edge>[];
 
-  var dartFiles = _getDartFiles(rootDir, ignore);
+  var dartFiles = getDartFiles(rootDir, ignore);
 
   for (var dartFile in dartFiles) {
     var from =

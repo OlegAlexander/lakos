@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:lakos/src/build_model.dart';
 import 'package:string_scanner/string_scanner.dart';
-import 'get_package_location.dart';
 
 void main() {
   test('buildModel rootDir does not exist', () {

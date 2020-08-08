@@ -2,7 +2,6 @@ import 'package:test/test.dart';
 import 'package:lakos/src/model.dart';
 import 'package:lakos/src/metrics.dart';
 
-// TODO Add more tests/expects.
 void main() {
   test('convertModelToDigraph', () {
     var g = Model();
@@ -20,8 +19,8 @@ void main() {
     var digraph = convertModelToDigraph(g);
     print(digraph);
     print(digraph.edgeMap);
-    print(digraph.isAcyclic());
-    print(digraph.localSources()); // Levels
+    print(digraph.isAcyclic);
+    print(digraph.localSources); // Levels
     for (var v in digraph.vertices) {
       print('$v -> ${digraph.edges(v)}');
     }
@@ -42,8 +41,8 @@ void main() {
     print(g);
     var digraph = convertModelToDigraph(g);
     print(digraph.edgeMap);
-    print('isAcyclic: ${digraph.isAcyclic()}');
-    print('levels: ${digraph.localSources()}');
+    print('isAcyclic: ${digraph.isAcyclic}');
+    print('levels: ${digraph.localSources}');
     computeNodeCDs(digraph, g);
     var ccd = computeCCD(g);
     print('ccd: $ccd');

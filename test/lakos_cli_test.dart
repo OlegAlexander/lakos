@@ -31,7 +31,7 @@ String runLakosDot(String rootDir, String outDir, String dotFilename) {
 }
 
 void main() {
-  Directory('dot_images').createSync();
+  Directory(outDir).createSync();
 
   test('Invalid option', () {
     var result = Process.runSync('dart', ['bin/lakos.dart', '--invalid']);
@@ -50,7 +50,7 @@ void main() {
   });
 
   test('json_serializable', () {
-    var packageLocation = getPackageLocation('json_serializable', '3.3.0');
+    var packageLocation = getPackageLocation('json_serializable');
     print(packageLocation);
     var result = runLakosDot(
         join(packageLocation.path, 'lib'), outDir, 'json_serializable');
@@ -58,7 +58,7 @@ void main() {
   });
 
   test('test', () {
-    var packageLocation = getPackageLocation('test', '1.14.3');
+    var packageLocation = getPackageLocation('test');
     print(packageLocation);
     var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'test');
     expect(result, isNotEmpty);
@@ -72,21 +72,21 @@ void main() {
   });
 
   test('path', () {
-    var packageLocation = getPackageLocation('path', '1.7.0');
+    var packageLocation = getPackageLocation('path');
     print(packageLocation);
     var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'path');
     expect(result, isNotEmpty);
   });
 
   test('args', () {
-    var packageLocation = getPackageLocation('args', '1.6.0');
+    var packageLocation = getPackageLocation('args');
     print(packageLocation);
     var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'args');
     expect(result, isNotEmpty);
   });
 
   test('dart_code_metrics', () {
-    var packageLocation = getPackageLocation('dart_code_metrics', '1.4.0');
+    var packageLocation = getPackageLocation('dart_code_metrics');
     print(packageLocation);
     var result = runLakosDot(
         join(packageLocation.path, 'lib'), outDir, 'dart_code_metrics');
@@ -94,14 +94,14 @@ void main() {
   });
 
   test('directed_graph', () {
-    var packageLocation = getPackageLocation('directed_graph', '0.1.3');
+    var packageLocation = getPackageLocation('directed_graph');
     print(packageLocation);
     var result = runLakosDot(packageLocation.path, outDir, 'directed_graph');
     expect(result, isNotEmpty);
   });
 
   test('pub_cache', () {
-    var packageLocation = getPackageLocation('pub_cache', '0.2.3');
+    var packageLocation = getPackageLocation('pub_cache');
     print(packageLocation);
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
     expect(result, isNotEmpty);

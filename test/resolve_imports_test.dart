@@ -5,8 +5,8 @@ import 'get_package_location.dart';
 import 'package:path/path.dart';
 
 void main() {
-  final testPackage = getPackageLocation('test', '1.14.3');
-  final pathPackage = getPackageLocation('path', '1.7.0');
+  final testPackage = getPackageLocation('test');
+  final pathPackage = getPackageLocation('path');
 
   test('Resolve relative file', () {
     var thisDartFile = File(join(testPackage.path, 'lib', 'src', 'runner',
