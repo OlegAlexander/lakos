@@ -5,6 +5,8 @@ import 'package:lakos/model.dart' as model;
 import 'package:lakos/resolve_imports.dart' as resolve_imports;
 import 'package:lakos/metrics.dart' as metrics;
 
+const alwaysIgnore = '{.git**,.svn**,.hg**,.dart_tool**,doc**}';
+
 // TODO Do another pass on this function.
 // TODO Maybe move this function and similar functionality, like sloc counting, to a parse library.
 String parseImportLine(String line) {
@@ -45,6 +47,8 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, String ignore) {
   var dartFilesGlob = glob.Glob('*.dart');
   var ignoreGlob =
       glob.Glob(ignore, context: path.Context(current: rootDir.path));
+  var alwaysIgnoreGlob =
+      glob.Glob(alwaysIgnore, context: path.Context(current: rootDir.path));
 
   // Recursively build the subgraph tree.
   // The trick is to keep track of two lists (dirs and subgraphs)
@@ -56,10 +60,12 @@ List<model.Subgraph> getDirTree(io.Directory rootDir, String ignore) {
     var dirsOnly = currentDir
         .listSync(recursive: false, followLinks: false)
         .whereType<io.Directory>()
+        .where((dir) => !alwaysIgnoreGlob.matches(dir.path))
         .where((dir) => !ignoreGlob.matches(dir.path));
     var filesOnly = dartFilesGlob
         .listSync(root: currentDir.path, followLinks: false)
         .whereType<io.File>()
+        .where((file) => !alwaysIgnoreGlob.matches(file.path))
         .where((file) => !ignoreGlob.matches(file.path));
 
     if (dirsOnly.isEmpty) {
@@ -106,9 +112,14 @@ Iterable<io.File> _getDartFiles(io.Directory rootDir, String ignore) {
   var dartFilesGlob = glob.Glob('**.dart');
   var ignoreGlob =
       glob.Glob(ignore, context: path.Context(current: rootDir.path));
+  var alwaysIgnoreGlob =
+      glob.Glob(alwaysIgnore, context: path.Context(current: rootDir.path));
+
+  // TODO This might be slow. Consider doing your own recursion using alwaysIgnoreGlob.
   var dartFiles = dartFilesGlob
       .listSync(root: rootDir.path, followLinks: false)
       .whereType<io.File>()
+      .where((file) => !alwaysIgnoreGlob.matches(file.path))
       .where((file) => !ignoreGlob.matches(file.path));
   return dartFiles;
 }
