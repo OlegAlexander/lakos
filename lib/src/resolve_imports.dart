@@ -1,25 +1,26 @@
-import 'dart:io' as io;
-import 'package:path/path.dart' as path;
+import 'dart:io';
+import 'package:path/path.dart';
 
 /// Resolve one file relative to another.
-io.File resolveFile(io.File thisDartFile, String relativeFile) {
+File resolveFile(File thisDartFile, String relativeFile) {
   var thisDartFileUri = Uri.file(thisDartFile.path);
   var resolvedUri = thisDartFileUri.resolve(relativeFile);
-  return io.File.fromUri(resolvedUri);
+  return File.fromUri(resolvedUri);
 }
 
 /// Searches up the directory tree until it finds the pubspec.yaml file.
 /// Returns null if pubspec.yaml is not found.
-io.File findPubspecYaml(io.Directory currentDir) {
+File findPubspecYaml(Directory currentDir) {
   if (!currentDir.isAbsolute) {
-    currentDir = io.Directory(path.normalize(currentDir.absolute.path));
+    currentDir = Directory(normalize(currentDir.absolute.path));
   }
-  var rootDir = path.split(currentDir.path).first;
+  var rootDir = split(currentDir.path).first;
   while (currentDir.path != rootDir) {
     var currentDirItems =
         currentDir.listSync(recursive: false, followLinks: false);
-    var pubspecYaml = currentDirItems.whereType<io.File>().where(
-        (file) => path.basename(file.path).toLowerCase() == 'pubspec.yaml');
+    var pubspecYaml = currentDirItems
+        .whereType<File>()
+        .where((file) => basename(file.path).toLowerCase() == 'pubspec.yaml');
     if (pubspecYaml.length == 1) {
       return pubspecYaml.first;
     } else {
@@ -30,11 +31,10 @@ io.File findPubspecYaml(io.Directory currentDir) {
 }
 
 /// Convert to a relative file in lib directory, then resolve from pubspec.yaml.
-io.File resolvePackageFileFromPubspecYaml(
-    io.File pubspecYaml, String packageFile) {
+File resolvePackageFileFromPubspecYaml(File pubspecYaml, String packageFile) {
   packageFile = packageFile.replaceFirst('package:', '');
-  var packageFilePathParts = path.split(packageFile);
+  var packageFilePathParts = split(packageFile);
   packageFilePathParts[0] = 'lib'; // Replace package name with lib
-  packageFile = path.joinAll(packageFilePathParts).replaceAll('\\', '/');
+  packageFile = joinAll(packageFilePathParts).replaceAll('\\', '/');
   return resolveFile(pubspecYaml, packageFile);
 }

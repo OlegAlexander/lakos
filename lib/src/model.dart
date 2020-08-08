@@ -1,4 +1,4 @@
-import 'dart:convert' as convert;
+import 'dart:convert';
 
 /// Main container class to hold the data model.
 class Model {
@@ -156,7 +156,7 @@ class Metrics {
 }
 
 String _prettyJson(jsonObject, {String indent = '  '}) {
-  return convert.JsonEncoder.withIndent(indent).convert(jsonObject);
+  return JsonEncoder.withIndent(indent).convert(jsonObject);
 }
 
 String _trimLines(String dot) {

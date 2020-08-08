@@ -1,54 +1,53 @@
-import 'dart:io' as io;
+import 'dart:io';
 import 'package:test/test.dart';
-import 'package:lakos/src/resolve_imports.dart' as resolve_imports;
-import 'get_package_location.dart' as gpl;
-import 'package:path/path.dart' as path;
+import 'package:lakos/src/resolve_imports.dart';
+import 'get_package_location.dart';
+import 'package:path/path.dart';
 
 void main() {
-  final testPackage = gpl.getPackageLocation('test', '1.14.3');
-  final pathPackage = gpl.getPackageLocation('path', '1.7.0');
+  final testPackage = getPackageLocation('test', '1.14.3');
+  final pathPackage = getPackageLocation('path', '1.7.0');
 
   test('Resolve relative file', () {
-    var thisDartFile = io.File(path.join(testPackage.path, 'lib', 'src',
-        'runner', 'browser', 'phantom_js.dart'));
+    var thisDartFile = File(join(testPackage.path, 'lib', 'src', 'runner',
+        'browser', 'phantom_js.dart'));
     var relativeFile = '../executable_settings.dart';
-    var resolvedFile = resolve_imports.resolveFile(thisDartFile, relativeFile);
+    var resolvedFile = resolveFile(thisDartFile, relativeFile);
     print(resolvedFile);
     expect(
         resolvedFile.path,
-        path.join(testPackage.path, 'lib', 'src', 'runner',
+        join(testPackage.path, 'lib', 'src', 'runner',
             'executable_settings.dart'));
   });
 
   test('Resolve relative file from .', () {
     var relativeFile = 'resolve_imports.dart';
-    var thisDartFile = io.File('./lib/graphviz.dart');
-    var resolvedFile = resolve_imports.resolveFile(thisDartFile, relativeFile);
+    var thisDartFile = File('./lib/graphviz.dart');
+    var resolvedFile = resolveFile(thisDartFile, relativeFile);
     print(resolvedFile);
-    expect(resolvedFile.path, path.join('lib', 'resolve_imports.dart'));
+    expect(resolvedFile.path, join('lib', 'resolve_imports.dart'));
   });
 
   test('find pubspec.yaml', () {
-    var pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('.'));
+    var pubspecYaml = findPubspecYaml(Directory('.'));
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('./lib'));
+    pubspecYaml = findPubspecYaml(Directory('./lib'));
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = resolve_imports.findPubspecYaml(testPackage);
+    pubspecYaml = findPubspecYaml(testPackage);
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = resolve_imports.findPubspecYaml(pathPackage);
+    pubspecYaml = findPubspecYaml(pathPackage);
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('..'));
+    pubspecYaml = findPubspecYaml(Directory('..'));
     expect(pubspecYaml, isNull);
   });
 
   test('resolvePackageFileFromPubspecYaml', () {
-    var pubspecYaml = resolve_imports.findPubspecYaml(io.Directory('.'));
-    var resolvedPackageFile = resolve_imports.resolvePackageFileFromPubspecYaml(
+    var pubspecYaml = findPubspecYaml(Directory('.'));
+    var resolvedPackageFile = resolvePackageFileFromPubspecYaml(
         pubspecYaml, 'package:lakos/graphviz.dart');
-    var pathParts = path.split(resolvedPackageFile.path);
-    var lastThreeParts = path
-        .joinAll(pathParts.sublist(pathParts.length - 3))
-        .replaceAll('\\', '/');
+    var pathParts = split(resolvedPackageFile.path);
+    var lastThreeParts =
+        joinAll(pathParts.sublist(pathParts.length - 3)).replaceAll('\\', '/');
     expect(lastThreeParts, 'lakos/lib/graphviz.dart');
   });
 }

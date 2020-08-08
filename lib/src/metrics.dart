@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'dart:io';
-import 'package:lakos/src/model.dart' as m;
-import 'package:directed_graph/directed_graph.dart' as dg;
+import 'package:lakos/src/model.dart';
+import 'package:directed_graph/directed_graph.dart';
 
 const precision = 2;
 
 /// Convert model to digraph.
-dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
+DirectedGraph<String> convertModelToDigraph(Model model) {
   var edgeMap = <String, List<String>>{};
 
   // Add nodes
@@ -22,24 +22,24 @@ dg.DirectedGraph<String> convertModelToDigraph(m.Model model) {
   }
 
   // Make vertexMap from edgeMap
-  var vertexMap = <String, dg.Vertex<String>>{};
+  var vertexMap = <String, Vertex<String>>{};
   for (var k in edgeMap.keys) {
-    vertexMap[k] = dg.Vertex(k);
+    vertexMap[k] = Vertex(k);
   }
 
   // Make vertexEdgeMap from edgeMap and vertexMap
-  var vertexEdgeMap = <dg.Vertex<String>, List<dg.Vertex<String>>>{};
+  var vertexEdgeMap = <Vertex<String>, List<Vertex<String>>>{};
   for (var k in edgeMap.keys) {
     vertexEdgeMap[vertexMap[k]] = edgeMap[k].map((x) => vertexMap[x]).toList();
   }
 
-  return dg.DirectedGraph<String>(vertexEdgeMap);
+  return DirectedGraph<String>(vertexEdgeMap);
 }
 
 /// Compute the component dependency of each node.
 /// The component dependency (CD) is the number of nodes a particular node depends on
 /// directly or transitively, including itself.
-void computeNodeCDs(dg.DirectedGraph<String> graph, m.Model model) {
+void computeNodeCDs(DirectedGraph<String> graph, Model model) {
   for (var v in graph.vertices) {
     model.nodes[v.data].cd = 0;
   }
@@ -66,7 +66,7 @@ void computeNodeCDs(dg.DirectedGraph<String> graph, m.Model model) {
 /// Instability = outDegree / (inDegree + outDegree)
 /// In general, node instability should decrease in the direction of dependency.
 /// In other words, lower level nodes should be more stable and more reusable than higher level nodes.
-void computeNodeDegreeMetrics(dg.DirectedGraph<String> graph, m.Model model) {
+void computeNodeDegreeMetrics(DirectedGraph<String> graph, Model model) {
   for (var v in graph.vertices) {
     model.nodes[v.data].inDegree = graph.inDegree(v);
     model.nodes[v.data].outDegree = graph.outDegree(v);
@@ -81,7 +81,7 @@ void computeNodeDegreeMetrics(dg.DirectedGraph<String> graph, m.Model model) {
 /// Return the cumulative component dependency, which is the sum of all component dependencies.
 /// The CCD can be interpreted as the total "coupling" of the graph.
 /// Lower is better.
-int computeCCD(m.Model model) {
+int computeCCD(Model model) {
   var ccd = 0;
   for (var node in model.nodes.values) {
     ccd += node.cd;
@@ -90,7 +90,7 @@ int computeCCD(m.Model model) {
 }
 
 /// A node that has inDegree and outDegree of 0 is an orphan.
-List<String> computeOrphans(m.Model model) {
+List<String> computeOrphans(Model model) {
   var orphans = <String>[];
   for (var node in model.nodes.values) {
     if (node.inDegree == 0 && node.outDegree == 0) {
@@ -160,7 +160,7 @@ int countSloc(File dartFile) {
   return sloc;
 }
 
-void computeNodeSlocs(m.Model model) {
+void computeNodeSlocs(Model model) {
   for (var node in model.nodes.values) {
     try {
       node.sloc = countSloc(File('${model.rootDir}${node.id}'));
@@ -170,7 +170,7 @@ void computeNodeSlocs(m.Model model) {
   }
 }
 
-int computeTotalSloc(m.Model model) {
+int computeTotalSloc(Model model) {
   var total = 0;
   for (var node in model.nodes.values) {
     if (node.sloc != null) {
@@ -188,7 +188,7 @@ extension NumberRounding on num {
   }
 }
 
-m.Metrics computeAllMetrics(m.Model model) {
+Metrics computeAllMetrics(Model model) {
   var digraph = convertModelToDigraph(model);
   computeNodeCDs(digraph, model);
   computeNodeDegreeMetrics(digraph, model);
@@ -198,7 +198,7 @@ m.Metrics computeAllMetrics(m.Model model) {
   var numNodes = digraph.vertices.length;
   var totalSloc = computeTotalSloc(model);
   var avgSloc = totalSloc / numNodes;
-  var metrics = m.Metrics(
+  var metrics = Metrics(
       digraph.isAcyclic(),
       numNodes,
       orphans,

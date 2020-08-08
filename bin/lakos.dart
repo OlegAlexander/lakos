@@ -1,5 +1,5 @@
-import 'dart:io' as io;
-import 'package:args/args.dart' as args;
+import 'dart:io';
+import 'package:args/args.dart';
 import 'package:lakos/lakos.dart';
 
 enum ExitCode {
@@ -27,7 +27,7 @@ Examples:
 
   // Pass output directly to Graphviz dot in one line
   lakos . | dot -Tsvg -o example.svg
-  lakos --no-tree --ignore "test/**" . | dot -Tpng -Gdpi=300 -o example.png
+  lakos --ignore "test/**" . | dot -Tpng -Gdpi=300 -o example.png
 
   // Save output to a dot file first and then use Graphviz dot to generate the graph image
   lakos --output example.dot /path/to/dart/package
@@ -40,7 +40,7 @@ Notes:
   * Only 'import' and 'export' directives are supported; 'library' and 'part' are not.
 ''';
 
-void printUsage(args.ArgParser parser) {
+void printUsage(ArgParser parser) {
   print(usageHeader);
   print(parser.usage);
   print(usageFooter);
@@ -50,9 +50,8 @@ void main(List<String> arguments) {
   // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
   // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
   // SLOC command: cloc --include-lang=Dart --by-file .
-  // TODO Consider not using import as everywhere.
 
-  var parser = args.ArgParser()
+  var parser = ArgParser()
     ..addOption('format',
         abbr: 'f',
         help: 'Output format.',
@@ -100,24 +99,24 @@ void main(List<String> arguments) {
         negatable: true);
 
   // Parse args.
-  args.ArgResults argResults;
+  ArgResults argResults;
 
   try {
     argResults = parser.parse(arguments);
   } catch (e) {
     print(e);
     printUsage(parser);
-    io.exit(ExitCode.InvalidOption.index);
+    exit(ExitCode.InvalidOption.index);
   }
 
   if (argResults.rest.length != 1) {
     print('No root directory specified.');
     printUsage(parser);
-    io.exit(ExitCode.NoRootDirectorySpecified.index);
+    exit(ExitCode.NoRootDirectorySpecified.index);
   }
 
   // Get options.
-  var rootDir = io.Directory(argResults.rest[0]);
+  var rootDir = Directory(argResults.rest[0]);
   var format = argResults['format'] as String;
   var output = argResults['output'] as String;
   var tree = argResults['tree'] as bool;
@@ -138,7 +137,7 @@ void main(List<String> arguments) {
         layout: layout);
   } catch (e) {
     print(e);
-    io.exit(ExitCode.BuildModelFailed.index);
+    exit(ExitCode.BuildModelFailed.index);
   }
 
   // Write output to STDOUT or a file.
@@ -156,17 +155,17 @@ void main(List<String> arguments) {
     print(contents);
   } else {
     try {
-      io.File(output).writeAsStringSync(contents);
+      File(output).writeAsStringSync(contents);
     } catch (e) {
       print(e);
-      io.exit(ExitCode.WriteToFileFailed.index);
+      exit(ExitCode.WriteToFileFailed.index);
     }
   }
 
   // Detect cycles.
   if (metrics) {
     if (!cyclesAllowed && !graph.metrics.isAcyclic) {
-      io.exit(ExitCode.CycleDetected.index);
+      exit(ExitCode.CycleDetected.index);
     }
   }
 }
