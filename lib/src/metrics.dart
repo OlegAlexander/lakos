@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'dart:io';
-import 'package:lakos/model.dart' as m;
+import 'package:lakos/src/model.dart' as m;
 import 'package:directed_graph/directed_graph.dart' as dg;
 
 const precision = 2;

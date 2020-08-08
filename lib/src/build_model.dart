@@ -1,14 +1,12 @@
 import 'dart:io' as io;
 import 'package:path/path.dart' as path;
 import 'package:glob/glob.dart' as glob;
-import 'package:lakos/model.dart' as model;
-import 'package:lakos/resolve_imports.dart' as resolve_imports;
-import 'package:lakos/metrics.dart' as metrics;
+import 'package:lakos/src/model.dart' as model;
+import 'package:lakos/src/resolve_imports.dart' as resolve_imports;
+import 'package:lakos/src/metrics.dart' as metrics;
 
-const alwaysIgnore = '{.git**,.svn**,.hg**,.dart_tool**,doc**}';
+const alwaysIgnore = '{.**,doc/**,build/**}';
 
-// TODO Do another pass on this function.
-// TODO Maybe move this function and similar functionality, like sloc counting, to a parse library.
 String parseImportLine(String line) {
   var openQuote = false;
   var importPath = '';
@@ -115,7 +113,7 @@ Iterable<io.File> _getDartFiles(io.Directory rootDir, String ignore) {
   var alwaysIgnoreGlob =
       glob.Glob(alwaysIgnore, context: path.Context(current: rootDir.path));
 
-  // TODO This might be slow. Consider doing your own recursion using alwaysIgnoreGlob.
+  // TODO Filtering after the fact might be slow. Consider doing your own recursion using alwaysIgnoreGlob.
   var dartFiles = dartFilesGlob
       .listSync(root: rootDir.path, followLinks: false)
       .whereType<io.File>()
@@ -200,7 +198,7 @@ class PubspecYamlNotFoundException implements Exception {
 /// Returns the Model object.
 /// Throws FileSystemException if rootDir doesn't exist.
 /// Throws PubspecYamlNotFoundException if pubspec.yaml can't be found in or above the rootDir.
-// TODO Consider exporting this function and Metrics in lib and hiding everything underneath in lib/src.
+/// Throws StringScannerException if ignoreGlob is invalid.
 model.Model buildModel(io.Directory rootDir,
     {String ignoreGlob = '!**',
     bool showTree = true,

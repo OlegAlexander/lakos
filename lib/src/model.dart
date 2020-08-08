@@ -32,6 +32,7 @@ ${metrics ?? ''}
         'metrics': metrics
       };
 
+  /// Returns the string representation of the model depending on the output format.
   String getOutput(OutputFormat format) {
     switch (format) {
       case OutputFormat.Dot:
@@ -132,7 +133,6 @@ class Metrics {
   double nccd;
   int totalSloc;
   double avgSloc;
-  // TODO Maybe add min, max, median, and standard deviation sloc?
 
   Metrics(this.isAcyclic, this.numNodes, this.orphans, this.ccd, this.acd,
       this.acdp, this.nccd, this.totalSloc, this.avgSloc);

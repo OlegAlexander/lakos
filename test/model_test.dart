@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:lakos/model.dart';
+import 'package:lakos/src/model.dart';
 import 'dart:convert';
 
 String prettyJson(jsonObject) {

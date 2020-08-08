@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 import 'package:test/test.dart';
-import 'package:lakos/resolve_imports.dart' as resolve_imports;
+import 'package:lakos/src/resolve_imports.dart' as resolve_imports;
 import 'get_package_location.dart' as gpl;
 import 'package:path/path.dart' as path;
 

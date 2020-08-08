@@ -1,7 +1,6 @@
 import 'dart:io' as io;
 import 'package:args/args.dart' as args;
-import 'package:lakos/build_model.dart' as build_model;
-import 'package:lakos/model.dart' as model;
+import 'package:lakos/lakos.dart';
 
 enum ExitCode {
   Ok,
@@ -30,7 +29,7 @@ Examples:
 
   // Pass output directly to Graphviz dot in one line
   lakos . | dot -Tsvg -o example.svg
-  lakos --no-tree ./lib | dot -Tpng -Gdpi=300 -o example.png
+  lakos --no-tree --ignore "test/**" . | dot -Tpng -Gdpi=300 -o example.png
 
   // Save output to a dot file first and then use Graphviz dot to generate the graph image
   lakos --output example.dot /path/to/dart/package
@@ -145,9 +144,9 @@ void main(List<String> arguments) {
   }
 
   // Build model.
-  model.Model graph;
+  Model graph;
   try {
-    graph = build_model.buildModel(rootDir,
+    graph = buildModel(rootDir,
         ignoreGlob: ignore,
         showTree: tree,
         showMetrics: metrics,
@@ -162,10 +161,10 @@ void main(List<String> arguments) {
   var contents = '';
   switch (format) {
     case 'dot':
-      contents = graph.getOutput(model.OutputFormat.Dot);
+      contents = graph.getOutput(OutputFormat.Dot);
       break;
     case 'json':
-      contents = graph.getOutput(model.OutputFormat.Json);
+      contents = graph.getOutput(OutputFormat.Json);
       break;
   }
 

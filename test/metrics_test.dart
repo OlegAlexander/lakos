@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:lakos/model.dart';
-import 'package:lakos/metrics.dart';
+import 'package:lakos/src/model.dart';
+import 'package:lakos/src/metrics.dart';
 
 // TODO Add more tests/expects.
 void main() {
