@@ -106,4 +106,11 @@ void main() {
     var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
     expect(result, isNotEmpty);
   });
+
+  test('string_scanner', () {
+    var packageLocation = getPackageLocation('string_scanner');
+    print(packageLocation);
+    var result = runLakosDot(packageLocation.path, outDir, 'string_scanner');
+    expect(result, isNotEmpty);
+  });
 }
