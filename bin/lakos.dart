@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:lakos/lakos.dart';
 
+//TODO add example/example.dart
 enum ExitCode {
   Ok,
   InvalidOption,
@@ -72,7 +73,8 @@ void main(List<String> arguments) {
         defaultsTo: true,
         negatable: true)
     ..addFlag('node-metrics',
-        help: 'Show node metrics. Only works when --metrics is true.',
+        help:
+            'Show node metrics. Only works when --metrics is true.\n--no-node-metrics is the default.',
         defaultsTo: false,
         negatable: true)
     ..addOption('ignore',
@@ -94,7 +96,7 @@ void main(List<String> arguments) {
         defaultsTo: 'TB')
     ..addFlag('cycles-allowed',
         help:
-            'Fail with a non-zero exit code if dependency cycles are detected. Only works when --metrics is true.',
+            'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n--no-cycles-allowed is the default.',
         defaultsTo: false,
         negatable: true);
 
