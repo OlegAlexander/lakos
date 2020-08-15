@@ -2,14 +2,13 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:lakos/lakos.dart';
 
-//TODO add example/example.dart
 enum ExitCode {
   Ok,
   InvalidOption,
   NoRootDirectorySpecified,
   BuildModelFailed,
   WriteToFileFailed,
-  CycleDetected
+  DependencyCycleDetected
 }
 
 const outputDefault = 'STDOUT';
@@ -19,27 +18,7 @@ const usageHeader = '''
 Usage: lakos [options] <root-directory>
 ''';
 
-const usageFooter = '''
-
-Examples:
-
-  // Print dot graph for current directory
-  lakos .
-
-  // Pass output directly to Graphviz dot in one line
-  lakos . | dot -Tsvg -o example.svg
-  lakos --ignore "test/**" . | dot -Tpng -Gdpi=300 -o example.png
-
-  // Save output to a dot file first and then use Graphviz dot to generate the graph image
-  lakos --output example.dot /path/to/dart/package
-  dot -Tpng example.dot -Gdpi=300 -o example.png
-
-Notes:
-
-  * Exports are drawn with a dashed edge.
-  * Orphan nodes are bold.
-  * Only 'import' and 'export' directives are supported; 'library' and 'part' are not.
-''';
+const usageFooter = '';
 
 void printUsage(ArgParser parser) {
   print(usageHeader);
@@ -94,7 +73,7 @@ void main(List<String> arguments) {
           'RL': 'right to left'
         },
         defaultsTo: 'TB')
-    ..addFlag('cycles-allowed',
+    ..addFlag('cycles-allowed', // TODO Consider calling this cycle-check
         help:
             'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n--no-cycles-allowed is the default.',
         defaultsTo: false,
@@ -167,7 +146,7 @@ void main(List<String> arguments) {
   // Detect cycles.
   if (metrics) {
     if (!cyclesAllowed && !graph.metrics.isAcyclic) {
-      exit(ExitCode.CycleDetected.index);
+      exit(ExitCode.DependencyCycleDetected.index);
     }
   }
 }

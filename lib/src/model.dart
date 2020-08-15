@@ -125,6 +125,7 @@ ${subgraphs.join('\n')}
 /// Store global metrics here.
 class Metrics {
   bool isAcyclic;
+  // TODO Add firstCycle. But wait until this issue is resolved: https://github.com/simphotonics/directed_graph/issues/1
   int numNodes;
   List<String> orphans = [];
   int ccd;
