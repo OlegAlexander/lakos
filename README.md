@@ -1,8 +1,8 @@
-<img src="https://user-images.githubusercontent.com/42989765/89739993-24e27280-da3a-11ea-9dd5-20d97d5d1630.png" alt="Example dependency graph" width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/90343870-55da1e80-dfc9-11ea-8bfb-682185c9ec4e.png" alt="Example dependency graph" width="100%"/>
 
 `lakos` is a command line tool and library that can:
 
-- Visualize Dart library dependencies in Graphviz `dot`.
+- Visualize Dart library dependencies in Graphviz dot.
 - Detect dependency cycles.
 - Identify orphans.
 - Compute the Cumulative Component Dependency (CCD) and related metrics.
@@ -56,25 +56,11 @@ Pass output directly to Graphviz dot in one line (a lot more useful):
 lakos . | dot -Tpng -Gdpi=300 -o example.png
 ```
 
-Save output to a dot file first and then use Graphviz dot:
+Save output to a dot file first and then generate an SVG using Graphviz dot:
 
 ```
 lakos -o example.dot .
 dot -Tsvg example.dot -o example.svg
-```
-
-TODO Consider moving these 2 examples to More examples.
-
-Ignore the test folder:
-
-```
-lakos -i "test/**" .
-```
-
-Save output to a json file:
-
-```
-lakos -f json -o example.json .
 ```
 
 ## Notes
@@ -134,6 +120,158 @@ Use these in your CI builds, especially DependencyCycleDetected.
 </ol>
 
 
+## More Examples
+
+Lakos run on itself, ignoring tests.
+
+```
+lakos -o dot_images/lakos.no_test.dot -i test/** .
+```
+
+<img src="https://user-images.githubusercontent.com/42989765/90344186-119c4d80-dfcc-11ea-87dc-cff08f768cbc.png" alt="Lakos run on itself, ignoring tests." width="100%"/>
+
+No tests, show node metrics.
+
+```
+lakos -o dot_images/glob.no_test_node_metrics.dot -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/glob-1.2.0
+```
+
+<img src="https://user-images.githubusercontent.com/42989765/90344206-532cf880-dfcc-11ea-86a7-03e8cf4c37c0.png" alt="No tests, show node metrics." width="100%"/>
+
+No tests, no tree, no metrics.
+
+```
+lakos --no-tree --no-metrics -o dot_images/string_scanner.no_test_no_tree_no_metrics.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
+```
+
+<img src="https://user-images.githubusercontent.com/42989765/90344305-67252a00-dfcd-11ea-898c-aa5bd2b302af.png" alt="No tests, no tree, no metrics." width="100%"/>
+
+No tests, no metrics, left to right layout.
+
+```
+lakos -o dot_images/test.no_test_no_metrics_lr.dot -i test/** --no-metrics -l LR /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3
+```
+
+<img src="https://user-images.githubusercontent.com/42989765/90344424-87091d80-dfce-11ea-9810-e2895d170366.png" alt="No tests, no metrics, left to right layout." width="100%"/>
+
+A graph with cycles.
+
+```
+lakos -o dot_images/path.no_test.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/path-1.7.0
+```
+
+<img src="https://user-images.githubusercontent.com/42989765/90344595-e9aee900-dfcf-11ea-9166-4f47e2313ce7.png" alt="A graph with cycles." width="100%"/>
+
+Example JSON output:
+
+```
+lakos -f json -o dot_images/directed_graph.no_test.json -i test/** /root/.pub-cache/hosted/pub.dartlang.org/directed_graph-0.1.8
+```
+
+```json
+{
+  "rootDir": "/root/.pub-cache/hosted/pub.dartlang.org/directed_graph-0.1.8",
+  "nodes": {
+    "/benchmark/bin/benchmark.dart": {
+      "id": "/benchmark/bin/benchmark.dart",
+      "label": "benchmark",
+      "cd": 2,
+      "inDegree": 0,
+      "outDegree": 1,
+      "instability": 1.0,
+      "sloc": 206
+    },
+    "/example/bin/example.dart": {
+      "id": "/example/bin/example.dart",
+      "label": "example",
+      "cd": 2,
+      "inDegree": 0,
+      "outDegree": 1,
+      "instability": 1.0,
+      "sloc": 73
+    },
+    "/lib/directed_graph.dart": {
+      "id": "/lib/directed_graph.dart",
+      "label": "directed_graph",
+      "cd": 1,
+      "inDegree": 2,
+      "outDegree": 0,
+      "instability": 0.0,
+      "sloc": 330
+    }
+  },
+  "subgraphs": [
+    {
+      "id": "/directed_graph-0.1.8",
+      "label": "directed_graph-0.1.8",
+      "nodes": [],
+      "subgraphs": [
+        {
+          "id": "/directed_graph-0.1.8/benchmark",
+          "label": "benchmark",
+          "nodes": [],
+          "subgraphs": [
+            {
+              "id": "/directed_graph-0.1.8/benchmark/bin",
+              "label": "bin",
+              "nodes": [
+                "/benchmark/bin/benchmark.dart"
+              ],
+              "subgraphs": []
+            }
+          ]
+        },
+        {
+          "id": "/directed_graph-0.1.8/example",
+          "label": "example",
+          "nodes": [],
+          "subgraphs": [
+            {
+              "id": "/directed_graph-0.1.8/example/bin",
+              "label": "bin",
+              "nodes": [
+                "/example/bin/example.dart"
+              ],
+              "subgraphs": []
+            }
+          ]
+        },
+        {
+          "id": "/directed_graph-0.1.8/lib",
+          "label": "lib",
+          "nodes": [
+            "/lib/directed_graph.dart"
+          ],
+          "subgraphs": []
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "/benchmark/bin/benchmark.dart",
+      "to": "/lib/directed_graph.dart",
+      "directive": "import"
+    },
+    {
+      "from": "/example/bin/example.dart",
+      "to": "/lib/directed_graph.dart",
+      "directive": "import"
+    }
+  ],
+  "metrics": {
+    "isAcyclic": true,
+    "numNodes": 3,
+    "orphans": [],
+    "ccd": 5,
+    "acd": 1.67,
+    "acdp": 55.56,
+    "nccd": 1.0,
+    "totalSloc": 609,
+    "avgSloc": 203.0
+  }
+}
+```
 
 # Library Usage
 
@@ -156,6 +294,4 @@ See example/example.dart
 - Java: Sonargraph, JArchitect
 - Python: pydeps
 - Haskell: graphmod
-
-# More Examples
 
