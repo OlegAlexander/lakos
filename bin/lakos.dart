@@ -27,6 +27,7 @@ void printUsage(ArgParser parser) {
 }
 
 void main(List<String> arguments) {
+  // TODO Clean up comment below.
   // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
   // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
   // SLOC command: cloc --include-lang=Dart --by-file .
@@ -108,9 +109,9 @@ void main(List<String> arguments) {
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
 
   // Build model.
-  Model graph;
+  Model model;
   try {
-    graph = buildModel(rootDir,
+    model = buildModel(rootDir,
         ignoreGlob: ignore,
         showTree: tree,
         showMetrics: metrics,
@@ -125,10 +126,10 @@ void main(List<String> arguments) {
   var contents = '';
   switch (format) {
     case 'dot':
-      contents = graph.getOutput(OutputFormat.Dot);
+      contents = model.getOutput(OutputFormat.Dot);
       break;
     case 'json':
-      contents = graph.getOutput(OutputFormat.Json);
+      contents = model.getOutput(OutputFormat.Json);
       break;
   }
 
@@ -136,6 +137,9 @@ void main(List<String> arguments) {
     print(contents);
   } else {
     try {
+      if (!File(output).parent.existsSync()) {
+        File(output).parent.createSync(recursive: true);
+      }
       File(output).writeAsStringSync(contents);
     } catch (e) {
       print(e);
@@ -145,7 +149,7 @@ void main(List<String> arguments) {
 
   // Detect cycles.
   if (metrics) {
-    if (!cyclesAllowed && !graph.metrics.isAcyclic) {
+    if (!cyclesAllowed && !model.metrics.isAcyclic) {
       exit(ExitCode.DependencyCycleDetected.index);
     }
   }

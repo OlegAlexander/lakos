@@ -1,116 +1,195 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:path/path.dart';
 import 'get_package_location.dart';
+import '../bin/lakos.dart' show ExitCode;
 
 const outDir = 'dot_images';
-
-/// Run lakos dot and return the stdout.
-/// Also save the stdout to a dot file and generate a png.
-String runLakosDot(String rootDir, String outDir, String dotFilename) {
-  var result = Process.runSync('dart', ['bin/lakos.dart', rootDir]);
-
-  print(['lakosResult', result.stdout, result.stderr, result.exitCode]);
-
-  File('$outDir/$dotFilename.dot').writeAsStringSync(result.stdout);
-  var dotResult = Process.runSync('dot', [
-    '-Tpng',
-    '$outDir/$dotFilename.dot',
-    '-Gdpi=300',
-    '-o',
-    '$outDir/$dotFilename.png'
-  ]);
-
-  print(['dotResult', dotResult.stdout, dotResult.stderr, dotResult.exitCode]);
-
-  // Remove carriage returns on Windows
-  var ls = LineSplitter();
-  var lines = ls.convert(result.stdout);
-  return lines.join('\n');
-}
+const lakos = 'bin/lakos.dart';
+var packages = {
+  '.': ExitCode.Ok.index,
+  'path': ExitCode.DependencyCycleDetected.index,
+  'args': ExitCode.DependencyCycleDetected.index,
+  'directed_graph': ExitCode.Ok.index,
+  'glob': ExitCode.Ok.index,
+  'test': ExitCode.Ok.index,
+  'pub_cache': ExitCode.DependencyCycleDetected.index,
+  'json_serializable': ExitCode.DependencyCycleDetected.index,
+  'string_scanner': ExitCode.DependencyCycleDetected.index
+};
 
 void main() {
   Directory(outDir).createSync();
 
-  test('Invalid option', () {
-    var result = Process.runSync('dart', ['bin/lakos.dart', '--invalid']);
-    print([result.stdout, result.stderr, result.exitCode]);
-    expect(result.stdout.toString().split('\n')[0].trim(),
-        'FormatException: Could not find an option named "invalid".');
-    expect(result.exitCode, 1);
+  test('InvalidOption', () {
+    var result = Process.runSync('dart', [lakos, '--invalid']);
+    expect(result.exitCode, ExitCode.InvalidOption.index);
+
+    result = Process.runSync('dart', [lakos, '--layout', 'INVALID']);
+    expect(result.exitCode, ExitCode.InvalidOption.index);
   });
 
-  test('No directory specified', () {
-    var result = Process.runSync('dart', ['bin/lakos.dart']);
-    print([result.stdout, result.stderr, result.exitCode]);
-    expect(result.stdout.toString().split('\n')[0].trim(),
-        'No root directory specified.');
-    expect(result.exitCode, 2);
+  test('NoRootDirectorySpecified', () {
+    var result = Process.runSync('dart', [lakos]);
+    expect(result.exitCode, ExitCode.NoRootDirectorySpecified.index);
   });
 
-  test('json_serializable', () {
-    var packageLocation = getPackageLocation('json_serializable');
-    print(packageLocation);
-    var result = runLakosDot(
-        join(packageLocation.path, 'lib'), outDir, 'json_serializable');
-    expect(result, isNotEmpty);
+  test('BuildModelFailed', () {
+    var result = Process.runSync('dart', [lakos, 'i/dont/exist']);
+    expect(result.exitCode, ExitCode.BuildModelFailed.index);
   });
 
-  test('test', () {
-    var packageLocation = getPackageLocation('test');
-    print(packageLocation);
-    var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'test');
-    expect(result, isNotEmpty);
+  test('generate dot graphs', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename = join(outDir, '$outputFilename.dot');
+      var pngFilename = join(outDir, '$outputFilename.png');
+
+      var lakosDotCommand = [lakos, '-o', dotFilename, packageLocation.path];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode, packages[package]);
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
   });
 
-  test('lakos', () {
-    var packageLocation = Directory('.');
-    print(packageLocation);
-    var result = runLakosDot(packageLocation.path, outDir, 'lakos');
-    expect(result, isNotEmpty);
+  test('generate dot graphs--no test', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename = join(outDir, '$outputFilename.no_test.dot');
+      var pngFilename = join(outDir, '$outputFilename.no_test.png');
+
+      var lakosDotCommand = [
+        lakos,
+        '-o',
+        dotFilename,
+        '-i',
+        'test/**',
+        packageLocation.path
+      ];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode, packages[package]);
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
   });
 
-  test('path', () {
-    var packageLocation = getPackageLocation('path');
-    print(packageLocation);
-    var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'path');
-    expect(result, isNotEmpty);
+  test('generate dot graphs--no test--no tree--no-metrics', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename =
+          join(outDir, '$outputFilename.no_test_no_tree_no_metrics.dot');
+      var pngFilename =
+          join(outDir, '$outputFilename.no_test_no_tree_no_metrics.png');
+
+      var lakosDotCommand = [
+        lakos,
+        '--no-tree',
+        '--no-metrics',
+        '-o',
+        dotFilename,
+        '-i',
+        'test/**',
+        packageLocation.path
+      ];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode,
+          ExitCode.Ok.index); // With --no-metrics expect OK
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
   });
 
-  test('args', () {
-    var packageLocation = getPackageLocation('args');
-    print(packageLocation);
-    var result = runLakosDot(join(packageLocation.path, 'lib'), outDir, 'args');
-    expect(result, isNotEmpty);
+  test('generate dot graphs--no test--node metrics', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename =
+          join(outDir, '$outputFilename.no_test_node_metrics.dot');
+      var pngFilename =
+          join(outDir, '$outputFilename.no_test_node_metrics.png');
+
+      var lakosDotCommand = [
+        lakos,
+        '-o',
+        dotFilename,
+        '-i',
+        'test/**',
+        '--node-metrics',
+        packageLocation.path
+      ];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode, packages[package]);
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
   });
 
-  test('dart_code_metrics', () {
-    var packageLocation = getPackageLocation('dart_code_metrics');
-    print(packageLocation);
-    var result = runLakosDot(
-        join(packageLocation.path, 'lib'), outDir, 'dart_code_metrics');
-    expect(result, isNotEmpty);
+  test('generate dot graphs--no test--no metrics--layout LR', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename =
+          join(outDir, '$outputFilename.no_test_no_metrics_lr.dot');
+      var pngFilename =
+          join(outDir, '$outputFilename.no_test_no_metrics_lr.png');
+
+      var lakosDotCommand = [
+        lakos,
+        '-o',
+        dotFilename,
+        '-i',
+        'test/**',
+        '--no-metrics',
+        '-l',
+        'LR',
+        packageLocation.path
+      ];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode,
+          ExitCode.Ok.index); // With --no-metrics expect OK
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
   });
 
-  test('directed_graph', () {
-    var packageLocation = getPackageLocation('directed_graph');
-    print(packageLocation);
-    var result = runLakosDot(packageLocation.path, outDir, 'directed_graph');
-    expect(result, isNotEmpty);
-  });
+  test('generate json files--no test', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var jsonFilename = join(outDir, '$outputFilename.no_test.json');
 
-  test('pub_cache', () {
-    var packageLocation = getPackageLocation('pub_cache');
-    print(packageLocation);
-    var result = runLakosDot(packageLocation.path, outDir, 'pub_cache');
-    expect(result, isNotEmpty);
-  });
-
-  test('string_scanner', () {
-    var packageLocation = getPackageLocation('string_scanner');
-    print(packageLocation);
-    var result = runLakosDot(packageLocation.path, outDir, 'string_scanner');
-    expect(result, isNotEmpty);
+      var lakosJsonCommand = [
+        lakos,
+        '-f',
+        'json',
+        '-o',
+        jsonFilename,
+        '-i',
+        'test/**',
+        packageLocation.path
+      ];
+      print(lakosJsonCommand.join(' '));
+      var result = Process.runSync('dart', lakosJsonCommand);
+      expect(result.exitCode, packages[package]);
+    }
   });
 }
