@@ -27,9 +27,7 @@ void printUsage(ArgParser parser) {
 }
 
 void main(List<String> arguments) {
-  // TODO Clean up comment below.
-  // Validate args > Create model > compute metrics > output formats > fail if thresholds exceeded
-  // Use this lib for graph algorithms https://pub.dev/packages/directed_graph
+  // Validate args > Create model > compute metrics > output formats > detect cycles
   // SLOC command: cloc --include-lang=Dart --by-file .
 
   var parser = ArgParser()
@@ -74,7 +72,7 @@ void main(List<String> arguments) {
           'RL': 'right to left'
         },
         defaultsTo: 'TB')
-    ..addFlag('cycles-allowed', // TODO Consider calling this cycle-check
+    ..addFlag('cycles-allowed',
         help:
             'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n--no-cycles-allowed is the default.',
         defaultsTo: false,

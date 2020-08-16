@@ -154,13 +154,13 @@ lakos -o dot_images/test.no_test_no_metrics_lr.dot -i test/** --no-metrics -l LR
 
 <img src="https://user-images.githubusercontent.com/42989765/90344424-87091d80-dfce-11ea-9810-e2895d170366.png" alt="No tests, no metrics, left to right layout." width="100%"/>
 
-A graph with cycles.
+A graph with circular dependencies.
 
 ```
 lakos -o dot_images/path.no_test.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/path-1.7.0
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/90344595-e9aee900-dfcf-11ea-9166-4f47e2313ce7.png" alt="A graph with cycles." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/90344595-e9aee900-dfcf-11ea-9166-4f47e2313ce7.png" alt="A graph with circular dependencies." width="100%"/>
 
 Example JSON output:
 
