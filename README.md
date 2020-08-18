@@ -88,7 +88,7 @@ Use `--metrics` to compute and show these.
 
 **acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. The ACD can be interpreted as the average number of nodes that will need to change when one node changes. Lower is better.
 
-**acdp:** The ACD as a percentage of numNodes. ACDP = (ACD / numNodes) _ 100 = (CCD / numNodes^2) _ 100. The ACDP can be interpreted as the average percentage of nodes that will need to change when one node changes. The ACDP is my original research. Lower is better.
+**acdp:** The ACD as a percentage of numNodes. ACDP = (ACD / numNodes) \* 100 = (CCD / numNodes^2) \* 100. The ACDP can be interpreted as the average percentage of nodes that will need to change when one node changes. The ACDP is my original research. Lower is better.
 
 **nccd:** The Normalized Cumulative Component Dependency. This is the CCD divided by a CCD of a binary tree of the same size. It's the only metric here that can compare graphs of different sizes. If the NCCD is below 1.0, the graph is "horizontal". If the NCCD is above 1.0, the graph is "vertical". If the NCCD is above 2.0, the graph probably contains cycles. Lower is better.
 
@@ -170,6 +170,7 @@ Example JSON output:
 ```console
 lakos -f json -o dot_images/pub_cache.no_test.json -i test/** /root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3
 ```
+
 <details> <summary>Click to show the JSON output.</summary>
 
 ```json
@@ -213,24 +214,18 @@ lakos -f json -o dot_images/pub_cache.no_test.json -i test/** /root/.pub-cache/h
         {
           "id": "/example",
           "label": "example",
-          "nodes": [
-            "/example/list.dart"
-          ],
+          "nodes": ["/example/list.dart"],
           "subgraphs": []
         },
         {
           "id": "/lib",
           "label": "lib",
-          "nodes": [
-            "/lib/pub_cache.dart"
-          ],
+          "nodes": ["/lib/pub_cache.dart"],
           "subgraphs": [
             {
               "id": "/lib/src",
               "label": "src",
-              "nodes": [
-                "/lib/src/impl.dart"
-              ],
+              "nodes": ["/lib/src/impl.dart"],
               "subgraphs": []
             }
           ]
@@ -257,11 +252,7 @@ lakos -f json -o dot_images/pub_cache.no_test.json -i test/** /root/.pub-cache/h
   ],
   "metrics": {
     "isAcyclic": false,
-    "firstCycle": [
-      "/lib/pub_cache.dart",
-      "/lib/src/impl.dart",
-      "/lib/pub_cache.dart"
-    ],
+    "firstCycle": ["/lib/pub_cache.dart", "/lib/src/impl.dart", "/lib/pub_cache.dart"],
     "numNodes": 3,
     "orphans": [],
     "ccd": 7,
@@ -275,8 +266,6 @@ lakos -f json -o dot_images/pub_cache.no_test.json -i test/** /root/.pub-cache/h
 ```
 
 </details>
-
-
 
 # Library Usage
 

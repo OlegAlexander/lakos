@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Escaped multiplication asterisks in readme.
+
 ## 1.1.0
 
 - Added Metrics.firstCycle.
