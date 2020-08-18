@@ -5,26 +5,6 @@ import 'package:directed_graph/directed_graph.dart';
 
 const precision = 2;
 
-/// Converts a Model to a DirectedGraph from the directed_graph library.
-/// May be useful for further analysis of the dependency graph.
-DirectedGraph<String> convertModelToDirectedGraph(Model model) {
-  var edgeMap = <String, List<String>>{};
-
-  // Add nodes
-  for (var node in model.nodes.values) {
-    if (!edgeMap.containsKey(node.id)) {
-      edgeMap[node.id] = [];
-    }
-  }
-
-  // Add edges
-  for (var edge in model.edges) {
-    edgeMap[edge.from].add(edge.to);
-  }
-
-  return DirectedGraph<String>.fromData(edgeMap);
-}
-
 /// Compute the component dependency of each node.
 /// The component dependency (CD) is the number of nodes a particular node depends on
 /// directly or transitively, including itself.
@@ -178,7 +158,7 @@ extension NumberRounding on num {
 }
 
 Metrics computeAllMetrics(Model model) {
-  var digraph = convertModelToDirectedGraph(model);
+  var digraph = model.toDirectedGraph();
   computeNodeCDs(digraph, model);
   computeNodeDegreeMetrics(digraph, model);
   computeNodeSlocs(model);
@@ -189,7 +169,7 @@ Metrics computeAllMetrics(Model model) {
   var avgSloc = totalSloc / numNodes;
   var firstCycle = digraph.cycle.map((node) => node.data).toList();
   var metrics = Metrics(
-      digraph.isAcyclic,
+      firstCycle.isEmpty,
       firstCycle,
       numNodes,
       orphans,

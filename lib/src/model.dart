@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:directed_graph/directed_graph.dart';
 
 /// The main container class to hold the data model.
 /// Returned from the [buildModel] function.
@@ -58,6 +59,26 @@ ${metrics ?? ''}
         return _prettyJson(toJson());
     }
     return ''; // Will never reach here.
+  }
+
+  /// Converts a Model to a [DirectedGraph] from the `directed_graph` library.
+  /// May be useful for further analysis of the dependency graph.
+  DirectedGraph<String> toDirectedGraph() {
+    var edgeMap = <String, List<String>>{};
+
+    // Add nodes
+    for (var node in nodes.values) {
+      if (!edgeMap.containsKey(node.id)) {
+        edgeMap[node.id] = [];
+      }
+    }
+
+    // Add edges
+    for (var edge in edges) {
+      edgeMap[edge.from].add(edge.to);
+    }
+
+    return DirectedGraph<String>.fromData(edgeMap);
   }
 }
 

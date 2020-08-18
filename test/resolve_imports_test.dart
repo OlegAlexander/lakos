@@ -17,7 +17,8 @@ void main() {
     expect(
         resolvedFile.path,
         join(testPackage.path, 'lib', 'src', 'runner',
-            'executable_settings.dart'));
+                'executable_settings.dart')
+            .replaceAll('\\', '/'));
   });
 
   test('Resolve relative file from .', () {
@@ -25,7 +26,8 @@ void main() {
     var thisDartFile = File('./lib/graphviz.dart');
     var resolvedFile = resolveFile(thisDartFile, relativeFile);
     print(resolvedFile);
-    expect(resolvedFile.path, join('lib', 'resolve_imports.dart'));
+    expect(resolvedFile.path,
+        join('lib', 'resolve_imports.dart').replaceAll('\\', '/'));
   });
 
   test('find pubspec.yaml', () {

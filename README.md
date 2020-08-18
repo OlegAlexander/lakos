@@ -273,9 +273,11 @@ In addition to the command line tool, `lakos` can also be used as a library.
 
 Use `buildModel` to construct a `Model` object.
 
-Use `convertModelToDirectedGraph` for further analysis with the `directed_graph` library.
+Use `Model.getOutput` to print the model in dot or JSON format.
 
-See example/example.dart.
+Use `Model.toDirectedGraph` for further analysis with the `directed_graph` library.
+
+See [example/example.dart](https://github.com/OlegAlexander/lakos/blob/master/example/example.dart).
 
 # Inspiration
 

@@ -223,14 +223,16 @@ Model buildModel(Directory rootDir,
     rootDir = Directory(normalize(rootDir.absolute.path));
   }
 
+  // Always use forward slashes
+  rootDir = Directory(rootDir.path.replaceAll('\\', '/'));
+
   var pubspecYaml = findPubspecYaml(rootDir);
   if (pubspecYaml == null) {
     throw PubspecYamlNotFoundException(
         'pubspec.yaml not found in or above the root directory.');
   }
 
-  var graph = Model(
-      rootDir: rootDir.path.replaceAll('\\', '/'), rankdir: layout)
+  var graph = Model(rootDir: rootDir.path, rankdir: layout)
     ..nodes =
         getDartFileNodes(rootDir, ignoreGlob, showNodeMetrics && showMetrics);
 

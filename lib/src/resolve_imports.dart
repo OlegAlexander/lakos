@@ -5,7 +5,9 @@ import 'package:path/path.dart';
 File resolveFile(File thisDartFile, String relativeFile) {
   var thisDartFileUri = Uri.file(thisDartFile.path);
   var resolvedUri = thisDartFileUri.resolve(relativeFile);
-  return File.fromUri(resolvedUri);
+  var fileFromUri = File.fromUri(resolvedUri);
+  var fileFromUriForwardSlashes = File(fileFromUri.path.replaceAll('\\', '/'));
+  return fileFromUriForwardSlashes;
 }
 
 /// Searches up the directory tree until it finds the pubspec.yaml file.

@@ -39,9 +39,10 @@ void main() {
     expect(result.exitCode, ExitCode.BuildModelFailed.index);
   });
 
-  test('generate dot graphs', () {
+  test('generate dot graphs -- force forward slashes on Windows', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
+      packageLocation = Directory(packageLocation.path.replaceAll('\\', '/'));
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.dot');
       var pngFilename = join(outDir, '$outputFilename.png');
