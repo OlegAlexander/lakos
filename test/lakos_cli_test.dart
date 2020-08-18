@@ -10,7 +10,7 @@ var packages = {
   '.': ExitCode.Ok.index,
   'path': ExitCode.DependencyCycleDetected.index,
   'args': ExitCode.DependencyCycleDetected.index,
-  'directed_graph': ExitCode.Ok.index,
+  'directed_graph': ExitCode.DependencyCycleDetected.index,
   'glob': ExitCode.Ok.index,
   'test': ExitCode.Ok.index,
   'pub_cache': ExitCode.DependencyCycleDetected.index,

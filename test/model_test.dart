@@ -251,12 +251,12 @@ digraph "" {
   });
 
   test('Metrics', () {
-    var metrics = Metrics(true, 10, [], 40, 12.3, 2.5, 1.2, 1000, 250.0);
+    var metrics = Metrics(true, [], 10, [], 40, 12.3, 2.5, 1.2, 1000, 250.0);
     print(metrics);
     expect(metrics.toString(),
         '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l numOrphans: 0 \\l ccd: 40 \\l acd: 12.3 \\l acdp: 2.5% \\l nccd: 1.2 \\l totalSloc: 1000 \\l avgSloc: 250.0 \\l", shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"isAcyclic":true,"numNodes":10,"orphans":[],"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2,"totalSloc":1000,"avgSloc":250.0}');
+        '{"isAcyclic":true,"firstCycle":[],"numNodes":10,"orphans":[],"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2,"totalSloc":1000,"avgSloc":250.0}');
   });
 }

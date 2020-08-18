@@ -5,8 +5,9 @@ import 'package:directed_graph/directed_graph.dart';
 
 const precision = 2;
 
-/// Convert model to digraph.
-DirectedGraph<String> convertModelToDigraph(Model model) {
+/// Converts a Model to a DirectedGraph from the directed_graph library.
+/// May be useful for further analysis of the dependency graph.
+DirectedGraph<String> convertModelToDirectedGraph(Model model) {
   var edgeMap = <String, List<String>>{};
 
   // Add nodes
@@ -21,19 +22,7 @@ DirectedGraph<String> convertModelToDigraph(Model model) {
     edgeMap[edge.from].add(edge.to);
   }
 
-  // Make vertexMap from edgeMap
-  var vertexMap = <String, Vertex<String>>{};
-  for (var k in edgeMap.keys) {
-    vertexMap[k] = Vertex(k);
-  }
-
-  // Make vertexEdgeMap from edgeMap and vertexMap
-  var vertexEdgeMap = <Vertex<String>, List<Vertex<String>>>{};
-  for (var k in edgeMap.keys) {
-    vertexEdgeMap[vertexMap[k]] = edgeMap[k].map((x) => vertexMap[x]).toList();
-  }
-
-  return DirectedGraph<String>(vertexEdgeMap);
+  return DirectedGraph<String>.fromData(edgeMap);
 }
 
 /// Compute the component dependency of each node.
@@ -189,7 +178,7 @@ extension NumberRounding on num {
 }
 
 Metrics computeAllMetrics(Model model) {
-  var digraph = convertModelToDigraph(model);
+  var digraph = convertModelToDirectedGraph(model);
   computeNodeCDs(digraph, model);
   computeNodeDegreeMetrics(digraph, model);
   computeNodeSlocs(model);
@@ -198,8 +187,10 @@ Metrics computeAllMetrics(Model model) {
   var numNodes = digraph.vertices.length;
   var totalSloc = computeTotalSloc(model);
   var avgSloc = totalSloc / numNodes;
+  var firstCycle = digraph.cycle.map((node) => node.data).toList();
   var metrics = Metrics(
       digraph.isAcyclic,
+      firstCycle,
       numNodes,
       orphans,
       ccd,

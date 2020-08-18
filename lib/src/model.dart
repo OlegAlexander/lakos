@@ -1,16 +1,32 @@
 import 'dart:convert';
 
-/// Main container class to hold the data model.
+/// The main container class to hold the data model.
+/// Returned from the [buildModel] function.
 class Model {
+  /// All node id paths are relative to the root directory.
   String rootDir;
+
+  /// Stores the graph layout direction.
+  /// Possible values: TB, BT, LR, and RL.
   String rankdir;
+
+  /// A map of nodes (Dart files).
   Map<String, Node> nodes = {};
+
+  /// A list of subgraphs which represent subfolders.
   List<Subgraph> subgraphs = [];
+
+  /// Imports and exports are represented as edges in a directed graph.
   List<Edge> edges = [];
+
+  /// Stores global metrics.
   Metrics metrics;
 
+  /// This constructor is not meant to be used directly.
+  /// Use the [buildModel] function instead.
   Model({this.rootDir = '.', this.rankdir = 'TB'});
 
+  /// Returns this object in dot format.
   @override
   String toString() {
     return _prettyPrintDot('''
@@ -24,6 +40,7 @@ ${metrics ?? ''}
 }''');
   }
 
+  /// Returns this object in JSON format.
   Map<String, dynamic> toJson() => {
         'rootDir': rootDir,
         'nodes': nodes,
@@ -32,7 +49,7 @@ ${metrics ?? ''}
         'metrics': metrics
       };
 
-  /// Returns the string representation of the model depending on the output format.
+  /// Returns the string representation of the model depending on the [OutputFormat].
   String getOutput(OutputFormat format) {
     switch (format) {
       case OutputFormat.Dot:
@@ -44,26 +61,46 @@ ${metrics ?? ''}
   }
 }
 
+/// Used in [Model.getOutput].
 enum OutputFormat { Dot, Json }
 
-/// Dart libraries are represented as nodes in a directed graph.
+/// Dart files are represented as nodes in a directed graph.
+/// See the README for more details about each node metric.
 class Node {
+  /// The file path relative to [Model.rootDir].
   String id;
+
+  /// The filename without extension.
   String label;
+
+  /// Component Dependency.
   int cd;
+
+  /// Number of incoming edges.
   int inDegree;
+
+  /// Number of outgoing edges.
   int outDegree;
+
+  /// Robert C. Martin's Instability metric.
   double instability;
+
+  /// Source Lines of Code.
   int sloc;
+
+  /// Whether to display node metrics or not.
   bool showNodeMetrics;
 
+  /// Constructor.
   Node(this.id, this.label, {this.showNodeMetrics = false});
 
+  /// Returns this object in dot format.
   @override
   String toString() {
     return '"$id" [label="$label${showNodeMetrics ? ' \\n cd: $cd \\n inDegree: $inDegree \\n outDegree: $outDegree \\n instability: $instability \\n sloc: $sloc' : ''}"${inDegree == 0 && outDegree == 0 ? ', style=bold' : ''}];';
   }
 
+  /// Returns this object in JSON format.
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
@@ -75,21 +112,30 @@ class Node {
       };
 }
 
+/// Import/Export directive used in [Edge].
 enum Directive { Import, Export }
 
-/// Import/Export dependencies are represented as edges in the graph.
+/// Import/Export dependencies are represented as edges in a directed graph.
 class Edge {
+  /// The source [Node.id].
   String from;
+
+  /// The target [Node.id].
   String to;
+
+  /// Import or Export.
   Directive directive;
 
+  /// Constructor.
   Edge(this.from, this.to, {this.directive = Directive.Import});
 
+  /// Returns this object in dot format.
   @override
   String toString() {
     return '"$from" -> "$to"${directive == Directive.Export ? ' [style=dashed]' : ''};';
   }
 
+  /// Returns this object in JSON format.
   Map<String, dynamic> toJson() => {
         'from': from,
         'to': to,
@@ -99,14 +145,25 @@ class Edge {
 
 /// Subfolders are represented as subgraphs.
 class Subgraph {
+  /// The folder path relative to [Model.rootDir].
   String id;
+
+  /// The folder name.
   String label;
+
+  /// A list of node ids in this folder.
   List<String> nodes = [];
+
+  /// A list of subfolders.
   List<Subgraph> subgraphs = [];
+
+  /// The parent folder.
   Subgraph parent;
 
+  /// Constructor.
   Subgraph(this.id, this.label);
 
+  /// Returns this object in dot format.
   @override
   String toString() {
     var wrappedNodes = nodes.map((x) => '"$x";');
@@ -118,33 +175,58 @@ ${subgraphs.join('\n')}
 }''';
   }
 
+  /// Returns this object in JSON format.
   Map<String, dynamic> toJson() =>
       {'id': id, 'label': label, 'nodes': nodes, 'subgraphs': subgraphs};
 }
 
-/// Store global metrics here.
+/// Stores global metrics.
+/// See the README for more details about each metric.
 class Metrics {
+  /// Is this a directed acyclic graph (DAG)?
   bool isAcyclic;
-  // TODO Add firstCycle. But wait until this issue is resolved: https://github.com/simphotonics/directed_graph/issues/1
+
+  /// The first dependency cycle found if the graph is not acyclic.
+  List<String> firstCycle = [];
+
+  /// Number of nodes (dart files).
   int numNodes;
+
+  /// List of orphan nodes.
   List<String> orphans = [];
+
+  /// Cumulative Component Dependency.
   int ccd;
+
+  /// Average Component Dependency.
   double acd;
+
+  /// Average Component Dependency Percentage.
   double acdp;
+
+  /// Normalized Cumulative Component Dependency.
   double nccd;
+
+  /// Total Source Lines of Code for all nodes.
   int totalSloc;
+
+  /// Average Source Lines of Code per node.
   double avgSloc;
 
-  Metrics(this.isAcyclic, this.numNodes, this.orphans, this.ccd, this.acd,
-      this.acdp, this.nccd, this.totalSloc, this.avgSloc);
+  /// Constructor.
+  Metrics(this.isAcyclic, this.firstCycle, this.numNodes, this.orphans,
+      this.ccd, this.acd, this.acdp, this.nccd, this.totalSloc, this.avgSloc);
 
+  /// Returns this object in dot format.
   @override
   String toString() {
     return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l acdp: $acdp% \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l", shape=rect];';
   }
 
+  /// Returns this object in JSON format.
   Map<String, dynamic> toJson() => {
         'isAcyclic': isAcyclic,
+        'firstCycle': firstCycle,
         'numNodes': numNodes,
         'orphans': orphans,
         'ccd': ccd,

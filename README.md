@@ -9,27 +9,27 @@
 
 # Command Line Usage
 
-```
+```console
 Usage: lakos [options] <root-directory>
 
 -f, --format=<FORMAT>        Output format.
                              [dot (default), json]
-                             
+
 -o, --output=<FILE>          Save output to a file instead of printing it.
                              (defaults to "STDOUT")
-                             
+
     --[no-]tree              Show directory structure as subgraphs.
                              (defaults to on)
-                             
+
     --[no-]metrics           Compute and show global metrics.
                              (defaults to on)
-                             
+
     --[no-]node-metrics      Show node metrics. Only works when --metrics is true.
                              --no-node-metrics is the default.
-                             
+
 -i, --ignore=<GLOB>          Exclude files and directories with a glob pattern.
                              (defaults to "!**")
-                             
+
 -l, --layout=<TB>            Graph layout direction. AKA "rankdir" in Graphviz.
 
           [BT]               bottom to top
@@ -47,18 +47,20 @@ Usage: lakos [options] <root-directory>
 ## Examples
 
 Print dot graph for current directory (not very useful):
-```
+
+```console
 lakos .
 ```
 
 Pass output directly to Graphviz dot in one line (a lot more useful):
-```
+
+```console
 lakos . | dot -Tpng -Gdpi=300 -o example.png
 ```
 
 Save output to a dot file first and then generate an SVG using Graphviz dot:
 
-```
+```console
 lakos -o example.dot .
 dot -Tsvg example.dot -o example.svg
 ```
@@ -76,6 +78,8 @@ Use `--metrics` to compute and show these.
 
 **isAcyclic:** True if the library dependencies form a directed acyclic graph (DAG). False if the graph contains dependency cycles. True is better.
 
+**firstCycle:** The first dependency cycle found if the graph is not acyclic. Available in the JSON output.
+
 **numNodes:** Number of Dart libraries (nodes) in the graph.
 
 **numOrphans:** Number of Dart libraries that have no imports and are imported nowhere. (inDegree and outDegree are 0.)
@@ -84,7 +88,7 @@ Use `--metrics` to compute and show these.
 
 **acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. The ACD can be interpreted as the average number of nodes that will need to change when one node changes. Lower is better.
 
-**acdp:** The ACD as a percentage of numNodes. ACDP = (ACD / numNodes) * 100 = (CCD / numNodes^2) * 100. The ACDP can be interpreted as the average percentage of nodes that will need to change when one node changes. The ACDP is my original research. Lower is better.
+**acdp:** The ACD as a percentage of numNodes. ACDP = (ACD / numNodes) _ 100 = (CCD / numNodes^2) _ 100. The ACDP can be interpreted as the average percentage of nodes that will need to change when one node changes. The ACDP is my original research. Lower is better.
 
 **nccd:** The Normalized Cumulative Component Dependency. This is the CCD divided by a CCD of a binary tree of the same size. It's the only metric here that can compare graphs of different sizes. If the NCCD is below 1.0, the graph is "horizontal". If the NCCD is above 1.0, the graph is "vertical". If the NCCD is above 2.0, the graph probably contains cycles. Lower is better.
 
@@ -119,12 +123,11 @@ Use these in your CI builds, especially DependencyCycleDetected.
   <li>DependencyCycleDetected</li>
 </ol>
 
-
 ## More Examples
 
 Lakos run on itself, ignoring tests.
 
-```
+```console
 lakos -o dot_images/lakos.no_test.dot -i test/** .
 ```
 
@@ -132,7 +135,7 @@ lakos -o dot_images/lakos.no_test.dot -i test/** .
 
 No tests, show node metrics.
 
-```
+```console
 lakos -o dot_images/glob.no_test_node_metrics.dot -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/glob-1.2.0
 ```
 
@@ -140,7 +143,7 @@ lakos -o dot_images/glob.no_test_node_metrics.dot -i test/** --node-metrics /roo
 
 No tests, no tree, no metrics.
 
-```
+```console
 lakos --no-tree --no-metrics -o dot_images/string_scanner.no_test_no_tree_no_metrics.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
 ```
 
@@ -148,7 +151,7 @@ lakos --no-tree --no-metrics -o dot_images/string_scanner.no_test_no_tree_no_met
 
 No tests, no metrics, left to right layout.
 
-```
+```console
 lakos -o dot_images/test.no_test_no_metrics_lr.dot -i test/** --no-metrics -l LR /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3
 ```
 
@@ -156,7 +159,7 @@ lakos -o dot_images/test.no_test_no_metrics_lr.dot -i test/** --no-metrics -l LR
 
 A graph with circular dependencies.
 
-```
+```console
 lakos -o dot_images/path.no_test.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/path-1.7.0
 ```
 
@@ -164,134 +167,142 @@ lakos -o dot_images/path.no_test.dot -i test/** /root/.pub-cache/hosted/pub.dart
 
 Example JSON output:
 
+```console
+lakos -f json -o dot_images/pub_cache.no_test.json -i test/** /root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3
 ```
-lakos -f json -o dot_images/directed_graph.no_test.json -i test/** /root/.pub-cache/hosted/pub.dartlang.org/directed_graph-0.1.8
-```
+<details> <summary>Click to show the JSON output.</summary>
 
 ```json
 {
-  "rootDir": "/root/.pub-cache/hosted/pub.dartlang.org/directed_graph-0.1.8",
+  "rootDir": "/root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3",
   "nodes": {
-    "/benchmark/bin/benchmark.dart": {
-      "id": "/benchmark/bin/benchmark.dart",
-      "label": "benchmark",
-      "cd": 2,
+    "/example/list.dart": {
+      "id": "/example/list.dart",
+      "label": "list",
+      "cd": 3,
       "inDegree": 0,
       "outDegree": 1,
       "instability": 1.0,
-      "sloc": 206
+      "sloc": 14
     },
-    "/example/bin/example.dart": {
-      "id": "/example/bin/example.dart",
-      "label": "example",
+    "/lib/pub_cache.dart": {
+      "id": "/lib/pub_cache.dart",
+      "label": "pub_cache",
       "cd": 2,
-      "inDegree": 0,
-      "outDegree": 1,
-      "instability": 1.0,
-      "sloc": 73
-    },
-    "/lib/directed_graph.dart": {
-      "id": "/lib/directed_graph.dart",
-      "label": "directed_graph",
-      "cd": 1,
       "inDegree": 2,
-      "outDegree": 0,
-      "instability": 0.0,
-      "sloc": 330
+      "outDegree": 1,
+      "instability": 0.33,
+      "sloc": 162
+    },
+    "/lib/src/impl.dart": {
+      "id": "/lib/src/impl.dart",
+      "label": "impl",
+      "cd": 2,
+      "inDegree": 1,
+      "outDegree": 1,
+      "instability": 0.5,
+      "sloc": 95
     }
   },
   "subgraphs": [
     {
-      "id": "/directed_graph-0.1.8",
-      "label": "directed_graph-0.1.8",
+      "id": "",
+      "label": "pub_cache-0.2.3",
       "nodes": [],
       "subgraphs": [
         {
-          "id": "/directed_graph-0.1.8/benchmark",
-          "label": "benchmark",
-          "nodes": [],
-          "subgraphs": [
-            {
-              "id": "/directed_graph-0.1.8/benchmark/bin",
-              "label": "bin",
-              "nodes": [
-                "/benchmark/bin/benchmark.dart"
-              ],
-              "subgraphs": []
-            }
-          ]
-        },
-        {
-          "id": "/directed_graph-0.1.8/example",
+          "id": "/example",
           "label": "example",
-          "nodes": [],
-          "subgraphs": [
-            {
-              "id": "/directed_graph-0.1.8/example/bin",
-              "label": "bin",
-              "nodes": [
-                "/example/bin/example.dart"
-              ],
-              "subgraphs": []
-            }
-          ]
-        },
-        {
-          "id": "/directed_graph-0.1.8/lib",
-          "label": "lib",
           "nodes": [
-            "/lib/directed_graph.dart"
+            "/example/list.dart"
           ],
           "subgraphs": []
+        },
+        {
+          "id": "/lib",
+          "label": "lib",
+          "nodes": [
+            "/lib/pub_cache.dart"
+          ],
+          "subgraphs": [
+            {
+              "id": "/lib/src",
+              "label": "src",
+              "nodes": [
+                "/lib/src/impl.dart"
+              ],
+              "subgraphs": []
+            }
+          ]
         }
       ]
     }
   ],
   "edges": [
     {
-      "from": "/benchmark/bin/benchmark.dart",
-      "to": "/lib/directed_graph.dart",
+      "from": "/example/list.dart",
+      "to": "/lib/pub_cache.dart",
       "directive": "import"
     },
     {
-      "from": "/example/bin/example.dart",
-      "to": "/lib/directed_graph.dart",
+      "from": "/lib/pub_cache.dart",
+      "to": "/lib/src/impl.dart",
+      "directive": "import"
+    },
+    {
+      "from": "/lib/src/impl.dart",
+      "to": "/lib/pub_cache.dart",
       "directive": "import"
     }
   ],
   "metrics": {
-    "isAcyclic": true,
+    "isAcyclic": false,
+    "firstCycle": [
+      "/lib/pub_cache.dart",
+      "/lib/src/impl.dart",
+      "/lib/pub_cache.dart"
+    ],
     "numNodes": 3,
     "orphans": [],
-    "ccd": 5,
-    "acd": 1.67,
-    "acdp": 55.56,
-    "nccd": 1.0,
-    "totalSloc": 609,
-    "avgSloc": 203.0
+    "ccd": 7,
+    "acd": 2.33,
+    "acdp": 77.78,
+    "nccd": 1.4,
+    "totalSloc": 271,
+    "avgSloc": 90.33
   }
 }
 ```
 
+</details>
+
+
+
 # Library Usage
 
-See example/example.dart
+In addition to the command line tool, `lakos` can also be used as a library.
+
+Use `buildModel` to construct a `Model` object.
+
+Use `convertModelToDirectedGraph` for further analysis with the `directed_graph` library.
+
+See example/example.dart.
 
 # Inspiration
 
-`lakos` is named after John Lakos, author of *Large-Scale C++ Software Design*. This book presents:
+`lakos` is named after John Lakos, author of _Large-Scale C++ Software Design_. This book presents:
 
-- A graph-theoretic argument for keeping library dependencies acyclic.
+- A graph-theoretic argument for keeping module dependencies acyclic.
 - A set of "levelization techniques", such as Escalation and Demotion, to help avoid cyclic dependencies.
 - A set of coupling metrics, such as the CCD, ACD, and the NCCD.
 - An emphasis on physical design (files, folders) working in harmony with logical design (functions, classes).
 
 # Similar Tools
 
+- Dart: pubviz
 - C/C++: cinclude2dot
-- JavaScript/TypeScript: madge, dependency-cruiser 
+- JavaScript/TypeScript: madge, dependency-cruiser
 - C#: NDepend
 - Java: Sonargraph, JArchitect
 - Python: pydeps
 - Haskell: graphmod
-

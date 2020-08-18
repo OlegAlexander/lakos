@@ -4,9 +4,11 @@ import 'package:glob/glob.dart';
 import 'package:lakos/src/model.dart';
 import 'package:lakos/src/resolve_imports.dart';
 import 'package:lakos/src/metrics.dart';
+import 'package:string_scanner/string_scanner.dart';
 
 const alwaysIgnore = '{.**,doc/**,build/**}';
 
+/// Parse the import line to get the package or file path.
 String parseImportLine(String line) {
   var openQuote = false;
   var importPath = '';
@@ -28,13 +30,11 @@ String parseImportLine(String line) {
   return importPath;
 }
 
+/// Recurses into the rootDir and gets all the subfolders as sugraphs.
 List<Subgraph> getDirTree(Directory rootDir, String ignore) {
   var dirs = [rootDir];
   var subgraphs = [
-    Subgraph(
-        rootDir.path
-            .replaceFirst(rootDir.parent.path, '')
-            .replaceAll('\\', '/'),
+    Subgraph(rootDir.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/'),
         basename(rootDir.path))
   ];
   var treeSubgraphs = <Subgraph>[];
@@ -72,7 +72,7 @@ List<Subgraph> getDirTree(Directory rootDir, String ignore) {
     // Add directories as subgraphs
     for (var dir in dirsOnly) {
       var subgraph = Subgraph(
-          dir.path.replaceFirst(rootDir.parent.path, '').replaceAll('\\', '/'),
+          dir.path.replaceFirst(rootDir.path, '').replaceAll('\\', '/'),
           basename(dir.path));
       currentSubgraph.subgraphs.add(subgraph);
       subgraph.parent = currentSubgraph;
@@ -105,6 +105,7 @@ List<Subgraph> getDirTree(Directory rootDir, String ignore) {
   return treeSubgraphs;
 }
 
+/// Returns all Dart files recursively from the rootDir.
 Iterable<File> getDartFiles(Directory rootDir, String ignore) {
   var dartFilesGlob = Glob('**.dart');
   var ignoreGlob = Glob(ignore, context: Context(current: rootDir.path));
@@ -119,6 +120,7 @@ Iterable<File> getDartFiles(Directory rootDir, String ignore) {
   return dartFiles;
 }
 
+/// Returns a map of Dart files as Nodes.
 Map<String, Node> getDartFileNodes(
     Directory rootDir, String ignore, bool showNodeMetrics) {
   var dartFiles = getDartFiles(rootDir, ignore);
@@ -133,6 +135,7 @@ Map<String, Node> getDartFileNodes(
   return nodes;
 }
 
+/// Read each Dart file and get the import and export paths.
 List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
   var edges = <Edge>[];
 
@@ -182,6 +185,7 @@ List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
   return edges;
 }
 
+/// Thrown by [buildModel] if pubspec.yaml can't be found in or above the rootDir.
 class PubspecYamlNotFoundException implements Exception {
   final String message;
   PubspecYamlNotFoundException(this.message);
@@ -189,11 +193,25 @@ class PubspecYamlNotFoundException implements Exception {
   String toString() => 'PubspecYamlNotFoundException: $message';
 }
 
-/// This is the main function for API usage.
-/// Returns the Model object.
-/// Throws FileSystemException if rootDir doesn't exist.
-/// Throws PubspecYamlNotFoundException if pubspec.yaml can't be found in or above the rootDir.
-/// Throws StringScannerException if ignoreGlob is invalid.
+/// This is the main function for API usage. Returns a [Model] object.
+///
+/// - `rootDir` -- The root directory (required).
+///
+/// - `ignoreGlob` -- A glob pattern of files/folders to ignore.
+///
+/// - `showTree` -- Show the directory tree?
+///
+/// - `showMetrics` -- Show metrics?
+///
+/// - `showNodeMetrics` -- Show node metrics?
+///
+/// - `layout` -- AKA "rankdir" in Graphviz. Possible values: TB, BT, LR, and RL.
+///
+/// Throws [FileSystemException] if rootDir doesn't exist.
+///
+/// Throws [PubspecYamlNotFoundException] if pubspec.yaml can't be found in or above the rootDir.
+///
+/// Throws [StringScannerException] if ignoreGlob is invalid.
 Model buildModel(Directory rootDir,
     {String ignoreGlob = '!**',
     bool showTree = true,

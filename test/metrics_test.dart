@@ -16,7 +16,7 @@ void main() {
     g.edges.add(Edge('c', 'd'));
     // g.edges.add(Edge('d', 'a')); // Cycle
     print(g);
-    var digraph = convertModelToDigraph(g);
+    var digraph = convertModelToDirectedGraph(g);
     print(digraph);
     print(digraph.edgeMap);
     print(digraph.isAcyclic);
@@ -39,7 +39,7 @@ void main() {
     g.edges.add(Edge('c', 'd'));
     // g.edges.add(Edge('d', 'a')); // Cycle
     print(g);
-    var digraph = convertModelToDigraph(g);
+    var digraph = convertModelToDirectedGraph(g);
     print(digraph.edgeMap);
     print('isAcyclic: ${digraph.isAcyclic}');
     print('levels: ${digraph.localSources}');
