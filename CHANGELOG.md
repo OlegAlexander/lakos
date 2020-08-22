@@ -1,3 +1,8 @@
+## 1.2.2
+
+- Upgraded to directed_graph 0.2.2.
+- Added a test for piping stdout to dot.
+
 ## 1.2.1
 
 - **API breaking change:** convertModelToDirectedGraph is now Model.toDirectedGraph.

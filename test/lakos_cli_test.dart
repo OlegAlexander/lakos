@@ -6,6 +6,7 @@ import '../bin/lakos.dart' show ExitCode;
 
 const outDir = 'dot_images';
 const lakos = 'bin/lakos.dart';
+const dpi = '200';
 var packages = {
   '.': ExitCode.Ok.index,
   'path': ExitCode.DependencyCycleDetected.index,
@@ -42,7 +43,8 @@ void main() {
   test('generate dot graphs -- force forward slashes on Windows', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
-      packageLocation = Directory(packageLocation.path.replaceAll('\\', '/'));
+      packageLocation = Directory(
+          packageLocation.path.replaceAll('\\', '/')); // Force forward slashes
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.dot');
       var pngFilename = join(outDir, '$outputFilename.png');
@@ -53,7 +55,29 @@ void main() {
       expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
+      expect(dotResult.exitCode, ExitCode.Ok.index);
+    }
+  });
+
+  test('Pipe to dot', () {
+    for (var package in packages.keys) {
+      var packageLocation = getPackageLocation(package);
+      var outputFilename = package == '.' ? 'lakos' : package;
+      var dotFilename = join(outDir, '$outputFilename.pipe.dot');
+      var pngFilename = join(outDir, '$outputFilename.pipe.png');
+
+      var lakosDotCommand = [lakos, packageLocation.path];
+      print(lakosDotCommand.join(' '));
+      var lakosDotResult = Process.runSync('dart', lakosDotCommand);
+      expect(lakosDotResult.exitCode, packages[package]);
+
+      // Manually save the stdout to a file
+      File(dotFilename).writeAsStringSync(lakosDotResult.stdout);
+
+      var dotResult = Process.runSync(
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
+      print(dotResult.stderr);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
@@ -78,7 +102,7 @@ void main() {
       expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
@@ -108,7 +132,7 @@ void main() {
           ExitCode.Ok.index); // With --no-metrics expect OK
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
@@ -136,7 +160,7 @@ void main() {
       expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
@@ -167,7 +191,7 @@ void main() {
           ExitCode.Ok.index); // With --no-metrics expect OK
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=300', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
