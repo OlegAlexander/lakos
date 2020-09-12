@@ -11,6 +11,9 @@ class Model {
   /// Possible values: TB, BT, LR, and RL.
   String rankdir;
 
+  /// Any X11 or hex color.
+  String nodeColor;
+
   /// A map of nodes (Dart files).
   Map<String, Node> nodes = {};
 
@@ -25,7 +28,7 @@ class Model {
 
   /// This constructor is not meant to be used directly.
   /// Use the [buildModel] function instead.
-  Model({this.rootDir = '.', this.rankdir = 'TB'});
+  Model({this.rootDir = '.', this.rankdir = 'TB', this.nodeColor = 'lavender'});
 
   /// Returns this object in dot format.
   @override
@@ -33,6 +36,7 @@ class Model {
     return _prettyPrintDot('''
 digraph "" {
 style=rounded;
+node [style=filled fillcolor="$nodeColor"];
 rankdir=$rankdir;
 ${nodes.values.join('\n')}
 ${subgraphs.join('\n')}
@@ -118,7 +122,7 @@ class Node {
   /// Returns this object in dot format.
   @override
   String toString() {
-    return '"$id" [label="$label${showNodeMetrics ? ' \\n cd: $cd \\n inDegree: $inDegree \\n outDegree: $outDegree \\n instability: $instability \\n sloc: $sloc' : ''}"${inDegree == 0 && outDegree == 0 ? ', style=bold' : ''}];';
+    return '"$id" [label="$label${showNodeMetrics ? ' \\n cd: $cd \\n inDegree: $inDegree \\n outDegree: $outDegree \\n instability: $instability \\n sloc: $sloc' : ''}"${inDegree == 0 && outDegree == 0 ? ' shape=octagon' : ''}];';
   }
 
   /// Returns this object in JSON format.
@@ -213,6 +217,12 @@ class Metrics {
   /// Number of nodes (dart files).
   int numNodes;
 
+  /// Number of edges (dependencies).
+  int numEdges;
+
+  /// Average degree of a directed graph = numEdges/numNodes
+  double avgDegree;
+
   /// List of orphan nodes.
   List<String> orphans = [];
 
@@ -221,9 +231,6 @@ class Metrics {
 
   /// Average Component Dependency.
   double acd;
-
-  /// Average Component Dependency Percentage.
-  double acdp;
 
   /// Normalized Cumulative Component Dependency.
   double nccd;
@@ -235,13 +242,23 @@ class Metrics {
   double avgSloc;
 
   /// Constructor.
-  Metrics(this.isAcyclic, this.firstCycle, this.numNodes, this.orphans,
-      this.ccd, this.acd, this.acdp, this.nccd, this.totalSloc, this.avgSloc);
+  Metrics(
+      this.isAcyclic,
+      this.firstCycle,
+      this.numNodes,
+      this.numEdges,
+      this.avgDegree,
+      this.orphans,
+      this.ccd,
+      this.acd,
+      this.nccd,
+      this.totalSloc,
+      this.avgSloc);
 
   /// Returns this object in dot format.
   @override
   String toString() {
-    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l acdp: $acdp% \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l", shape=rect];';
+    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes  \\l numEdges: $numEdges  \\l avgDegree: $avgDegree \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l" shape=rect];';
   }
 
   /// Returns this object in JSON format.
@@ -249,10 +266,11 @@ class Metrics {
         'isAcyclic': isAcyclic,
         'firstCycle': firstCycle,
         'numNodes': numNodes,
+        'numEdges': numEdges,
+        'avgDegree': avgDegree,
         'orphans': orphans,
         'ccd': ccd,
         'acd': acd,
-        'acdp': acdp,
         'nccd': nccd,
         'totalSloc': totalSloc,
         'avgSloc': avgSloc

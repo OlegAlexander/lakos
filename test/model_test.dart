@@ -18,6 +18,7 @@ void main() {
     expect(g.toString(), '''
 digraph "" {
   style=rounded;
+  node [style=filled fillcolor="lavender"];
   rankdir=TB;
   "a" [label="a"];
   "b" [label="b"];
@@ -38,6 +39,7 @@ digraph "" {
     expect(g.toString(), '''
 digraph "" {
   style=rounded;
+  node [style=filled fillcolor="lavender"];
   rankdir=LR;
   "a" [label="a"];
   "b" [label="b"];
@@ -109,6 +111,7 @@ digraph "" {
     expect(g.toString(), '''
 digraph "" {
   style=rounded;
+  node [style=filled fillcolor="lavender"];
   rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
@@ -134,6 +137,7 @@ digraph "" {
     expect(g.toString(), '''
 digraph "" {
   style=rounded;
+  node [style=filled fillcolor="lavender"];
   rankdir=LR;
   subgraph "cluster~zero" {
     label="zero";
@@ -162,6 +166,7 @@ digraph "" {
     expect(g.toString(), '''
 digraph "" {
   style=rounded;
+  node [style=filled fillcolor="lavender"];
   rankdir=TB;
   subgraph "cluster~zero" {
     label="zero";
@@ -236,7 +241,7 @@ digraph "" {
     node.inDegree = 0;
     node.outDegree = 0;
     print(node);
-    expect(node.toString(), '"a" [label="a", style=bold];');
+    expect(node.toString(), '"a" [label="a" shape=octagon];');
   });
 
   test('Edge', () {
@@ -251,12 +256,13 @@ digraph "" {
   });
 
   test('Metrics', () {
-    var metrics = Metrics(true, [], 10, [], 40, 12.3, 2.5, 1.2, 1000, 250.0);
+    var metrics =
+        Metrics(true, [], 10, 12, 1.1, [], 40, 12.3, 1.2, 1000, 250.0);
     print(metrics);
     expect(metrics.toString(),
-        '"metrics" [label=" isAcyclic: true \\l numNodes: 10 \\l numOrphans: 0 \\l ccd: 40 \\l acd: 12.3 \\l acdp: 2.5% \\l nccd: 1.2 \\l totalSloc: 1000 \\l avgSloc: 250.0 \\l", shape=rect];');
+        '"metrics" [label=" isAcyclic: true \\l numNodes: 10  \\l numEdges: 12  \\l avgDegree: 1.1 \\l numOrphans: 0 \\l ccd: 40 \\l acd: 12.3 \\l nccd: 1.2 \\l totalSloc: 1000 \\l avgSloc: 250.0 \\l" shape=rect];');
     print(jsonEncode(metrics));
     expect(jsonEncode(metrics),
-        '{"isAcyclic":true,"firstCycle":[],"numNodes":10,"orphans":[],"ccd":40,"acd":12.3,"acdp":2.5,"nccd":1.2,"totalSloc":1000,"avgSloc":250.0}');
+        '{"isAcyclic":true,"firstCycle":[],"numNodes":10,"numEdges":12,"avgDegree":1.1,"orphans":[],"ccd":40,"acd":12.3,"nccd":1.2,"totalSloc":1000,"avgSloc":250.0}');
   });
 }

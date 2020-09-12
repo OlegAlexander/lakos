@@ -47,12 +47,13 @@ void main(List<String> arguments) {
         defaultsTo: true,
         negatable: true)
     ..addFlag('metrics',
-        help: 'Compute and show global metrics.',
-        defaultsTo: true,
+        abbr: 'm',
+        help: 'Compute and show global metrics.\n(defaults to off)',
+        defaultsTo: false,
         negatable: true)
     ..addFlag('node-metrics',
         help:
-            'Show node metrics. Only works when --metrics is true.\n--no-node-metrics is the default.',
+            'Show node metrics. Only works when --metrics is true.\n(defaults to off)',
         defaultsTo: false,
         negatable: true)
     ..addOption('ignore',
@@ -60,6 +61,11 @@ void main(List<String> arguments) {
         help: 'Exclude files and directories with a glob pattern.',
         valueHelp: 'GLOB',
         defaultsTo: '!**')
+    ..addOption('node-color',
+        abbr: 'c',
+        help: 'Any X11 or hex color.',
+        valueHelp: 'lavender',
+        defaultsTo: 'lavender')
     ..addOption('layout',
         abbr: 'l',
         help: 'Graph layout direction. AKA "rankdir" in Graphviz.',
@@ -74,7 +80,7 @@ void main(List<String> arguments) {
         defaultsTo: 'TB')
     ..addFlag('cycles-allowed',
         help:
-            'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n--no-cycles-allowed is the default.',
+            'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n(defaults to off)',
         defaultsTo: false,
         negatable: true);
 
@@ -103,6 +109,7 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var nodeMetrics = argResults['node-metrics'] as bool;
   var ignore = argResults['ignore'] as String;
+  var nodeColor = argResults['node-color'] as String;
   var layout = argResults['layout'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
 
@@ -114,6 +121,7 @@ void main(List<String> arguments) {
         showTree: tree,
         showMetrics: metrics,
         showNodeMetrics: nodeMetrics,
+        nodeColor: nodeColor,
         layout: layout);
   } catch (e) {
     print(e);

@@ -47,7 +47,6 @@ void main() {
     var ccd = computeCCD(g);
     print('ccd: $ccd');
     print('acd: ${computeACD(ccd, digraph.vertices.length)}');
-    print('acdp: ${computeACDP(ccd, digraph.vertices.length)}%');
     print('nccd: ${computeNCCD(ccd, digraph.vertices.length)}');
   });
 

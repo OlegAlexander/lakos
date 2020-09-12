@@ -205,6 +205,8 @@ class PubspecYamlNotFoundException implements Exception {
 ///
 /// - `showNodeMetrics` -- Show node metrics?
 ///
+/// - `nodeColor` -- Any X11 or hex color.
+///
 /// - `layout` -- AKA "rankdir" in Graphviz. Possible values: TB, BT, LR, and RL.
 ///
 /// Throws [FileSystemException] if rootDir doesn't exist.
@@ -215,8 +217,9 @@ class PubspecYamlNotFoundException implements Exception {
 Model buildModel(Directory rootDir,
     {String ignoreGlob = '!**',
     bool showTree = true,
-    bool showMetrics = true,
+    bool showMetrics = false,
     bool showNodeMetrics = false,
+    String nodeColor = 'lavender',
     String layout = 'TB'}) {
   // Convert relative to absolute path.
   if (!rootDir.isAbsolute) {
@@ -232,7 +235,8 @@ Model buildModel(Directory rootDir,
         'pubspec.yaml not found in or above the root directory.');
   }
 
-  var graph = Model(rootDir: rootDir.path, rankdir: layout)
+  var graph = Model(
+      rootDir: rootDir.path, rankdir: layout, nodeColor: nodeColor)
     ..nodes =
         getDartFileNodes(rootDir, ignoreGlob, showNodeMetrics && showMetrics);
 

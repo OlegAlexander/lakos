@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:lakos/lakos.dart';
 
 void main() {
-  var model = buildModel(Directory('.'), ignoreGlob: 'test/**');
+  var model =
+      buildModel(Directory('.'), ignoreGlob: 'test/**', showMetrics: true);
   print(model.getOutput(OutputFormat.Dot));
   print(model.getOutput(OutputFormat.Json));
 

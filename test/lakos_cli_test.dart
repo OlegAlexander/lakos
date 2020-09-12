@@ -52,7 +52,7 @@ void main() {
       var lakosDotCommand = [lakos, '-o', dotFilename, packageLocation.path];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, packages[package]);
+      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
@@ -60,17 +60,17 @@ void main() {
     }
   });
 
-  test('Pipe to dot', () {
+  test('Pipe to dot -- node color', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename = join(outDir, '$outputFilename.pipe.dot');
-      var pngFilename = join(outDir, '$outputFilename.pipe.png');
+      var dotFilename = join(outDir, '$outputFilename.pipe_color.dot');
+      var pngFilename = join(outDir, '$outputFilename.pipe_color.png');
 
-      var lakosDotCommand = [lakos, packageLocation.path];
+      var lakosDotCommand = [lakos, '-c', '#ffff00', packageLocation.path];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, packages[package]);
+      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
 
       // Manually save the stdout to a file
       File(dotFilename).writeAsStringSync(lakosDotResult.stdout);
@@ -82,17 +82,18 @@ void main() {
     }
   });
 
-  test('generate dot graphs--no test', () {
+  test('generate dot graphs--metrics--no test', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename = join(outDir, '$outputFilename.no_test.dot');
-      var pngFilename = join(outDir, '$outputFilename.no_test.png');
+      var dotFilename = join(outDir, '$outputFilename.metrics_no_test.dot');
+      var pngFilename = join(outDir, '$outputFilename.metrics_no_test.png');
 
       var lakosDotCommand = [
         lakos,
         '-o',
         dotFilename,
+        '-m',
         '-i',
         'test/**',
         packageLocation.path
@@ -107,19 +108,16 @@ void main() {
     }
   });
 
-  test('generate dot graphs--no test--no tree--no-metrics', () {
+  test('generate dot graphs--no test--no tree', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename =
-          join(outDir, '$outputFilename.no_test_no_tree_no_metrics.dot');
-      var pngFilename =
-          join(outDir, '$outputFilename.no_test_no_tree_no_metrics.png');
+      var dotFilename = join(outDir, '$outputFilename.no_test_no_tree.dot');
+      var pngFilename = join(outDir, '$outputFilename.no_test_no_tree.png');
 
       var lakosDotCommand = [
         lakos,
         '--no-tree',
-        '--no-metrics',
         '-o',
         dotFilename,
         '-i',
@@ -128,8 +126,7 @@ void main() {
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode,
-          ExitCode.Ok.index); // With --no-metrics expect OK
+      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
@@ -150,6 +147,7 @@ void main() {
         lakos,
         '-o',
         dotFilename,
+        '-m',
         '-i',
         'test/**',
         '--node-metrics',
@@ -165,14 +163,12 @@ void main() {
     }
   });
 
-  test('generate dot graphs--no test--no metrics--layout LR', () {
+  test('generate dot graphs--no test--layout LR', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename =
-          join(outDir, '$outputFilename.no_test_no_metrics_lr.dot');
-      var pngFilename =
-          join(outDir, '$outputFilename.no_test_no_metrics_lr.png');
+      var dotFilename = join(outDir, '$outputFilename.no_test_lr.dot');
+      var pngFilename = join(outDir, '$outputFilename.no_test_lr.png');
 
       var lakosDotCommand = [
         lakos,
@@ -180,15 +176,13 @@ void main() {
         dotFilename,
         '-i',
         'test/**',
-        '--no-metrics',
         '-l',
         'LR',
         packageLocation.path
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode,
-          ExitCode.Ok.index); // With --no-metrics expect OK
+      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
@@ -196,11 +190,11 @@ void main() {
     }
   });
 
-  test('generate json files--no test', () {
+  test('generate json files--metrics--no test', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var jsonFilename = join(outDir, '$outputFilename.no_test.json');
+      var jsonFilename = join(outDir, '$outputFilename.metrics_no_test.json');
 
       var lakosJsonCommand = [
         lakos,
@@ -208,6 +202,7 @@ void main() {
         'json',
         '-o',
         jsonFilename,
+        '-m',
         '-i',
         'test/**',
         packageLocation.path

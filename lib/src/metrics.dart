@@ -75,15 +75,6 @@ List<String> computeOrphans(Model model) {
 /// Lower is better.
 double computeACD(int ccd, int numNodes) => ccd / numNodes;
 
-/// Return the average component dependency as a percentage of numNodes.
-/// ACDP = (ACD / numNodes) * 100 = (CCD / numNodes^2) * 100
-/// It can be interpreted as the average percentage of nodes that will need to change when one node changes.
-/// As a general trend, every new node added should reduce the ACDP.
-/// This metric is my original research. Use at your own risk.
-/// Lower is better.
-double computeACDP(int ccd, int numNodes) =>
-    (ccd / (numNodes * numNodes)) * 100;
-
 /// Base 2 log.
 double log2(num x) => log(x) / ln2;
 
@@ -164,7 +155,9 @@ Metrics computeAllMetrics(Model model) {
   computeNodeSlocs(model);
   var ccd = computeCCD(model);
   var orphans = computeOrphans(model);
-  var numNodes = digraph.vertices.length;
+  var numNodes = model.nodes.length;
+  var numEdges = model.edges.length;
+  var avgDegree = (numEdges / numNodes).toPrecision(precision);
   var totalSloc = computeTotalSloc(model);
   var avgSloc = totalSloc / numNodes;
   var firstCycle = digraph.cycle.map((node) => node.data).toList();
@@ -172,10 +165,11 @@ Metrics computeAllMetrics(Model model) {
       firstCycle.isEmpty,
       firstCycle,
       numNodes,
+      numEdges,
+      avgDegree,
       orphans,
       ccd,
       computeACD(ccd, numNodes).toPrecision(precision),
-      computeACDP(ccd, numNodes).toPrecision(precision),
       computeNCCD(ccd, numNodes).toPrecision(precision),
       totalSloc,
       avgSloc.toPrecision(precision));

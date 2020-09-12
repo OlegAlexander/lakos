@@ -1,3 +1,11 @@
+## 1.2.3
+
+- Added numEdges and avgDegree to metrics. Removed acdp.
+- Added `--node-color` option.
+- Made `--metrics` default to off.
+- Added a `gv2gml` example in readme.
+- Updated readme images.
+
 ## 1.2.2
 
 - Upgraded to directed_graph 0.2.2.
