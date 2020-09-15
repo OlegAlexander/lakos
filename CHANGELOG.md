@@ -1,6 +1,6 @@
 ## 1.3.0
 
-- **CLI breaking change:** --no-cycles-allowed no longer requires --metrics to be on.
+- **CLI breaking change:** `--no-cycles-allowed` no longer requires `--metrics` to be on.
 
 ## 1.2.3
 
