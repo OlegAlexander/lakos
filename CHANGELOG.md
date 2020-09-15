@@ -1,3 +1,7 @@
+## 1.3.0
+
+- **CLI breaking change:** --no-cycles-allowed no longer requires --metrics to be on.
+
 ## 1.2.3
 
 - Added numEdges and avgDegree to metrics. Removed acdp.

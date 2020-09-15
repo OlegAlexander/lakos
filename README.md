@@ -5,7 +5,7 @@
 - Visualize Dart library dependencies in Graphviz `dot`.
 - Detect dependency cycles.
 - Identify orphans.
-- Compute the Cumulative Component Dependency (CCD) and related metrics.
+- Compute useful dependency graph metrics.
 
 # Command Line Usage
 
@@ -14,25 +14,25 @@ Usage: lakos [options] <root-directory>
 
 -f, --format=<FORMAT>          Output format.
                                [dot (default), json]
-
+                               
 -o, --output=<FILE>            Save output to a file instead of printing it.
                                (defaults to "STDOUT")
-
-    --[no-]tree                Show directory structure as subgraphs.
+                               
+    --[no-]tree                Show directory structure as subgraphs.       
                                (defaults to on)
-
+                               
 -m, --[no-]metrics             Compute and show global metrics.
-                               (defaults to off)
-
+                               (defaults to --no-metrics)
+                               
     --[no-]node-metrics        Show node metrics. Only works when --metrics is true.
-                               (defaults to off)
-
+                               (defaults to --no-node-metrics)
+                               
 -i, --ignore=<GLOB>            Exclude files and directories with a glob pattern.
                                (defaults to "!**")
-
+                               
 -c, --node-color=<lavender>    Any X11 or hex color.
                                (defaults to "lavender")
-
+                               
 -l, --layout=<TB>              Graph layout direction. AKA "rankdir" in Graphviz.
 
           [BT]                 bottom to top
@@ -40,11 +40,11 @@ Usage: lakos [options] <root-directory>
           [RL]                 right to left
           [TB] (default)       top to bottom
 
-    --[no-]cycles-allowed      Runs normally but exits with a non-zero exit code
+    --[no-]cycles-allowed      With --no-cycles-allowed lakos runs normally
+                               but exits with a non-zero exit code
                                if a dependency cycle is detected.
-                               Only works when --metrics is true.
                                Useful for CI builds.
-                               (defaults to off)
+                               (defaults to --no-cycles-allowed)
 ```
 
 ## Examples
@@ -93,7 +93,7 @@ lakos -o dot_images/glob.no_test_node_metrics.dot -m -i test/** --node-metrics /
 
 <img src="https://user-images.githubusercontent.com/42989765/93005565-07a43680-f507-11ea-8d06-e5647cc14e65.png" alt="No tests, show node metrics." width="100%"/>
 
-No tests, no tree.
+No tests, no directory tree.
 
 ```console
 lakos --no-tree -o dot_images/string_scanner.no_test_no_tree.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
@@ -244,15 +244,15 @@ Use `--metrics` to compute and show these.
 
 **numEdges:** Number of edges (dependencies) in the graph.
 
-**avgDegree:** The average number of incoming/outgoing edges per node. The average degree of a directed graph is numEdges / numNodes. Try to keep this value under 2.0.
+**avgDegree:** The average number of incoming/outgoing edges per node. Average degree (directed graph) = numEdges / numNodes. This metric can compare graphs of different sizes. Similar to the ACD, the average degree can be interpreted as the average number of nodes that *will* need to change when one node changes. Lower is better.
 
 **numOrphans:** Number of Dart libraries that have no imports and are imported nowhere. (inDegree and outDegree are 0.)
 
 **ccd:** The Cumulative Component Dependency (CCD) is the sum of all Component Dependencies. The CCD can be interpreted as the total "coupling" of the graph. Lower is better.
 
-**acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. The ACD can be interpreted as the average number of nodes that will need to change when one node changes. Lower is better.
+**acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. Similar to the avgDegree, the ACD can be interpreted as the average number of nodes that *may* need to change when one node changes. Lower is better.
 
-**nccd:** The Normalized Cumulative Component Dependency. This is the CCD divided by a CCD of a binary tree of the same size. It's the only metric here that can compare graphs of different sizes. If the NCCD is below 1.0, the graph is "horizontal". If the NCCD is above 1.0, the graph is "vertical". If the NCCD is above 2.0, the graph probably contains cycles. Lower is better.
+**nccd:** The Normalized Cumulative Component Dependency. This is the CCD divided by a CCD of a binary tree of the same size. This metric can compare graphs of different sizes. If the NCCD is below 1.0, the graph is "horizontal". If the NCCD is above 1.0, the graph is "vertical". If the NCCD is above 2.0, the graph probably contains cycles. Lower is better.
 
 **totalSloc:** Total Source Lines of Code for all nodes.
 

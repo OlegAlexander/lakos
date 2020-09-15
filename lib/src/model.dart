@@ -220,7 +220,7 @@ class Metrics {
   /// Number of edges (dependencies).
   int numEdges;
 
-  /// Average degree of a directed graph = numEdges/numNodes
+  /// Average degree of a directed graph = numEdges/numNodes.
   double avgDegree;
 
   /// List of orphan nodes.

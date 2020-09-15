@@ -52,7 +52,7 @@ void main() {
       var lakosDotCommand = [lakos, '-o', dotFilename, packageLocation.path];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
+      expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
@@ -60,14 +60,20 @@ void main() {
     }
   });
 
-  test('Pipe to dot -- node color', () {
+  test('Pipe to dot -- node color --cycles-allowed', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.pipe_color.dot');
       var pngFilename = join(outDir, '$outputFilename.pipe_color.png');
 
-      var lakosDotCommand = [lakos, '-c', '#ffff00', packageLocation.path];
+      var lakosDotCommand = [
+        lakos,
+        '-c',
+        '#ffff00',
+        '--cycles-allowed',
+        packageLocation.path
+      ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
       expect(lakosDotResult.exitCode, ExitCode.Ok.index);
@@ -126,7 +132,7 @@ void main() {
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
+      expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
@@ -182,7 +188,7 @@ void main() {
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
+      expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);

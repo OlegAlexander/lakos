@@ -48,12 +48,12 @@ void main(List<String> arguments) {
         negatable: true)
     ..addFlag('metrics',
         abbr: 'm',
-        help: 'Compute and show global metrics.\n(defaults to off)',
+        help: 'Compute and show global metrics.\n(defaults to --no-metrics)',
         defaultsTo: false,
         negatable: true)
     ..addFlag('node-metrics',
         help:
-            'Show node metrics. Only works when --metrics is true.\n(defaults to off)',
+            'Show node metrics. Only works when --metrics is true.\n(defaults to --no-node-metrics)',
         defaultsTo: false,
         negatable: true)
     ..addOption('ignore',
@@ -80,7 +80,7 @@ void main(List<String> arguments) {
         defaultsTo: 'TB')
     ..addFlag('cycles-allowed',
         help:
-            'Runs normally but exits with a non-zero exit code\nif a dependency cycle is detected.\nOnly works when --metrics is true.\nUseful for CI builds.\n(defaults to off)',
+            'With --no-cycles-allowed lakos runs normally\nbut exits with a non-zero exit code\nif a dependency cycle is detected.\nUseful for CI builds.\n(defaults to --no-cycles-allowed)',
         defaultsTo: false,
         negatable: true);
 
@@ -154,9 +154,7 @@ void main(List<String> arguments) {
   }
 
   // Detect cycles.
-  if (metrics) {
-    if (!cyclesAllowed && !model.metrics.isAcyclic) {
-      exit(ExitCode.DependencyCycleDetected.index);
-    }
+  if (!cyclesAllowed && !model.toDirectedGraph().isAcyclic) {
+    exit(ExitCode.DependencyCycleDetected.index);
   }
 }
