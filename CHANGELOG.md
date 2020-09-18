@@ -1,3 +1,7 @@
+## 1.3.1
+
+- Improved resolvedFile logic in getEdges function.
+
 ## 1.3.0
 
 - **CLI breaking change:** `--no-cycles-allowed` no longer requires `--metrics` to be on.

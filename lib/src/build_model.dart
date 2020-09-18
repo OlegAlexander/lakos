@@ -158,16 +158,22 @@ List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
         if (parsedImportLine.startsWith('package:')) {
           resolvedFile =
               resolvePackageFileFromPubspecYaml(pubspecYaml, parsedImportLine);
-        } else if (parsedImportLine.startsWith('dart:')) {
-          continue; // Ignore dart: imports
+        } else if (parsedImportLine.startsWith('dart:') ||
+            parsedImportLine.startsWith('dart-ext:')) {
+          continue; // Ignore dart: or dart-ext: imports
         } else {
-          resolvedFile = resolveFile(dartFile, parsedImportLine);
+          try {
+            resolvedFile = resolveFile(dartFile, parsedImportLine);
+          } catch (e) {
+            resolvedFile = null;
+          }
         }
 
         // Only add dart files that exist--account for imports inside strings, comments, etc.
         if (resolvedFile != null &&
             resolvedFile.existsSync() &&
-            isWithin(rootDir.path, resolvedFile.path)) {
+            isWithin(rootDir.path, resolvedFile.path) &&
+            resolvedFile.path.endsWith('.dart')) {
           var to = resolvedFile.path
               .replaceFirst(rootDir.path, '')
               .replaceAll('\\', '/');
