@@ -136,7 +136,8 @@ Map<String, Node> getDartFileNodes(
 }
 
 /// Read each Dart file and get the import and export paths.
-List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
+List<Edge> getEdges(
+    Directory rootDir, String ignore, File pubspecYaml, List<String> nodes) {
   var edges = <Edge>[];
 
   var dartFiles = getDartFiles(rootDir, ignore);
@@ -179,10 +180,13 @@ List<Edge> getEdges(Directory rootDir, String ignore, File pubspecYaml) {
               .replaceAll('\\', '/');
           // No self loops
           if (from != to) {
-            edges.add(Edge(from, to,
-                directive: line.startsWith('import')
-                    ? Directive.Import
-                    : Directive.Export));
+            // Only add edges to nodes that exist
+            if (nodes.contains(to)) {
+              edges.add(Edge(from, to,
+                  directive: line.startsWith('import')
+                      ? Directive.Import
+                      : Directive.Export));
+            }
           }
         }
       }
@@ -250,7 +254,8 @@ Model buildModel(Directory rootDir,
     graph.subgraphs = getDirTree(rootDir, ignoreGlob);
   }
 
-  graph.edges.addAll(getEdges(rootDir, ignoreGlob, pubspecYaml));
+  graph.edges.addAll(
+      getEdges(rootDir, ignoreGlob, pubspecYaml, graph.nodes.keys.toList()));
 
   if (showMetrics) {
     graph.metrics = computeAllMetrics(graph);
