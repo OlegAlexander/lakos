@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:lakos/src/model.dart';
-import 'package:lakos/src/metrics.dart';
+import 'package:lakos/src/compute_metrics.dart';
 
 void main() {
   test('convertModelToDigraph', () {
@@ -71,7 +71,7 @@ void main() {
     g.edges.add(Edge('c', 'd'));
     // g.edges.add(Edge('d', 'a')); // Cycle
     print(g);
-    var metrics = computeAllMetrics(g);
+    var metrics = computeMetrics(g);
     print(metrics);
     print(metrics.toJson());
   });

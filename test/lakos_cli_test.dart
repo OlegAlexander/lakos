@@ -15,7 +15,6 @@ var packages = {
   'glob': ExitCode.Ok.index,
   'test': ExitCode.Ok.index,
   'pub_cache': ExitCode.DependencyCycleDetected.index,
-  'json_serializable': ExitCode.DependencyCycleDetected.index,
   'string_scanner': ExitCode.DependencyCycleDetected.index
 };
 
@@ -60,17 +59,19 @@ void main() {
     }
   });
 
-  test('Pipe to dot -- node color --cycles-allowed', () {
+  test('Pipe to dot -- node color -- font --cycles-allowed', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename = join(outDir, '$outputFilename.pipe_color.dot');
-      var pngFilename = join(outDir, '$outputFilename.pipe_color.png');
+      var dotFilename = join(outDir, '$outputFilename.pipe_font_color.dot');
+      var pngFilename = join(outDir, '$outputFilename.pipe_font_color.png');
 
       var lakosDotCommand = [
         lakos,
         '-c',
-        '#ffff00',
+        '#f6e0b8:#c5a867',
+        '--font',
+        'Cambria',
         '--cycles-allowed',
         packageLocation.path
       ];

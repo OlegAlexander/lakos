@@ -14,6 +14,9 @@ class Model {
   /// Any X11 or hex color.
   String nodeColor;
 
+  /// Any Pango-Cairo font.
+  String font;
+
   /// A map of nodes (Dart files).
   Map<String, Node> nodes = {};
 
@@ -28,16 +31,19 @@ class Model {
 
   /// This constructor is not meant to be used directly.
   /// Use the [buildModel] function instead.
-  Model({this.rootDir = '.', this.rankdir = 'TB', this.nodeColor = 'lavender'});
+  Model(
+      {this.rootDir = '.',
+      this.rankdir = 'TB',
+      this.nodeColor = 'lavender',
+      this.font = 'Calibri'});
 
   /// Returns this object in dot format.
   @override
   String toString() {
     return _prettyPrintDot('''
 digraph "" {
-style=rounded;
-node [style=filled fillcolor="$nodeColor"];
-rankdir=$rankdir;
+graph [style=rounded fontname="$font" rankdir=$rankdir];
+node [style=filled gradientangle=270 fontname="$font" fillcolor="$nodeColor"];
 ${nodes.values.join('\n')}
 ${subgraphs.join('\n')}
 ${edges.join('\n')}

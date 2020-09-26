@@ -17,9 +17,8 @@ void main() {
     print(g);
     expect(g.toString(), '''
 digraph "" {
-  style=rounded;
-  node [style=filled fillcolor="lavender"];
-  rankdir=TB;
+  graph [style=rounded fontname="Calibri" rankdir=TB];
+  node [style=filled gradientangle=270 fontname="Calibri" fillcolor="lavender"];
   "a" [label="a"];
   "b" [label="b"];
   "c" [label="c"];
@@ -38,9 +37,8 @@ digraph "" {
     print(g);
     expect(g.toString(), '''
 digraph "" {
-  style=rounded;
-  node [style=filled fillcolor="lavender"];
-  rankdir=LR;
+  graph [style=rounded fontname="Calibri" rankdir=LR];
+  node [style=filled gradientangle=270 fontname="Calibri" fillcolor="lavender"];
   "a" [label="a"];
   "b" [label="b"];
   "c" [label="c"];
@@ -110,9 +108,8 @@ digraph "" {
     print(g);
     expect(g.toString(), '''
 digraph "" {
-  style=rounded;
-  node [style=filled fillcolor="lavender"];
-  rankdir=TB;
+  graph [style=rounded fontname="Calibri" rankdir=TB];
+  node [style=filled gradientangle=270 fontname="Calibri" fillcolor="lavender"];
   subgraph "cluster~zero" {
     label="zero";
     "a";
@@ -136,9 +133,8 @@ digraph "" {
     print(g);
     expect(g.toString(), '''
 digraph "" {
-  style=rounded;
-  node [style=filled fillcolor="lavender"];
-  rankdir=LR;
+  graph [style=rounded fontname="Calibri" rankdir=LR];
+  node [style=filled gradientangle=270 fontname="Calibri" fillcolor="lavender"];
   subgraph "cluster~zero" {
     label="zero";
     "a";
@@ -165,9 +161,8 @@ digraph "" {
     print(g);
     expect(g.toString(), '''
 digraph "" {
-  style=rounded;
-  node [style=filled fillcolor="lavender"];
-  rankdir=TB;
+  graph [style=rounded fontname="Calibri" rankdir=TB];
+  node [style=filled gradientangle=270 fontname="Calibri" fillcolor="lavender"];
   subgraph "cluster~zero" {
     label="zero";
     "a";

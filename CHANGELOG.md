@@ -1,3 +1,7 @@
+## 1.3.3
+
+- Added `--font` option.
+
 ## 1.3.2
 
 - Only add edges to nodes that exist.

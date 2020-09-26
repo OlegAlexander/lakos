@@ -148,7 +148,7 @@ extension NumberRounding on num {
   }
 }
 
-Metrics computeAllMetrics(Model model) {
+Metrics computeMetrics(Model model) {
   var digraph = model.toDirectedGraph();
   computeNodeCDs(digraph, model);
   computeNodeDegreeMetrics(digraph, model);

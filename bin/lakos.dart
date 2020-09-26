@@ -63,9 +63,14 @@ void main(List<String> arguments) {
         defaultsTo: '!**')
     ..addOption('node-color',
         abbr: 'c',
-        help: 'Any X11 or hex color.',
+        help:
+            'Any X11 or hex color.\nGradients are possible with a : separator.\nFor example, #e0e0f9:#c2c2f4',
         valueHelp: 'lavender',
         defaultsTo: 'lavender')
+    ..addOption('font',
+        help: 'Any Pango-Cairo font.',
+        valueHelp: 'Calibri',
+        defaultsTo: 'Calibri')
     ..addOption('layout',
         abbr: 'l',
         help: 'Graph layout direction. AKA "rankdir" in Graphviz.',
@@ -110,6 +115,7 @@ void main(List<String> arguments) {
   var nodeMetrics = argResults['node-metrics'] as bool;
   var ignore = argResults['ignore'] as String;
   var nodeColor = argResults['node-color'] as String;
+  var font = argResults['font'] as String;
   var layout = argResults['layout'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
 
@@ -122,6 +128,7 @@ void main(List<String> arguments) {
         showMetrics: metrics,
         showNodeMetrics: nodeMetrics,
         nodeColor: nodeColor,
+        font: font,
         layout: layout);
   } catch (e) {
     print(e);

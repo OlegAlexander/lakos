@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 import 'package:glob/glob.dart';
 import 'package:lakos/src/model.dart';
 import 'package:lakos/src/resolve_imports.dart';
-import 'package:lakos/src/metrics.dart';
+import 'package:lakos/src/compute_metrics.dart';
 import 'package:string_scanner/string_scanner.dart';
 
 const alwaysIgnore = '{.**,doc/**,build/**}';
@@ -217,6 +217,8 @@ class PubspecYamlNotFoundException implements Exception {
 ///
 /// - `nodeColor` -- Any X11 or hex color.
 ///
+/// - `font` -- Any Pango-Cairo font.
+///
 /// - `layout` -- AKA "rankdir" in Graphviz. Possible values: TB, BT, LR, and RL.
 ///
 /// Throws [FileSystemException] if rootDir doesn't exist.
@@ -230,6 +232,7 @@ Model buildModel(Directory rootDir,
     bool showMetrics = false,
     bool showNodeMetrics = false,
     String nodeColor = 'lavender',
+    String font = 'Calibri',
     String layout = 'TB'}) {
   // Convert relative to absolute path.
   if (!rootDir.isAbsolute) {
@@ -245,21 +248,21 @@ Model buildModel(Directory rootDir,
         'pubspec.yaml not found in or above the root directory.');
   }
 
-  var graph = Model(
-      rootDir: rootDir.path, rankdir: layout, nodeColor: nodeColor)
+  var model = Model(
+      rootDir: rootDir.path, rankdir: layout, nodeColor: nodeColor, font: font)
     ..nodes =
         getDartFileNodes(rootDir, ignoreGlob, showNodeMetrics && showMetrics);
 
   if (showTree) {
-    graph.subgraphs = getDirTree(rootDir, ignoreGlob);
+    model.subgraphs = getDirTree(rootDir, ignoreGlob);
   }
 
-  graph.edges.addAll(
-      getEdges(rootDir, ignoreGlob, pubspecYaml, graph.nodes.keys.toList()));
+  model.edges.addAll(
+      getEdges(rootDir, ignoreGlob, pubspecYaml, model.nodes.keys.toList()));
 
   if (showMetrics) {
-    graph.metrics = computeAllMetrics(graph);
+    model.metrics = computeMetrics(model);
   }
 
-  return graph;
+  return model;
 }

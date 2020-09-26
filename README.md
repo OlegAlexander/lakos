@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/42989765/93005262-45ec2680-f504-11ea-9129-a661446eab12.png" alt="Example dependency graph" width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331664-5fb94f00-ff83-11ea-81ea-ac252e1243a1.png" alt="Example dependency graph" width="100%"/>
 
 `lakos` is a command line tool and library that can:
 
@@ -18,7 +18,7 @@ Usage: lakos [options] <root-directory>
 -o, --output=<FILE>            Save output to a file instead of printing it.
                                (defaults to "STDOUT")
                                
-    --[no-]tree                Show directory structure as subgraphs.       
+    --[no-]tree                Show directory structure as subgraphs.
                                (defaults to on)
                                
 -m, --[no-]metrics             Compute and show global metrics.
@@ -31,7 +31,12 @@ Usage: lakos [options] <root-directory>
                                (defaults to "!**")
                                
 -c, --node-color=<lavender>    Any X11 or hex color.
+                               Gradients are possible with a : separator.
+                               For example, #e0e0f9:#c2c2f4
                                (defaults to "lavender")
+                               
+    --font=<Calibri>           Any Pango-Cairo font.
+                               (defaults to "Calibri")
                                
 -l, --layout=<TB>              Graph layout direction. AKA "rankdir" in Graphviz.
 
@@ -70,6 +75,7 @@ dot -Tsvg example.dot -o example.svg
 
 ## Notes
 
+- Nodes are Dart libraries. Edges are "uses" or "depends on" relationships.
 - Exports are drawn with a dashed edge.
 - Orphan nodes are octagons (with `--metrics`).
 - Only `import` and `export` directives are supported; `library` and `part` are not.
@@ -77,45 +83,47 @@ dot -Tsvg example.dot -o example.svg
 
 ## More Examples
 
-Lakos run on itself with metrics, ignoring tests.
+`lakos` run on itself with metrics, ignoring tests.
 
 ```console
 lakos -o dot_images/lakos.metrics_no_test.dot -m -i test/** .
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/93005509-85b40d80-f506-11ea-8bd7-ddbb563d885c.png" alt="Lakos run on itself with metrics, ignoring tests." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331699-9ee7a000-ff83-11ea-956c-f559ec5fbb60.png" alt="Lakos run on itself with metrics, ignoring tests." width="100%"/>
 
-No tests, show node metrics.
+
+Show node metrics.
 
 ```console
-lakos -o dot_images/glob.no_test_node_metrics.dot -m -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/glob-1.2.0
+lakos -o dot_images/args.no_test_node_metrics.dot -m -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/args-1.6.0
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/93005565-07a43680-f507-11ea-8d06-e5647cc14e65.png" alt="No tests, show node metrics." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94335258-27b80900-ff8f-11ea-8656-83112b3edd16.png" alt="Show node metrics." width="100%"/>
 
-No tests, no directory tree.
+No directory tree.
 
 ```console
 lakos --no-tree -o dot_images/string_scanner.no_test_no_tree.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/93005616-7e413400-f507-11ea-8f21-aec69648ea61.png" alt="No tests, no tree." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331765-11588000-ff84-11ea-951e-a4dee2cb8990.png" alt="No directory tree." width="100%"/>
 
-No tests, left to right layout.
+Left to right layout.
 
 ```console
 lakos -o dot_images/test.no_test_lr.dot -i test/** -l LR /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/93005661-e859d900-f507-11ea-836a-cf35449a9cb0.png" alt="No tests, left to right layout." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331795-449b0f00-ff84-11ea-8ae2-8945bf628ab5.png" alt="Left to right layout." width="100%"/>
 
-A graph with circular dependencies.
+Gradient node color, different font.
 
 ```console
-lakos -o dot_images/path.metrics_no_test.dot -m -i test/** /root/.pub-cache/hosted/pub.dartlang.org/path-1.7.0
+lakos -o dot_images/pub_cache.font_color.dot -c #f6e0b8:#c5a867 --font Cambria /root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/93005706-6cac5c00-f508-11ea-9ee8-db9679f83bba.png" alt="A graph with circular dependencies." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331961-b32c9c80-ff85-11ea-9abe-196addd40669.png" alt="Gradient node color, different font." width="100%"/>
+
 
 Example JSON output:
 
