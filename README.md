@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/42989765/94331664-5fb94f00-ff83-11ea-81ea-ac252e1243a1.png" alt="Example dependency graph" width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331664-5fb94f00-ff83-11ea-81ea-ac252e1243a1.png" alt="Example dependency graph" width="80%" align=center/>
 
 `lakos` is a command line tool and library that can:
 
@@ -89,7 +89,7 @@ dot -Tsvg example.dot -o example.svg
 lakos -o dot_images/lakos.metrics_no_test.dot -m -i test/** .
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331699-9ee7a000-ff83-11ea-956c-f559ec5fbb60.png" alt="Lakos run on itself with metrics, ignoring tests." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331699-9ee7a000-ff83-11ea-956c-f559ec5fbb60.png" alt="Lakos run on itself with metrics, ignoring tests." width="75%"/>
 
 
 Show node metrics.
@@ -98,7 +98,7 @@ Show node metrics.
 lakos -o dot_images/args.no_test_node_metrics.dot -m -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/args-1.6.0
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94335258-27b80900-ff8f-11ea-8656-83112b3edd16.png" alt="Show node metrics." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94335258-27b80900-ff8f-11ea-8656-83112b3edd16.png" alt="Show node metrics." width="90%"/>
 
 No directory tree.
 
@@ -106,7 +106,7 @@ No directory tree.
 lakos --no-tree -o dot_images/string_scanner.no_test_no_tree.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331765-11588000-ff84-11ea-951e-a4dee2cb8990.png" alt="No directory tree." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331765-11588000-ff84-11ea-951e-a4dee2cb8990.png" alt="No directory tree." width="80%"/>
 
 Left to right layout.
 
@@ -114,7 +114,7 @@ Left to right layout.
 lakos -o dot_images/test.no_test_lr.dot -i test/** -l LR /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331795-449b0f00-ff84-11ea-8ae2-8945bf628ab5.png" alt="Left to right layout." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331795-449b0f00-ff84-11ea-8ae2-8945bf628ab5.png" alt="Left to right layout." width="90%"/>
 
 Gradient node color, different font.
 
@@ -122,7 +122,7 @@ Gradient node color, different font.
 lakos -o dot_images/pub_cache.font_color.dot -c #f6e0b8:#c5a867 --font Cambria /root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331961-b32c9c80-ff85-11ea-9abe-196addd40669.png" alt="Gradient node color, different font." width="100%"/>
+<img src="https://user-images.githubusercontent.com/42989765/94331961-b32c9c80-ff85-11ea-9abe-196addd40669.png" alt="Gradient node color, different font." width="40%"/>
 
 
 Example JSON output:

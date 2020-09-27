@@ -1,3 +1,7 @@
+## 1.3.4
+
+- Got image sizes under control in readme.
+
 ## 1.3.3
 
 - Added `--font` option.

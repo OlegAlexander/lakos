@@ -8,7 +8,7 @@ const precision = 2;
 /// Compute the component dependency of each node.
 /// The component dependency (CD) is the number of nodes a particular node depends on
 /// directly or transitively, including itself.
-void computeNodeCDs(DirectedGraph<String> graph, Model model) {
+void computeNodeCDs(DirectedGraph<String> graph, @modified Model model) {
   for (var v in graph.vertices) {
     model.nodes[v.data].cd = 0;
   }
@@ -35,7 +35,8 @@ void computeNodeCDs(DirectedGraph<String> graph, Model model) {
 /// Instability = outDegree / (inDegree + outDegree)
 /// In general, node instability should decrease in the direction of dependency.
 /// In other words, lower level nodes should be more stable and more reusable than higher level nodes.
-void computeNodeDegreeMetrics(DirectedGraph<String> graph, Model model) {
+void computeNodeDegreeMetrics(
+    DirectedGraph<String> graph, @modified Model model) {
   for (var v in graph.vertices) {
     model.nodes[v.data].inDegree = graph.inDegree(v);
     model.nodes[v.data].outDegree = graph.outDegree(v);
@@ -120,7 +121,7 @@ int countSloc(File dartFile) {
   return sloc;
 }
 
-void computeNodeSlocs(Model model) {
+void computeNodeSlocs(@modified Model model) {
   for (var node in model.nodes.values) {
     try {
       node.sloc = countSloc(File('${model.rootDir}${node.id}'));
@@ -148,7 +149,7 @@ extension NumberRounding on num {
   }
 }
 
-Metrics computeMetrics(Model model) {
+Metrics computeMetrics(@modified Model model) {
   var digraph = model.toDirectedGraph();
   computeNodeCDs(digraph, model);
   computeNodeDegreeMetrics(digraph, model);

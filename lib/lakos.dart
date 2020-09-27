@@ -10,4 +10,4 @@
 library lakos;
 
 export 'src/build_model.dart' show buildModel, PubspecYamlNotFoundException;
-export 'src/model.dart';
+export 'src/model.dart' hide Modified, modified;

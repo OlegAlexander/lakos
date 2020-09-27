@@ -326,3 +326,19 @@ String _prettyPrintDot(String dot, {String indent = '  '}) {
   }
   return newTokens.join('');
 }
+
+/// @modified annotation class.
+class Modified {
+  /// Constructor.
+  const Modified();
+}
+
+/// @modified annotation.
+/// Ctrl+hover over the function to see the annotations!
+/// Usage:
+/// ```
+/// void incrementAge(@modified Person person) {
+///   person.age += 1;
+/// }
+/// ```
+const Modified modified = Modified();
