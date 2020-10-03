@@ -7,16 +7,6 @@ class Model {
   /// All node id paths are relative to the root directory.
   String rootDir;
 
-  /// Stores the graph layout direction.
-  /// Possible values: TB, BT, LR, and RL.
-  String rankdir;
-
-  /// Any X11 or hex color.
-  String nodeColor;
-
-  /// Any Pango-Cairo font.
-  String font;
-
   /// A map of nodes (Dart files).
   Map<String, Node> nodes = {};
 
@@ -31,19 +21,16 @@ class Model {
 
   /// This constructor is not meant to be used directly.
   /// Use the [buildModel] function instead.
-  Model(
-      {this.rootDir = '.',
-      this.rankdir = 'TB',
-      this.nodeColor = 'lavender',
-      this.font = 'Calibri'});
+  Model({this.rootDir = '.'});
 
   /// Returns this object in dot format.
   @override
   String toString() {
     return _prettyPrintDot('''
 digraph "" {
-graph [style=rounded fontname="$font" rankdir=$rankdir];
-node [style=filled gradientangle=270 fontname="$font" fillcolor="$nodeColor"];
+graph [style=rounded fontname="Arial Black" fontsize=13 penwidth=2.6];
+node [shape=rect style="filled,rounded" fontname=Arial fontsize=15 fillcolor=Lavender penwidth=1.3];
+edge [penwidth=1.3];
 ${nodes.values.join('\n')}
 ${subgraphs.join('\n')}
 ${edges.join('\n')}
@@ -264,7 +251,7 @@ class Metrics {
   /// Returns this object in dot format.
   @override
   String toString() {
-    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes  \\l numEdges: $numEdges  \\l avgDegree: $avgDegree \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l" shape=rect];';
+    return '"metrics" [label=" isAcyclic: $isAcyclic \\l numNodes: $numNodes  \\l numEdges: $numEdges  \\l avgDegree: $avgDegree \\l numOrphans: ${orphans.length} \\l ccd: $ccd \\l acd: $acd \\l nccd: $nccd \\l totalSloc: $totalSloc \\l avgSloc: $avgSloc \\l"];';
   }
 
   /// Returns this object in JSON format.

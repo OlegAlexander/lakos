@@ -1,3 +1,8 @@
+## 1.4.0
+
+- **CLI breaking change:** Removed `--node-color`, `--font`, and `--layout` options because all of these can be overriden through the Graphviz `dot` command line arguments.
+- Improved default graph styling.
+
 ## 1.3.4
 
 - Got image sizes under control in readme.

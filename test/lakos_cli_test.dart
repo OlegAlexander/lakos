@@ -6,7 +6,7 @@ import '../bin/lakos.dart' show ExitCode;
 
 const outDir = 'dot_images';
 const lakos = 'bin/lakos.dart';
-const dpi = '200';
+const dpi = 200;
 var packages = {
   '.': ExitCode.Ok.index,
   'path': ExitCode.DependencyCycleDetected.index,
@@ -54,24 +54,29 @@ void main() {
       expect(lakosDotResult.exitCode, packages[package]);
 
       var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
+          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename, '-v']);
+      print(dotResult.stderr
+          .toString()
+          .split('\n')
+          .where((line) => line.startsWith('fontname')));
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
 
-  test('Pipe to dot -- node color -- font --cycles-allowed', () {
+  test('metrics_no_test Pipe to dot -- node color --cycles-allowed', () {
     for (var package in packages.keys) {
       var packageLocation = getPackageLocation(package);
       var outputFilename = package == '.' ? 'lakos' : package;
-      var dotFilename = join(outDir, '$outputFilename.pipe_font_color.dot');
-      var pngFilename = join(outDir, '$outputFilename.pipe_font_color.png');
+      var dotFilename =
+          join(outDir, '$outputFilename.metrics_no_test_pipe_color.dot');
+      var pngFilename =
+          join(outDir, '$outputFilename.metrics_no_test_pipe_color.png');
 
       var lakosDotCommand = [
         lakos,
-        '-c',
-        '#f6e0b8:#c5a867',
-        '--font',
-        'Cambria',
+        '-m',
+        '-i',
+        'test/**',
         '--cycles-allowed',
         packageLocation.path
       ];
@@ -82,9 +87,23 @@ void main() {
       // Manually save the stdout to a file
       File(dotFilename).writeAsStringSync(lakosDotResult.stdout);
 
-      var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
-      print(dotResult.stderr);
+      var dotCommand = [
+        '-Tpng',
+        dotFilename,
+        '-Gdpi=$dpi',
+        '-Nfillcolor=steelblue2:steelblue4',
+        '-Nfontcolor=white',
+        '-Ngradientangle=270',
+        '-o',
+        pngFilename,
+        '-v'
+      ];
+      print(dotCommand.join(' '));
+      var dotResult = Process.runSync('dot', dotCommand);
+      print(dotResult.stderr
+          .toString()
+          .split('\n')
+          .where((line) => line.startsWith('fontname')));
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });
@@ -183,16 +202,22 @@ void main() {
         dotFilename,
         '-i',
         'test/**',
-        '-l',
-        'LR',
         packageLocation.path
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
       expect(lakosDotResult.exitCode, packages[package]);
 
-      var dotResult = Process.runSync(
-          'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
+      var dotCommand = [
+        '-Tpng',
+        dotFilename,
+        '-Grankdir=LR',
+        '-Gdpi=$dpi',
+        '-o',
+        pngFilename
+      ];
+      print(dotCommand.join(' '));
+      var dotResult = Process.runSync('dot', dotCommand);
       expect(dotResult.exitCode, ExitCode.Ok.index);
     }
   });

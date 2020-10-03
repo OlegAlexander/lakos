@@ -61,28 +61,6 @@ void main(List<String> arguments) {
         help: 'Exclude files and directories with a glob pattern.',
         valueHelp: 'GLOB',
         defaultsTo: '!**')
-    ..addOption('node-color',
-        abbr: 'c',
-        help:
-            'Any X11 or hex color.\nGradients are possible with a : separator.\nFor example, #e0e0f9:#c2c2f4',
-        valueHelp: 'lavender',
-        defaultsTo: 'lavender')
-    ..addOption('font',
-        help: 'Any Pango-Cairo font.',
-        valueHelp: 'Calibri',
-        defaultsTo: 'Calibri')
-    ..addOption('layout',
-        abbr: 'l',
-        help: 'Graph layout direction. AKA "rankdir" in Graphviz.',
-        valueHelp: 'TB',
-        allowed: ['TB', 'LR', 'BT', 'RL'],
-        allowedHelp: {
-          'TB': 'top to bottom',
-          'LR': 'left to right',
-          'BT': 'bottom to top',
-          'RL': 'right to left'
-        },
-        defaultsTo: 'TB')
     ..addFlag('cycles-allowed',
         help:
             'With --no-cycles-allowed lakos runs normally\nbut exits with a non-zero exit code\nif a dependency cycle is detected.\nUseful for CI builds.\n(defaults to --no-cycles-allowed)',
@@ -114,9 +92,6 @@ void main(List<String> arguments) {
   var metrics = argResults['metrics'] as bool;
   var nodeMetrics = argResults['node-metrics'] as bool;
   var ignore = argResults['ignore'] as String;
-  var nodeColor = argResults['node-color'] as String;
-  var font = argResults['font'] as String;
-  var layout = argResults['layout'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool;
 
   // Build model.
@@ -126,10 +101,7 @@ void main(List<String> arguments) {
         ignoreGlob: ignore,
         showTree: tree,
         showMetrics: metrics,
-        showNodeMetrics: nodeMetrics,
-        nodeColor: nodeColor,
-        font: font,
-        layout: layout);
+        showNodeMetrics: nodeMetrics);
   } catch (e) {
     print(e);
     exit(ExitCode.BuildModelFailed.index);

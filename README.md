@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/42989765/94331664-5fb94f00-ff83-11ea-81ea-ac252e1243a1.png" alt="Example dependency graph" width="80%" align=center/>
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94976346-8c142480-04c9-11eb-920f-0d3412f1f042.png" alt="Example dependency graph" width="70%"/></p>
 
 `lakos` is a command line tool and library that can:
 
@@ -12,44 +12,29 @@
 ```console
 Usage: lakos [options] <root-directory>
 
--f, --format=<FORMAT>          Output format.
-                               [dot (default), json]
-                               
--o, --output=<FILE>            Save output to a file instead of printing it.
-                               (defaults to "STDOUT")
-                               
-    --[no-]tree                Show directory structure as subgraphs.
-                               (defaults to on)
-                               
--m, --[no-]metrics             Compute and show global metrics.
-                               (defaults to --no-metrics)
-                               
-    --[no-]node-metrics        Show node metrics. Only works when --metrics is true.
-                               (defaults to --no-node-metrics)
-                               
--i, --ignore=<GLOB>            Exclude files and directories with a glob pattern.
-                               (defaults to "!**")
-                               
--c, --node-color=<lavender>    Any X11 or hex color.
-                               Gradients are possible with a : separator.
-                               For example, #e0e0f9:#c2c2f4
-                               (defaults to "lavender")
-                               
-    --font=<Calibri>           Any Pango-Cairo font.
-                               (defaults to "Calibri")
-                               
--l, --layout=<TB>              Graph layout direction. AKA "rankdir" in Graphviz.
-
-          [BT]                 bottom to top
-          [LR]                 left to right
-          [RL]                 right to left
-          [TB] (default)       top to bottom
-
-    --[no-]cycles-allowed      With --no-cycles-allowed lakos runs normally
-                               but exits with a non-zero exit code
-                               if a dependency cycle is detected.
-                               Useful for CI builds.
-                               (defaults to --no-cycles-allowed)
+-f, --format=<FORMAT>        Output format.
+                             [dot (default), json]
+                             
+-o, --output=<FILE>          Save output to a file instead of printing it.
+                             (defaults to "STDOUT")
+                             
+    --[no-]tree              Show directory structure as subgraphs.
+                             (defaults to on)
+                             
+-m, --[no-]metrics           Compute and show global metrics.
+                             (defaults to --no-metrics)
+                             
+    --[no-]node-metrics      Show node metrics. Only works when --metrics is true.
+                             (defaults to --no-node-metrics)
+                             
+-i, --ignore=<GLOB>          Exclude files and directories with a glob pattern.
+                             (defaults to "!**")
+                             
+    --[no-]cycles-allowed    With --no-cycles-allowed lakos runs normally
+                             but exits with a non-zero exit code
+                             if a dependency cycle is detected.
+                             Useful for CI builds.
+                             (defaults to --no-cycles-allowed)
 ```
 
 ## Examples
@@ -60,7 +45,7 @@ Print dot graph for the current directory (not very useful):
 lakos .
 ```
 
-Pass output directly to Graphviz `dot` in one line (a lot more useful):
+Pass output directly to Graphviz `dot` in one line (much more useful):
 
 ```console
 lakos . | dot -Tpng -Gdpi=200 -o example.png
@@ -89,8 +74,7 @@ dot -Tsvg example.dot -o example.svg
 lakos -o dot_images/lakos.metrics_no_test.dot -m -i test/** .
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331699-9ee7a000-ff83-11ea-956c-f559ec5fbb60.png" alt="Lakos run on itself with metrics, ignoring tests." width="75%"/>
-
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977052-eada9d80-04cb-11eb-98fe-9e27886923df.png" alt="Lakos run on itself with metrics, ignoring tests." width="70%"/></p>
 
 Show node metrics.
 
@@ -98,7 +82,7 @@ Show node metrics.
 lakos -o dot_images/args.no_test_node_metrics.dot -m -i test/** --node-metrics /root/.pub-cache/hosted/pub.dartlang.org/args-1.6.0
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94335258-27b80900-ff8f-11ea-8656-83112b3edd16.png" alt="Show node metrics." width="90%"/>
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977108-2c6b4880-04cc-11eb-9039-433a7390d42d.png" alt="Show node metrics." width="90%"/></p>
 
 No directory tree.
 
@@ -106,23 +90,7 @@ No directory tree.
 lakos --no-tree -o dot_images/string_scanner.no_test_no_tree.dot -i test/** /root/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.5
 ```
 
-<img src="https://user-images.githubusercontent.com/42989765/94331765-11588000-ff84-11ea-951e-a4dee2cb8990.png" alt="No directory tree." width="80%"/>
-
-Left to right layout.
-
-```console
-lakos -o dot_images/test.no_test_lr.dot -i test/** -l LR /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3
-```
-
-<img src="https://user-images.githubusercontent.com/42989765/94331795-449b0f00-ff84-11ea-8ae2-8945bf628ab5.png" alt="Left to right layout." width="90%"/>
-
-Gradient node color, different font.
-
-```console
-lakos -o dot_images/pub_cache.font_color.dot -c #f6e0b8:#c5a867 --font Cambria /root/.pub-cache/hosted/pub.dartlang.org/pub_cache-0.2.3
-```
-
-<img src="https://user-images.githubusercontent.com/42989765/94331961-b32c9c80-ff85-11ea-9abe-196addd40669.png" alt="Gradient node color, different font." width="40%"/>
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977170-72281100-04cc-11eb-9a92-ae932f368ca8.png" alt="No directory tree." width="70%"/></p>
 
 
 Example JSON output:
@@ -228,6 +196,27 @@ lakos -f json -o dot_images/pub_cache.metrics_no_test.json -m -i test/** /root/.
 
 </details>
 
+
+## Styling Graphviz
+
+You may override the default style attributes directly through the Graphviz `dot` command line arguments. In Graphviz, the style attributes are divided into 3 sections: `graph`, `node`, and `edge`. To override a specific attribute, use the `-G`, `-N`, and `-E` prefix, respectively. For example, `-Nfillcolor=white` will set the node fill color to white. All the Graphviz style attributes can be found [here](https://graphviz.org/doc/info/attrs.html).
+
+Example of left to right layout.
+
+```console
+dot -Tpng dot_images/test.lr.dot -Grankdir=LR -Gdpi=200 -o dot_images/test.lr.png
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977365-3f324d00-04cd-11eb-8e05-89b58da653f7.png" alt="Left to right layout." width="80%"/></p>
+
+Gradient node color.
+
+```console
+dot -Tpng dot_images/string_scanner.gradient.dot -Gdpi=200 -Nfillcolor=steelblue2:steelblue4 -Nfontcolor=white -Ngradientangle=270 -o dot_images/string_scanner.gradient.png
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977486-bb2c9500-04cd-11eb-80b9-5f23401cd2a4.png" alt="Gradient node color." width="60%"/></p>
+
 ## Convert to GML
 
 Still can't get enough graph visualization goodness? Try this!
@@ -238,7 +227,7 @@ lakos -i test/** /root/.pub-cache/hosted/pub.dartlang.org/test-1.15.3 | gv2gml -
 
 `gv2gml` converts dot format into [GML format](https://en.wikipedia.org/wiki/Graph_Modelling_Language), which you can open in yEd, Gephi, Cytoscape, etc.
 
-<img src="https://user-images.githubusercontent.com/42989765/93006268-f3fcce00-f50e-11ea-9f96-e6ce9c8cffbb.png" alt="GML file imported into yEd." width="100%"/>
+<p align="center"><img src="https://user-images.githubusercontent.com/42989765/93006268-f3fcce00-f50e-11ea-9f96-e6ce9c8cffbb.png" alt="GML file imported into yEd." width="100%"/></p>
 
 ## Global Metrics
 
@@ -252,13 +241,13 @@ Use `--metrics` to compute and show these.
 
 **numEdges:** Number of edges (dependencies) in the graph.
 
-**avgDegree:** The average number of incoming/outgoing edges per node. Average degree (directed graph) = numEdges / numNodes. This metric can compare graphs of different sizes. Similar to the ACD, the average degree can be interpreted as the average number of nodes that *will* need to change when one node changes. Lower is better.
+**avgDegree:** The average number of incoming/outgoing edges per node. Average degree (directed graph) = numEdges / numNodes. This metric can compare graphs of different sizes. Similar to the ACD, the average degree can be interpreted as the average number of nodes that _will_ need to change when one node changes. Lower is better.
 
 **numOrphans:** Number of Dart libraries that have no imports and are imported nowhere. (inDegree and outDegree are 0.)
 
 **ccd:** The Cumulative Component Dependency (CCD) is the sum of all Component Dependencies. The CCD can be interpreted as the total "coupling" of the graph. Lower is better.
 
-**acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. Similar to the avgDegree, the ACD can be interpreted as the average number of nodes that *may* need to change when one node changes. Lower is better.
+**acd:** The Average Component Dependency (ACD). ACD = CCD / numNodes. Similar to the avgDegree, the ACD can be interpreted as the average number of nodes that _may_ need to change when one node changes. Lower is better.
 
 **nccd:** The Normalized Cumulative Component Dependency. This is the CCD divided by a CCD of a binary tree of the same size. This metric can compare graphs of different sizes. If the NCCD is below 1.0, the graph is "horizontal". If the NCCD is above 1.0, the graph is "vertical". If the NCCD is above 2.0, the graph probably contains cycles. Lower is better.
 
