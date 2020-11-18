@@ -4,7 +4,6 @@ import 'package:glob/glob.dart';
 import 'package:lakos/src/model.dart';
 import 'package:lakos/src/resolve_imports.dart';
 import 'package:lakos/src/compute_metrics.dart';
-import 'package:string_scanner/string_scanner.dart';
 
 const alwaysIgnore = '{.**,doc/**,build/**}';
 
@@ -219,7 +218,7 @@ class PubspecYamlNotFoundException implements Exception {
 ///
 /// Throws [PubspecYamlNotFoundException] if pubspec.yaml can't be found in or above the rootDir.
 ///
-/// Throws [StringScannerException] if ignoreGlob is invalid.
+/// Throws [FormatException] if ignoreGlob is invalid.
 Model buildModel(Directory rootDir,
     {String ignoreGlob = '!**',
     bool showTree = true,

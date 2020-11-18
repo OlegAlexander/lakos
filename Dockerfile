@@ -1,6 +1,7 @@
 # Use docker to run tests in a Linux container. (Because I'm developing on Windows.)
 # Usage: docker build .
 # Clean up: docker container prune -f
+# Really clean up: docker system prune -a --volumes -f
 
 FROM google/dart
 
@@ -12,9 +13,9 @@ RUN apt install graphviz -y
 
 # Get dependencies
 ADD pubspec.* /lakos/
-RUN pub get
+RUN dart pub get
 ADD . /lakos
-RUN pub get --offline
+RUN dart pub get --offline
 
 # Run all tests
-RUN pub run test
+RUN dart test

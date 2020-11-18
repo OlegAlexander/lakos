@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:test/test.dart';
 import 'package:lakos/src/build_model.dart';
-import 'package:string_scanner/string_scanner.dart';
 
 void main() {
   test('buildModel rootDir does not exist', () {
@@ -25,11 +24,10 @@ void main() {
   });
 
   test('invalid glob string', () {
-    // buildModel(Directory('.'), ignoreGlob: '{invalid');
     try {
       buildModel(Directory('.'), ignoreGlob: '{invalid');
     } catch (e) {
-      expect(e, isA<StringScannerException>());
+      expect(e, isA<FormatException>());
     }
   });
 
