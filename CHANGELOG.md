@@ -1,3 +1,8 @@
+## 1.4.1
+
+- Upgraded all dependencies to null-safe versions, except for directed_graph.
+- string_scanner is no longer a direct dependency.
+
 ## 1.4.0
 
 - **CLI breaking change:** Removed `--node-color`, `--font`, and `--layout` options because all of these can be overriden through the Graphviz `dot` command line arguments.

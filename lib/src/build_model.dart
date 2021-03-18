@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:glob/glob.dart';
+import 'package:glob/list_local_fs.dart';
 import 'package:lakos/src/model.dart';
 import 'package:lakos/src/resolve_imports.dart';
 import 'package:lakos/src/compute_metrics.dart';
