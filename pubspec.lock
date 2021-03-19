@@ -84,7 +84,14 @@ packages:
       name: directed_graph
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.3"
+    version: "0.3.2"
+  exception_templates:
+    dependency: transitive
+    description:
+      name: exception_templates
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   file:
     dependency: transitive
     description:
@@ -105,7 +112,7 @@ packages:
       name: graphs
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "1.0.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -134,13 +141,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  lazy_evaluation:
+  lazy_memo:
     dependency: transitive
     description:
-      name: lazy_evaluation
+      name: lazy_memo
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.6+3"
+    version: "0.1.1"
   logging:
     dependency: transitive
     description:
@@ -218,6 +225,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  quote_buffer:
+    dependency: transitive
+    description:
+      name: quote_buffer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   shelf:
     dependency: transitive
     description:

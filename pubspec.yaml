@@ -12,7 +12,7 @@ executables:
 dependencies:
   path: ^1.8.0
   args: ^2.0.0
-  directed_graph: ^0.2.3
+  directed_graph: ^0.3.2
   glob: ^2.0.0
 
 dev_dependencies:

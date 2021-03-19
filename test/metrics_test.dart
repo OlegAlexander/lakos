@@ -18,7 +18,6 @@ void main() {
     print(g);
     var digraph = g.toDirectedGraph();
     print(digraph);
-    print(digraph.edgeMap);
     print(digraph.isAcyclic);
     print(digraph.localSources); // Levels
     for (var v in digraph.vertices) {
@@ -40,7 +39,7 @@ void main() {
     // g.edges.add(Edge('d', 'a')); // Cycle
     print(g);
     var digraph = g.toDirectedGraph();
-    print(digraph.edgeMap);
+    print(digraph);
     print('isAcyclic: ${digraph.isAcyclic}');
     print('levels: ${digraph.localSources}');
     computeNodeCDs(digraph, g);

@@ -61,12 +61,12 @@ ${metrics ?? ''}
   /// Converts a Model to a [DirectedGraph] from the `directed_graph` library.
   /// May be useful for further analysis of the dependency graph.
   DirectedGraph<String> toDirectedGraph() {
-    var edgeMap = <String, List<String>>{};
+    var edgeMap = <String, Set<String>>{};
 
     // Add nodes
     for (var node in nodes.values) {
       if (!edgeMap.containsKey(node.id)) {
-        edgeMap[node.id] = [];
+        edgeMap[node.id] = {};
       }
     }
 
@@ -75,7 +75,7 @@ ${metrics ?? ''}
       edgeMap[edge.from].add(edge.to);
     }
 
-    return DirectedGraph<String>.fromData(edgeMap);
+    return DirectedGraph<String>(edgeMap);
   }
 }
 
