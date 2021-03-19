@@ -17,7 +17,7 @@ class Model {
   List<Edge> edges = [];
 
   /// Stores global metrics.
-  Metrics metrics;
+  Metrics? metrics;
 
   /// This constructor is not meant to be used directly.
   /// Use the [buildModel] function instead.
@@ -55,7 +55,6 @@ ${metrics ?? ''}
       case OutputFormat.Json:
         return _prettyJson(toJson());
     }
-    return ''; // Will never reach here.
   }
 
   /// Converts a Model to a [DirectedGraph] from the `directed_graph` library.
@@ -72,7 +71,7 @@ ${metrics ?? ''}
 
     // Add edges
     for (var edge in edges) {
-      edgeMap[edge.from].add(edge.to);
+      edgeMap[edge.from]!.add(edge.to);
     }
 
     return DirectedGraph<String>(edgeMap);
@@ -92,19 +91,19 @@ class Node {
   String label;
 
   /// Component Dependency.
-  int cd;
+  int? cd;
 
   /// Number of incoming edges.
-  int inDegree;
+  int? inDegree;
 
   /// Number of outgoing edges.
-  int outDegree;
+  int? outDegree;
 
   /// Robert C. Martin's Instability metric.
-  double instability;
+  double? instability;
 
   /// Source Lines of Code.
-  int sloc;
+  int? sloc;
 
   /// Whether to display node metrics or not.
   bool showNodeMetrics;
@@ -176,7 +175,7 @@ class Subgraph {
   List<Subgraph> subgraphs = [];
 
   /// The parent folder.
-  Subgraph parent;
+  Subgraph? parent;
 
   /// Constructor.
   Subgraph(this.id, this.label);

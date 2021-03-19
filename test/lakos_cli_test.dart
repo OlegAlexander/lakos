@@ -41,7 +41,7 @@ void main() {
 
   test('generate dot graphs -- force forward slashes on Windows', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       packageLocation = Directory(
           packageLocation.path.replaceAll('\\', '/')); // Force forward slashes
       var outputFilename = package == '.' ? 'lakos' : package;
@@ -65,7 +65,7 @@ void main() {
 
   test('metrics_no_test Pipe to dot -- node color --cycles-allowed', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename =
           join(outDir, '$outputFilename.metrics_no_test_pipe_color.dot');
@@ -110,7 +110,7 @@ void main() {
 
   test('generate dot graphs--metrics--no test', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.metrics_no_test.dot');
       var pngFilename = join(outDir, '$outputFilename.metrics_no_test.png');
@@ -136,7 +136,7 @@ void main() {
 
   test('generate dot graphs--no test--no tree', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.no_test_no_tree.dot');
       var pngFilename = join(outDir, '$outputFilename.no_test_no_tree.png');
@@ -162,7 +162,7 @@ void main() {
 
   test('generate dot graphs--no test--node metrics', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename =
           join(outDir, '$outputFilename.no_test_node_metrics.dot');
@@ -191,7 +191,7 @@ void main() {
 
   test('generate dot graphs--no test--layout LR', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var dotFilename = join(outDir, '$outputFilename.no_test_lr.dot');
       var pngFilename = join(outDir, '$outputFilename.no_test_lr.png');
@@ -224,7 +224,7 @@ void main() {
 
   test('generate json files--metrics--no test', () {
     for (var package in packages.keys) {
-      var packageLocation = getPackageLocation(package);
+      var packageLocation = getPackageLocation(package)!;
       var outputFilename = package == '.' ? 'lakos' : package;
       var jsonFilename = join(outDir, '$outputFilename.metrics_no_test.json');
 

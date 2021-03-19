@@ -9,7 +9,7 @@ import 'package:lakos/src/compute_metrics.dart';
 const alwaysIgnore = '{.**,doc/**,build/**}';
 
 /// Parse the import line to get the package or file path.
-String parseImportLine(String line) {
+String? parseImportLine(String line) {
   var openQuote = false;
   var importPath = '';
   for (var char in line.split('')) {
@@ -40,7 +40,7 @@ List<Subgraph> getDirTree(Directory rootDir, String ignore) {
   var treeSubgraphs = <Subgraph>[];
   treeSubgraphs.add(subgraphs.first);
 
-  var leaves = <Subgraph>[];
+  var leaves = <Subgraph?>[];
 
   var dartFilesGlob = Glob('*.dart');
   var ignoreGlob = Glob(ignore, context: Context(current: rootDir.path));
@@ -91,10 +91,10 @@ List<Subgraph> getDirTree(Directory rootDir, String ignore) {
 
   // Recursively remove empty subgraphs which don't contain any dart files
   while (leaves.isNotEmpty) {
-    var leaf = leaves.removeLast();
+    var leaf = leaves.removeLast()!;
     if (leaf.parent != null) {
       if (leaf.nodes.isEmpty && leaf.subgraphs.isEmpty) {
-        leaf.parent.subgraphs.remove(leaf);
+        leaf.parent!.subgraphs.remove(leaf);
 
         // Recurse up the tree depth first
         leaves.add(leaf.parent);
@@ -155,7 +155,7 @@ List<Edge> getEdges(
           continue;
         }
 
-        File resolvedFile;
+        File? resolvedFile;
         if (parsedImportLine.startsWith('package:')) {
           resolvedFile =
               resolvePackageFileFromPubspecYaml(pubspecYaml, parsedImportLine);

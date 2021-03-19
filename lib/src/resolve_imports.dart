@@ -12,7 +12,7 @@ File resolveFile(File thisDartFile, String relativeFile) {
 
 /// Searches up the directory tree until it finds the pubspec.yaml file.
 /// Returns null if pubspec.yaml is not found.
-File findPubspecYaml(Directory currentDir) {
+File? findPubspecYaml(Directory currentDir) {
   if (!currentDir.isAbsolute) {
     currentDir = Directory(normalize(currentDir.absolute.path));
   }

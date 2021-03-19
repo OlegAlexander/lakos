@@ -1,3 +1,8 @@
+## 2.0.0
+
+- Upgraded to null-safe directed_graph.
+- Migrated lakos to null safety!
+
 ## 1.4.1
 
 - Upgraded all dependencies to null-safe versions, except for directed_graph.

@@ -7,12 +7,12 @@ void main() {
   print(model.getOutput(OutputFormat.Dot));
   print(model.getOutput(OutputFormat.Json));
 
-  if (!model.metrics.isAcyclic) {
+  if (!model.metrics!.isAcyclic) {
     print('Dependency cycle detected.');
   }
 
   var nodesSortedBySloc = model.nodes.values.toList();
-  nodesSortedBySloc.sort((a, b) => a.sloc.compareTo(b.sloc));
+  nodesSortedBySloc.sort((a, b) => a.sloc!.compareTo(b.sloc!));
   for (var node in nodesSortedBySloc) {
     print('${node.sloc}: ${node.id}');
   }

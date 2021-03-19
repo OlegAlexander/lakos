@@ -68,7 +68,7 @@ void main(List<String> arguments) {
         negatable: true);
 
   // Parse args.
-  ArgResults argResults;
+  late ArgResults argResults;
 
   try {
     argResults = parser.parse(arguments);
@@ -86,16 +86,16 @@ void main(List<String> arguments) {
 
   // Get options.
   var rootDir = Directory(argResults.rest[0]);
-  var format = argResults['format'] as String;
-  var output = argResults['output'] as String;
+  var format = argResults['format'] as String?;
+  var output = argResults['output'] as String?;
   var tree = argResults['tree'] as bool;
   var metrics = argResults['metrics'] as bool;
   var nodeMetrics = argResults['node-metrics'] as bool;
   var ignore = argResults['ignore'] as String;
-  var cyclesAllowed = argResults['cycles-allowed'] as bool;
+  var cyclesAllowed = argResults['cycles-allowed'] as bool?;
 
   // Build model.
-  Model model;
+  late Model model;
   try {
     model = buildModel(rootDir,
         ignoreGlob: ignore,
@@ -122,7 +122,7 @@ void main(List<String> arguments) {
     print(contents);
   } else {
     try {
-      if (!File(output).parent.existsSync()) {
+      if (!File(output!).parent.existsSync()) {
         File(output).parent.createSync(recursive: true);
       }
       File(output).writeAsStringSync(contents);
@@ -133,7 +133,7 @@ void main(List<String> arguments) {
   }
 
   // Detect cycles.
-  if (!cyclesAllowed && !model.toDirectedGraph().isAcyclic) {
+  if (!cyclesAllowed! && !model.toDirectedGraph().isAcyclic) {
     exit(ExitCode.DependencyCycleDetected.index);
   }
 }

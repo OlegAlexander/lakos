@@ -9,7 +9,7 @@ void main() {
   final pathPackage = getPackageLocation('path');
 
   test('Resolve relative file', () {
-    var thisDartFile = File(join(testPackage.path, 'lib', 'src', 'runner',
+    var thisDartFile = File(join(testPackage!.path, 'lib', 'src', 'runner',
         'browser', 'phantom_js.dart'));
     var relativeFile = '../executable_settings.dart';
     var resolvedFile = resolveFile(thisDartFile, relativeFile);
@@ -35,16 +35,16 @@ void main() {
     expect(pubspecYaml, isNotNull);
     pubspecYaml = findPubspecYaml(Directory('./lib'));
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = findPubspecYaml(testPackage);
+    pubspecYaml = findPubspecYaml(testPackage!);
     expect(pubspecYaml, isNotNull);
-    pubspecYaml = findPubspecYaml(pathPackage);
+    pubspecYaml = findPubspecYaml(pathPackage!);
     expect(pubspecYaml, isNotNull);
     pubspecYaml = findPubspecYaml(Directory('..'));
     expect(pubspecYaml, isNull);
   });
 
   test('resolvePackageFileFromPubspecYaml', () {
-    var pubspecYaml = findPubspecYaml(Directory('.'));
+    var pubspecYaml = findPubspecYaml(Directory('.'))!;
     var resolvedPackageFile = resolvePackageFileFromPubspecYaml(
         pubspecYaml, 'package:lakos/graphviz.dart');
     var pathParts = split(resolvedPackageFile.path);

@@ -10,7 +10,7 @@ const precision = 2;
 /// directly or transitively, including itself.
 void computeNodeCDs(DirectedGraph<String> graph, @modified Model model) {
   for (var v in graph.vertices) {
-    model.nodes[v].cd = 0;
+    model.nodes[v]!.cd = 0;
   }
   for (var v in graph.vertices) {
     var nodes = [v];
@@ -19,7 +19,8 @@ void computeNodeCDs(DirectedGraph<String> graph, @modified Model model) {
       var next = nodes.removeAt(0);
       // Only visit each node once
       if (!visited.contains(next)) {
-        model.nodes[v].cd += 1;
+        // Solution to += error: https://stackoverflow.com/a/66472892
+        model.nodes[v]!.cd = model.nodes[v]!.cd! + 1;
         visited.add(next);
         nodes.addAll(graph.edges(next));
       }
@@ -38,12 +39,12 @@ void computeNodeCDs(DirectedGraph<String> graph, @modified Model model) {
 void computeNodeDegreeMetrics(
     DirectedGraph<String> graph, @modified Model model) {
   for (var v in graph.vertices) {
-    model.nodes[v].inDegree = graph.inDegree(v);
-    model.nodes[v].outDegree = graph.outDegree(v);
-    if (model.nodes[v].inDegree + model.nodes[v].outDegree > 0) {
-      model.nodes[v].instability = (model.nodes[v].outDegree /
-              (model.nodes[v].inDegree + model.nodes[v].outDegree))
-          .toPrecision(precision);
+    model.nodes[v]!.inDegree = graph.inDegree(v);
+    model.nodes[v]!.outDegree = graph.outDegree(v);
+    if (model.nodes[v]!.inDegree! + model.nodes[v]!.outDegree! > 0) {
+      model.nodes[v]!.instability = (model.nodes[v]!.outDegree! /
+              (model.nodes[v]!.inDegree! + model.nodes[v]!.outDegree!))
+          .toPrecision(precision) as double?;
     }
   }
 }
@@ -54,7 +55,7 @@ void computeNodeDegreeMetrics(
 int computeCCD(Model model) {
   var ccd = 0;
   for (var node in model.nodes.values) {
-    ccd += node.cd;
+    ccd += node.cd!;
   }
   return ccd;
 }
@@ -135,7 +136,7 @@ int computeTotalSloc(Model model) {
   var total = 0;
   for (var node in model.nodes.values) {
     if (node.sloc != null) {
-      total += node.sloc;
+      total += node.sloc!;
     }
   }
   return total;
@@ -167,12 +168,12 @@ Metrics computeMetrics(@modified Model model) {
       firstCycle,
       numNodes,
       numEdges,
-      avgDegree,
+      avgDegree as double,
       orphans,
       ccd,
-      computeACD(ccd, numNodes).toPrecision(precision),
-      computeNCCD(ccd, numNodes).toPrecision(precision),
+      computeACD(ccd, numNodes).toPrecision(precision) as double,
+      computeNCCD(ccd, numNodes).toPrecision(precision) as double,
       totalSloc,
-      avgSloc.toPrecision(precision));
+      avgSloc.toPrecision(precision) as double);
   return metrics;
 }
