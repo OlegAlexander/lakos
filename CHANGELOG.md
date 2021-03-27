@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Upgraded dependencies.
+
 ## 2.0.0
 
 - Upgraded to null-safe directed_graph.

@@ -1,6 +1,6 @@
 name: lakos
 description: Visualize Dart library dependencies in Graphviz dot. Detect dependency cycles.
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/OlegAlexander/lakos
 
 environment:
@@ -12,8 +12,8 @@ executables:
 dependencies:
   path: ^1.8.0
   args: ^2.0.0
-  directed_graph: ^0.3.3
-  glob: ^2.0.0
+  directed_graph: ^0.3.5
+  glob: ^2.0.1
 
 dev_dependencies:
   pedantic: ^1.11.0
