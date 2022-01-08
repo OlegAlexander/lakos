@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:io';
 import 'package:lakos/src/model.dart';
 import 'package:directed_graph/directed_graph.dart';
+import 'package:darq/darq.dart';
 
 const precision = 2;
 
@@ -52,24 +53,13 @@ void computeNodeDegreeMetrics(
 /// Return the cumulative component dependency, which is the sum of all component dependencies.
 /// The CCD can be interpreted as the total "coupling" of the graph.
 /// Lower is better.
-int computeCCD(Model model) {
-  var ccd = 0;
-  for (var node in model.nodes.values) {
-    ccd += node.cd!;
-  }
-  return ccd;
-}
+int computeCCD(Model model) => model.nodes.values.sum((node) => node.cd!);
 
 /// A node that has inDegree and outDegree of 0 is an orphan.
-List<String> computeOrphans(Model model) {
-  var orphans = <String>[];
-  for (var node in model.nodes.values) {
-    if (node.inDegree == 0 && node.outDegree == 0) {
-      orphans.add(node.id);
-    }
-  }
-  return orphans;
-}
+List<String> computeOrphans(Model model) => model.nodes.values
+    .where((node) => node.inDegree == 0 && node.outDegree == 0)
+    .map((node) => node.id)
+    .toList();
 
 /// Return the average component dependency.
 /// ACD = CCD / numNodes
@@ -132,15 +122,8 @@ void computeNodeSlocs(@modified Model model) {
   }
 }
 
-int computeTotalSloc(Model model) {
-  var total = 0;
-  for (var node in model.nodes.values) {
-    if (node.sloc != null) {
-      total += node.sloc!;
-    }
-  }
-  return total;
-}
+int computeTotalSloc(Model model) =>
+    model.nodes.values.map((node) => node.sloc).nonNull().append(0).sum();
 
 /// Round to precision.
 /// Source: https://stackoverflow.com/a/32205216
