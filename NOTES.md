@@ -12,5 +12,5 @@
 - [ ] Upgrade lakos version in pubspec.yaml
 - [ ] Update CHANGELOG.md
 - [ ] Commit and push changes to github
-- [ ] Run `dart publish --dry-run` and `dart publish`
+- [ ] Run `dart pub publish --dry-run` and `dart pub publish` (ignore warnings about tight constraints)
 - [ ] Run `dart pub global activate lakos` and make sure it's the latest version
