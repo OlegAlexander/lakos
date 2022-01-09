@@ -3,12 +3,12 @@ import 'package:args/args.dart';
 import 'package:lakos/lakos.dart';
 
 enum ExitCode {
-  Ok,
-  InvalidOption,
-  NoRootDirectorySpecified,
-  BuildModelFailed,
-  WriteToFileFailed,
-  DependencyCycleDetected
+  ok,
+  invalidOption,
+  noRootDirectorySpecified,
+  buildModelFailed,
+  writeToFileFailed,
+  dependencyCycleDetected
 }
 
 const outputDefault = 'STDOUT';
@@ -75,13 +75,13 @@ void main(List<String> arguments) {
   } catch (e) {
     print(e);
     printUsage(parser);
-    exit(ExitCode.InvalidOption.index);
+    exit(ExitCode.invalidOption.index);
   }
 
   if (argResults.rest.length != 1) {
     print('No root directory specified.');
     printUsage(parser);
-    exit(ExitCode.NoRootDirectorySpecified.index);
+    exit(ExitCode.noRootDirectorySpecified.index);
   }
 
   // Get options.
@@ -104,17 +104,17 @@ void main(List<String> arguments) {
         showNodeMetrics: nodeMetrics);
   } catch (e) {
     print(e);
-    exit(ExitCode.BuildModelFailed.index);
+    exit(ExitCode.buildModelFailed.index);
   }
 
   // Write output to STDOUT or a file.
   var contents = '';
   switch (format) {
     case 'dot':
-      contents = model.getOutput(OutputFormat.Dot);
+      contents = model.getOutput(OutputFormat.dot);
       break;
     case 'json':
-      contents = model.getOutput(OutputFormat.Json);
+      contents = model.getOutput(OutputFormat.json);
       break;
   }
 
@@ -128,12 +128,12 @@ void main(List<String> arguments) {
       File(output).writeAsStringSync(contents);
     } catch (e) {
       print(e);
-      exit(ExitCode.WriteToFileFailed.index);
+      exit(ExitCode.writeToFileFailed.index);
     }
   }
 
   // Detect cycles.
   if (!cyclesAllowed! && !model.toDirectedGraph().isAcyclic) {
-    exit(ExitCode.DependencyCycleDetected.index);
+    exit(ExitCode.dependencyCycleDetected.index);
   }
 }

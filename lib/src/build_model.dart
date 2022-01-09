@@ -24,7 +24,7 @@ String? parseImportLine(String line) {
       importPath += char;
     }
   }
-  if (importPath.isEmpty) {
+  if (importPath.isEmpty || !line.endsWith(';')) {
     return null;
   }
   return importPath;
@@ -149,6 +149,7 @@ List<Edge> getEdges(
     // Grab the imports from the dart file
     var lines = dartFile.readAsLinesSync();
     for (var line in lines) {
+      line = line.trim();
       if (line.startsWith('import') || line.startsWith('export')) {
         var parsedImportLine = parseImportLine(line);
         if (parsedImportLine == null) {
@@ -184,8 +185,8 @@ List<Edge> getEdges(
             if (nodes.contains(to)) {
               edges.add(Edge(from, to,
                   directive: line.startsWith('import')
-                      ? Directive.Import
-                      : Directive.Export));
+                      ? Directive.import
+                      : Directive.export));
             }
           }
         }

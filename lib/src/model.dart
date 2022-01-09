@@ -50,9 +50,9 @@ ${metrics ?? ''}
   /// Returns the string representation of the model depending on the [OutputFormat].
   String getOutput(OutputFormat format) {
     switch (format) {
-      case OutputFormat.Dot:
+      case OutputFormat.dot:
         return toString();
-      case OutputFormat.Json:
+      case OutputFormat.json:
         return _prettyJson(toJson());
     }
   }
@@ -79,7 +79,7 @@ ${metrics ?? ''}
 }
 
 /// Used in [Model.getOutput].
-enum OutputFormat { Dot, Json }
+enum OutputFormat { dot, json }
 
 /// Dart files are represented as nodes in a directed graph.
 /// See the README for more details about each node metric.
@@ -130,7 +130,7 @@ class Node {
 }
 
 /// Import/Export directive used in [Edge].
-enum Directive { Import, Export }
+enum Directive { import, export }
 
 /// Import/Export dependencies are represented as edges in a directed graph.
 class Edge {
@@ -144,12 +144,12 @@ class Edge {
   Directive directive;
 
   /// Constructor.
-  Edge(this.from, this.to, {this.directive = Directive.Import});
+  Edge(this.from, this.to, {this.directive = Directive.import});
 
   /// Returns this object in dot format.
   @override
   String toString() {
-    return '"$from" -> "$to"${directive == Directive.Export ? ' [style=dashed]' : ''};';
+    return '"$from" -> "$to"${directive == Directive.export ? ' [style=dashed]' : ''};';
   }
 
   /// Returns this object in JSON format.

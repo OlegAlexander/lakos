@@ -2,7 +2,7 @@
 
 `lakos` is a command line tool and library that can:
 
-- Visualize Dart library dependencies in Graphviz `dot`.
+- Visualize internal Dart library dependencies in Graphviz `dot`.
 - Detect dependency cycles.
 - Identify orphans.
 - Compute useful dependency graph metrics.
@@ -14,22 +14,22 @@ Usage: lakos [options] <root-directory>
 
 -f, --format=<FORMAT>        Output format.
                              [dot (default), json]
-                             
+
 -o, --output=<FILE>          Save output to a file instead of printing it.
                              (defaults to "STDOUT")
-                             
+
     --[no-]tree              Show directory structure as subgraphs.
                              (defaults to on)
-                             
+
 -m, --[no-]metrics           Compute and show global metrics.
                              (defaults to --no-metrics)
-                             
+
     --[no-]node-metrics      Show node metrics. Only works when --metrics is true.
                              (defaults to --no-node-metrics)
-                             
+
 -i, --ignore=<GLOB>          Exclude files and directories with a glob pattern.
                              (defaults to "!**")
-                             
+
     --[no-]cycles-allowed    With --no-cycles-allowed lakos runs normally
                              but exits with a non-zero exit code
                              if a dependency cycle is detected.
@@ -60,7 +60,7 @@ dot -Tsvg example.dot -o example.svg
 
 ## Notes
 
-- Nodes are Dart libraries. Edges are "uses" or "depends on" relationships.
+- Nodes are internal Dart libraries. Edges are "uses" or "depends on" relationships.
 - Exports are drawn with a dashed edge.
 - Orphan nodes are octagons (with `--metrics`).
 - Only `import` and `export` directives are supported; `library` and `part` are not.
@@ -91,7 +91,6 @@ lakos --no-tree -o dot_images/string_scanner.no_test_no_tree.dot -i test/** /roo
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/42989765/94977170-72281100-04cc-11eb-9a92-ae932f368ca8.png" alt="No directory tree." width="70%"/></p>
-
 
 Example JSON output:
 
@@ -196,6 +195,13 @@ lakos -f json -o dot_images/pub_cache.metrics_no_test.json -m -i test/** /root/.
 
 </details>
 
+## Ignoring Multiple Directories
+
+Use curly brackets in the glob pattern to ignore multiple folders:
+
+```console
+lakos -i {lib/extensions/**,test/**} .
+```
 
 ## Styling Graphviz
 

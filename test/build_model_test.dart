@@ -37,6 +37,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import "package:lakos/resolve_imports.dart" as resolve_imports;
 import  "metrics.dart"  as metrics;
+import 'package:' 
 '''
         .split('\n')
         .map((line) => parseImportLine(line));
@@ -45,6 +46,7 @@ import  "metrics.dart"  as metrics;
       'package:path/path.dart',
       'package:lakos/resolve_imports.dart',
       'metrics.dart',
+      null,
       null
     ]);
   });

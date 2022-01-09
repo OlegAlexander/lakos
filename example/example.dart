@@ -4,8 +4,8 @@ import 'package:lakos/lakos.dart';
 void main() {
   var model =
       buildModel(Directory('.'), ignoreGlob: 'test/**', showMetrics: true);
-  print(model.getOutput(OutputFormat.Dot));
-  print(model.getOutput(OutputFormat.Json));
+  print(model.getOutput(OutputFormat.dot));
+  print(model.getOutput(OutputFormat.json));
 
   if (!model.metrics!.isAcyclic) {
     print('Dependency cycle detected.');

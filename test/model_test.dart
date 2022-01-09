@@ -13,7 +13,7 @@ void main() {
     g.nodes['b'] = Node('b', 'b');
     g.nodes['c'] = Node('c', 'c');
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c', directive: Directive.Export));
+    g.edges.add(Edge('a', 'c', directive: Directive.export));
     print(g);
     expect(g.toString(), '''
 digraph "" {
@@ -34,7 +34,7 @@ digraph "" {
     g.nodes['b'] = Node('b', 'b');
     g.nodes['c'] = Node('c', 'c');
     g.edges.add(Edge('a', 'b'));
-    g.edges.add(Edge('a', 'c', directive: Directive.Export));
+    g.edges.add(Edge('a', 'c', directive: Directive.export));
     print(g);
     expect(g.toString(), '''
 digraph "" {
@@ -248,7 +248,7 @@ digraph "" {
     var edge = Edge('a', 'b');
     print(edge);
     expect(edge.toString(), '"a" -> "b";');
-    edge = Edge('a', 'b', directive: Directive.Export);
+    edge = Edge('a', 'b', directive: Directive.export);
     print(edge);
     expect(edge.toString(), '"a" -> "b" [style=dashed];');
     print(jsonEncode(edge));

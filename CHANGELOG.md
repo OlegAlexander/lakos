@@ -1,3 +1,8 @@
+## 2.0.2
+
+- Ignore import lines that don't end with a semicolon.
+- Upgraded dependencies.
+
 ## 2.0.1
 
 - Upgraded dependencies.

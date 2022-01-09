@@ -8,14 +8,14 @@ const outDir = 'dot_images';
 const lakos = 'bin/lakos.dart';
 const dpi = 200;
 var packages = {
-  '.': ExitCode.Ok.index,
-  'path': ExitCode.DependencyCycleDetected.index,
-  'args': ExitCode.DependencyCycleDetected.index,
-  'directed_graph': ExitCode.Ok.index,
-  'glob': ExitCode.Ok.index,
-  'test': ExitCode.Ok.index,
-  'pub_cache': ExitCode.DependencyCycleDetected.index,
-  'string_scanner': ExitCode.DependencyCycleDetected.index
+  '.': ExitCode.ok.index,
+  'path': ExitCode.dependencyCycleDetected.index,
+  'args': ExitCode.dependencyCycleDetected.index,
+  'directed_graph': ExitCode.ok.index,
+  'glob': ExitCode.ok.index,
+  'test': ExitCode.ok.index,
+  'pub_cache': ExitCode.dependencyCycleDetected.index,
+  'string_scanner': ExitCode.dependencyCycleDetected.index
 };
 
 void main() {
@@ -23,20 +23,20 @@ void main() {
 
   test('InvalidOption', () {
     var result = Process.runSync('dart', [lakos, '--invalid']);
-    expect(result.exitCode, ExitCode.InvalidOption.index);
+    expect(result.exitCode, ExitCode.invalidOption.index);
 
     result = Process.runSync('dart', [lakos, '--layout', 'INVALID']);
-    expect(result.exitCode, ExitCode.InvalidOption.index);
+    expect(result.exitCode, ExitCode.invalidOption.index);
   });
 
   test('NoRootDirectorySpecified', () {
     var result = Process.runSync('dart', [lakos]);
-    expect(result.exitCode, ExitCode.NoRootDirectorySpecified.index);
+    expect(result.exitCode, ExitCode.noRootDirectorySpecified.index);
   });
 
   test('BuildModelFailed', () {
     var result = Process.runSync('dart', [lakos, 'i/dont/exist']);
-    expect(result.exitCode, ExitCode.BuildModelFailed.index);
+    expect(result.exitCode, ExitCode.buildModelFailed.index);
   });
 
   test('generate dot graphs -- force forward slashes on Windows', () {
@@ -59,7 +59,7 @@ void main() {
           .toString()
           .split('\n')
           .where((line) => line.startsWith('fontname')));
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
@@ -82,7 +82,7 @@ void main() {
       ];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
-      expect(lakosDotResult.exitCode, ExitCode.Ok.index);
+      expect(lakosDotResult.exitCode, ExitCode.ok.index);
 
       // Manually save the stdout to a file
       File(dotFilename).writeAsStringSync(lakosDotResult.stdout);
@@ -104,7 +104,7 @@ void main() {
           .toString()
           .split('\n')
           .where((line) => line.startsWith('fontname')));
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
@@ -130,7 +130,7 @@ void main() {
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
@@ -156,7 +156,7 @@ void main() {
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
@@ -185,7 +185,7 @@ void main() {
 
       var dotResult = Process.runSync(
           'dot', ['-Tpng', dotFilename, '-Gdpi=$dpi', '-o', pngFilename]);
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
@@ -218,7 +218,7 @@ void main() {
       ];
       print(dotCommand.join(' '));
       var dotResult = Process.runSync('dot', dotCommand);
-      expect(dotResult.exitCode, ExitCode.Ok.index);
+      expect(dotResult.exitCode, ExitCode.ok.index);
     }
   });
 
