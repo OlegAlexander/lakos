@@ -318,3 +318,4 @@ See [example/example.dart](https://github.com/OlegAlexander/lakos/blob/master/ex
 - Java: Sonargraph, JArchitect
 - Python: pydeps
 - Haskell: graphmod
+- Swift: swiftAlyzer
