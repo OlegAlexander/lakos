@@ -36,7 +36,7 @@ File? findPubspecYaml(Directory currentDir) {
 File resolvePackageFileFromPubspecYaml(File pubspecYaml, String packageFile) {
   packageFile = packageFile.replaceFirst('package:', '');
   var packageFilePathParts = split(packageFile);
-  packageFilePathParts[0] = 'lib'; // Replace package name with lib
+  packageFilePathParts.insert(1, 'lib');
   packageFile = joinAll(packageFilePathParts).replaceAll('\\', '/');
   return resolveFile(pubspecYaml, packageFile);
 }
