@@ -3,7 +3,7 @@
 # Clean up: docker container prune -f
 # Really clean up: docker system prune -a --volumes -f
 
-FROM google/dart
+FROM dart
 
 WORKDIR /lakos
 

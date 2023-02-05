@@ -14,7 +14,6 @@ var packages = {
   'directed_graph': ExitCode.ok.index,
   'glob': ExitCode.ok.index,
   'test': ExitCode.ok.index,
-  'pub_cache': ExitCode.dependencyCycleDetected.index,
   'string_scanner': ExitCode.dependencyCycleDetected.index
 };
 
@@ -48,7 +47,7 @@ void main() {
       var dotFilename = join(outDir, '$outputFilename.dot');
       var pngFilename = join(outDir, '$outputFilename.png');
 
-      var lakosDotCommand = [lakos, '-o', dotFilename, packageLocation.path];
+      var lakosDotCommand = [lakos, '-i', 'test/**','-o', dotFilename, packageLocation.path];
       print(lakosDotCommand.join(' '));
       var lakosDotResult = Process.runSync('dart', lakosDotCommand);
       expect(lakosDotResult.exitCode, packages[package]);

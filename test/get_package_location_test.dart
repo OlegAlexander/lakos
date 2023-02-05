@@ -3,9 +3,9 @@ import 'get_package_location.dart';
 
 void main() {
   test('getPackageLocation', () {
-    var location = getPackageLocation('pub_cache');
+    var location = getPackageLocation('path');
     expect(location, isNotNull);
-    location = getPackageLocation('pub_cacheeeeee');
+    location = getPackageLocation('pathhhhhhhhhhhh');
     expect(location, isNull);
   });
 }

@@ -1,3 +1,9 @@
+## 2.0.3
+
+- Inlined the [discontinued pub_cache package](https://github.com/google/pub_cache/issues/48) and fixed all lint warnings.
+- Using the new `dart` Docker image.
+- Upgraded dependencies.
+
 ## 2.0.2
 
 - Ignore import lines that don't end with a semicolon.

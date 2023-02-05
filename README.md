@@ -200,7 +200,7 @@ lakos -f json -o dot_images/pub_cache.metrics_no_test.json -m -i test/** /root/.
 Use curly brackets in the glob pattern to ignore multiple folders:
 
 ```console
-lakos -i {lib/extensions/**,test/**} .
+lakos -i "{lib/extensions/**,test/**}" .
 ```
 
 ## Styling Graphviz
