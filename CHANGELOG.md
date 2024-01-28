@@ -1,3 +1,9 @@
+## 2.0.4
+
+- Upgraded Dart SDK to v3.2.6
+- Upgraded dependencies.
+
+
 ## 2.0.3
 
 - Inlined the [discontinued pub_cache package](https://github.com/google/pub_cache/issues/48) and fixed all lint warnings.
