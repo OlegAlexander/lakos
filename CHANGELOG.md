@@ -1,8 +1,11 @@
+## 2.0.5
+
+- Upgraded all dependency packages
+
 ## 2.0.4
 
 - Upgraded Dart SDK to v3.2.6
 - Upgraded dependencies.
-
 
 ## 2.0.3
 
