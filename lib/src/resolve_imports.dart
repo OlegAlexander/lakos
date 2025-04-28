@@ -33,10 +33,19 @@ File? findPubspecYaml(Directory currentDir) {
 }
 
 /// Convert to a relative file in lib directory, then resolve from pubspec.yaml.
-File resolvePackageFileFromPubspecYaml(File pubspecYaml, String packageFile) {
-  packageFile = packageFile.replaceFirst('package:', '');
-  var packageFilePathParts = split(packageFile);
-  packageFilePathParts[0] = 'lib'; // Replace package name with lib
+File resolvePackageFileFromPubspecYaml(File pubspecYaml, String packageFile, bool workspaceMode) {
+  List<String> packageFilePathParts = [];
+  if (workspaceMode) {
+    packageFile = packageFile.replaceFirst('package:', 'packages/');
+    packageFilePathParts = split(packageFile);
+    // Insert 'lib' after 'packages'/'package_name'
+    packageFilePathParts.insert(2, 'lib');   
+  } else {
+    packageFile = packageFile.replaceFirst('package:', '');
+    packageFilePathParts = split(packageFile);
+    packageFilePathParts[0] = 'lib'; // Replace package name with lib
+
+  }
   packageFile = joinAll(packageFilePathParts).replaceAll('\\', '/');
   return resolveFile(pubspecYaml, packageFile);
 }

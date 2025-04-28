@@ -65,7 +65,13 @@ void main(List<String> arguments) {
         help:
             'With --no-cycles-allowed lakos runs normally\nbut exits with a non-zero exit code\nif a dependency cycle is detected.\nUseful for CI builds.\n(defaults to --no-cycles-allowed)',
         defaultsTo: false,
+        negatable: true)
+    ..addFlag('workspace',
+        help:
+            'Resolve filenames relative to the workspace.\nThis is useful for monorepos.',
+        defaultsTo: false,
         negatable: true);
+
 
   // Parse args.
   late ArgResults argResults;
@@ -93,6 +99,7 @@ void main(List<String> arguments) {
   var nodeMetrics = argResults['node-metrics'] as bool;
   var ignore = argResults['ignore'] as String;
   var cyclesAllowed = argResults['cycles-allowed'] as bool?;
+  var workspaceMode = argResults['workspace'] as bool;
 
   // Build model.
   late Model model;
@@ -101,7 +108,8 @@ void main(List<String> arguments) {
         ignoreGlob: ignore,
         showTree: tree,
         showMetrics: metrics,
-        showNodeMetrics: nodeMetrics);
+        showNodeMetrics: nodeMetrics,
+        workspaceMode: workspaceMode);
   } catch (e) {
     print(e);
     exit(ExitCode.buildModelFailed.index);

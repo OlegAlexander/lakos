@@ -137,7 +137,7 @@ Map<String, Node> getDartFileNodes(
 
 /// Read each Dart file and get the import and export paths.
 List<Edge> getEdges(
-    Directory rootDir, String ignore, File pubspecYaml, List<String> nodes) {
+    Directory rootDir, String ignore, File pubspecYaml, List<String> nodes, bool workspaceMode) {
   var edges = <Edge>[];
 
   var dartFiles = getDartFiles(rootDir, ignore);
@@ -159,7 +159,7 @@ List<Edge> getEdges(
         File? resolvedFile;
         if (parsedImportLine.startsWith('package:')) {
           resolvedFile =
-              resolvePackageFileFromPubspecYaml(pubspecYaml, parsedImportLine);
+              resolvePackageFileFromPubspecYaml(pubspecYaml, parsedImportLine, workspaceMode);
         } else if (parsedImportLine.startsWith('dart:') ||
             parsedImportLine.startsWith('dart-ext:')) {
           continue; // Ignore dart: or dart-ext: imports
@@ -225,7 +225,8 @@ Model buildModel(Directory rootDir,
     {String ignoreGlob = '!**',
     bool showTree = true,
     bool showMetrics = false,
-    bool showNodeMetrics = false}) {
+    bool showNodeMetrics = false,
+    bool workspaceMode = false}) {
   // Convert relative to absolute path.
   if (!rootDir.isAbsolute) {
     rootDir = Directory(normalize(rootDir.absolute.path));
@@ -249,7 +250,7 @@ Model buildModel(Directory rootDir,
   }
 
   model.edges.addAll(
-      getEdges(rootDir, ignoreGlob, pubspecYaml, model.nodes.keys.toList()));
+      getEdges(rootDir, ignoreGlob, pubspecYaml, model.nodes.keys.toList(), workspaceMode));
 
   if (showMetrics) {
     model.metrics = computeMetrics(model);
