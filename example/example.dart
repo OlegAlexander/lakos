@@ -19,5 +19,5 @@ void main() {
 
   // Further analysis with the directed_graph library
   var digraph = model.toDirectedGraph();
-  print(digraph.topologicalOrdering);
+  print(digraph.topologicalOrdering());
 }

@@ -269,7 +269,7 @@ class Metrics {
       };
 }
 
-String _prettyJson(jsonObject, {String indent = '  '}) {
+String _prettyJson(dynamic jsonObject, {String indent = '  '}) {
   return JsonEncoder.withIndent(indent).convert(jsonObject);
 }
 

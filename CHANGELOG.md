@@ -1,3 +1,7 @@
+## 2.0.7
+
+- Upgraded dependencies.
+
 ## 2.0.6
 
 - Upgraded and relaxed dependencies.

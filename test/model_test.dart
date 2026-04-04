@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:lakos/src/model.dart';
 import 'dart:convert';
 
-String prettyJson(jsonObject) {
+String prettyJson(dynamic jsonObject) {
   return JsonEncoder.withIndent('  ').convert(jsonObject);
 }
 

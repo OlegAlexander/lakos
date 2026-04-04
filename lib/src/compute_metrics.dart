@@ -145,7 +145,7 @@ Metrics computeMetrics(@modified Model model) {
   var avgDegree = (numEdges / numNodes).toPrecision(precision);
   var totalSloc = computeTotalSloc(model);
   var avgSloc = totalSloc / numNodes;
-  var firstCycle = digraph.cycle.map((node) => node).toList();
+  var firstCycle = digraph.cycle().map((node) => node).toList();
   var metrics = Metrics(
       firstCycle.isEmpty,
       firstCycle,
